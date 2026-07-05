@@ -190,7 +190,8 @@ export default function ShowcasePage() {
 
       <Section label="Qualifications — Education">
         <EducationCard
-          title="BSc Data Science — Cairo University"
+          degree="BSc Data Science"
+          institution="Cairo University"
           subtitle="Faculty of Computers & Artificial Intelligence · Distinction with Honors"
           tags={["Deep Learning", "Optimization", "Database Systems", "Algorithms"]}
           metricValue="3.76"
@@ -204,7 +205,8 @@ export default function ShowcasePage() {
           <ExperienceRow
             dateRange="Aug 2024 – Present"
             location="Cairo, EG"
-            position="Software Engineer — Cegedim"
+            title="Software Engineer"
+            company="Cegedim"
             bullets={[
               "Rewrote a production pipeline processing 100M+ records — from 12 hours to under 2.",
               "Introduced DuckDB into a 181-table migration, cutting 2 hours to 10 minutes.",
@@ -213,7 +215,8 @@ export default function ShowcasePage() {
           />
           <ExperienceRow
             dateRange="Apr – Aug 2023"
-            position="Competitive Programming Mentor — ICPC FCAI-CU"
+            title="Competitive Programming Mentor"
+            company="ICPC FCAI-CU"
             bullets={[
               "Coached first-year students on algorithms and contest problem-solving.",
             ]}

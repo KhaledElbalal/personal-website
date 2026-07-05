@@ -1,7 +1,8 @@
 type ExperienceRowProps = {
   dateRange: string;
   location?: string;
-  position: string;
+  title: string;
+  company?: string;
   bullets?: string[];
   className?: string;
 };
@@ -9,7 +10,8 @@ type ExperienceRowProps = {
 export function ExperienceRow({
   dateRange,
   location,
-  position,
+  title,
+  company,
   bullets = [],
   className = "",
 }: ExperienceRowProps) {
@@ -24,8 +26,16 @@ export function ExperienceRow({
         ) : null}
       </div>
       <div>
-        <h3 className="m-0 font-mono text-xl font-bold text-[color:var(--color-xiketic)]">
-          {position}
+        <h3 className="m-0 font-mono text-xl font-bold leading-tight text-[color:var(--color-xiketic)]">
+          <span className="block sm:inline">{title}</span>
+          {company ? (
+            <>
+              <span aria-hidden="true" className="hidden sm:inline">
+                {" — "}
+              </span>
+              <span className="block sm:inline">{company}</span>
+            </>
+          ) : null}
         </h3>
         {bullets.length > 0 ? (
           <ul className="mt-3.5 flex list-none flex-col gap-2.5 p-0">
