@@ -15,6 +15,33 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
+export type QualificationsPage = {
+  _id: string;
+  _type: "qualificationsPage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  intro?: string;
+  cv?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  stats?: Array<{
+    value?: string;
+    label?: string;
+    _type: "stat";
+    _key: string;
+  }>;
+};
+
 export type SiteSettings = {
   _id: string;
   _type: "siteSettings";
@@ -45,25 +72,58 @@ export type Skill = {
   order?: number;
 };
 
-export type TimelineEntry = {
-  _id: string;
-  _type: "timelineEntry";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  hash?: string;
-  text?: string;
-  ref?: "none" | "HEAD" | "contest";
-  date?: string;
-  detail?: string;
-  order?: number;
-};
-
 export type SanityImageAssetReference = {
   _ref: string;
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type Qualification = {
+  _id: string;
+  _type: "qualification";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  kind?: "education" | "experience" | "certificate" | "award";
+  title?: string;
+  subtitle?: string;
+  location?: string;
+  startDate?: string;
+  endDate?: string;
+  current?: boolean;
+  bullets?: Array<string>;
+  tags?: Array<string>;
+  logo?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  metric?: {
+    value?: string;
+    label?: string;
+  };
+  featured?: boolean;
+  order?: number;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type BlogPost = {
@@ -115,22 +175,6 @@ export type BlogPost = {
         _key: string;
       }
   >;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type Slug = {
@@ -290,13 +334,15 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | SanityFileAssetReference
+  | QualificationsPage
   | SiteSettings
   | Skill
-  | TimelineEntry
   | SanityImageAssetReference
-  | BlogPost
+  | Qualification
   | SanityImageCrop
   | SanityImageHotspot
+  | BlogPost
   | Slug
   | Project
   | SanityImagePaletteSwatch
@@ -475,16 +521,48 @@ export type POST_BY_SLUG_QUERY_RESULT = {
 } | null;
 
 // Source: ../sanity/queries.ts
-// Variable: TIMELINE_QUERY
-// Query: *[_type == "timelineEntry"] | order(order asc) { _id, hash, text, ref, date, detail }
-export type TIMELINE_QUERY_RESULT = Array<{
+// Variable: QUALIFICATIONS_QUERY
+// Query: *[_type == "qualification"] | order(kind asc, order asc) {    _id, kind, title, subtitle, location, startDate, endDate, current,    bullets, tags, logo, metric, featured, order  }
+export type QUALIFICATIONS_QUERY_RESULT = Array<{
   _id: string;
-  hash: string | null;
-  text: string | null;
-  ref: "contest" | "HEAD" | "none" | null;
-  date: string | null;
-  detail: string | null;
+  kind: "award" | "certificate" | "education" | "experience" | null;
+  title: string | null;
+  subtitle: string | null;
+  location: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean | null;
+  bullets: Array<string> | null;
+  tags: Array<string> | null;
+  logo: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  metric: {
+    value?: string;
+    label?: string;
+  } | null;
+  featured: boolean | null;
+  order: number | null;
 }>;
+
+// Source: ../sanity/queries.ts
+// Variable: QUALIFICATIONS_PAGE_QUERY
+// Query: *[_type == "qualificationsPage"][0] {    intro,    "cvUrl": cv.asset->url,    stats  }
+export type QUALIFICATIONS_PAGE_QUERY_RESULT = {
+  intro: string | null;
+  cvUrl: string | null;
+  stats: Array<{
+    value?: string;
+    label?: string;
+    _type: "stat";
+    _key: string;
+  }> | null;
+} | null;
 
 // Source: ../sanity/queries.ts
 // Variable: SKILLS_QUERY
@@ -521,7 +599,8 @@ declare module "@sanity/client" {
     '*[_type == "project" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n, body }': PROJECT_BY_SLUG_QUERY_RESULT;
     '*[_type == "blogPost" && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n }': BLOG_POSTS_QUERY_RESULT;
     '*[_type == "blogPost" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n, body }': POST_BY_SLUG_QUERY_RESULT;
-    '*[_type == "timelineEntry"] | order(order asc) { _id, hash, text, ref, date, detail }': TIMELINE_QUERY_RESULT;
+    '*[_type == "qualification"] | order(kind asc, order asc) {\n    _id, kind, title, subtitle, location, startDate, endDate, current,\n    bullets, tags, logo, metric, featured, order\n  }': QUALIFICATIONS_QUERY_RESULT;
+    '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
     '*[_type == "skill"] | order(order asc) { _id, role, description, items, path }': SKILLS_QUERY_RESULT;
     '*[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;
   }

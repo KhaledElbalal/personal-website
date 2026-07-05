@@ -43,8 +43,22 @@ export const POST_BY_SLUG_QUERY = defineQuery(
   `*[_type == "blogPost" && slug.current == $slug][0] { ${postFields}, body }`,
 );
 
-export const TIMELINE_QUERY = defineQuery(
-  `*[_type == "timelineEntry"] | order(order asc) { _id, hash, text, ref, date, detail }`,
+// All qualifications, grouped and ordered so the page can render each section
+// (education / experience / certificate / award) by filtering on `kind`.
+export const QUALIFICATIONS_QUERY = defineQuery(
+  `*[_type == "qualification"] | order(kind asc, order asc) {
+    _id, kind, title, subtitle, location, startDate, endDate, current,
+    bullets, tags, logo, metric, featured, order
+  }`,
+);
+
+// Page-level content (hero intro, CV download URL, headline stats).
+export const QUALIFICATIONS_PAGE_QUERY = defineQuery(
+  `*[_type == "qualificationsPage"][0] {
+    intro,
+    "cvUrl": cv.asset->url,
+    stats
+  }`,
 );
 
 export const SKILLS_QUERY = defineQuery(
