@@ -13,6 +13,7 @@ import {
   Button,
   LinkArrow,
   NavLink,
+  PageHeader,
   SectionHeading,
   SocialLink,
   Tag,
@@ -60,6 +61,24 @@ export default function ShowcasePage() {
         to iPhone SE.
       </p>
 
+      <Section label="Page Header (hero — sits on a #F7F7F7 band)">
+        <div className="-mx-6 sm:-mx-10">
+          <PageHeader
+            as="h2"
+            title="Qualifications"
+            intro="The paper trail: a data science degree with honors, production systems at Cegedim, and a contest record that keeps compiling."
+            actions={<Button href="#">Download CV ↓</Button>}
+            aside={
+              <div className="flex flex-wrap gap-x-8 gap-y-4">
+                <StatBlock value="3.76" label="GPA, with honors" />
+                <StatBlock value="100M+" label="records in prod" />
+                <StatBlock value="6×" label="awards & certs" />
+              </div>
+            }
+          />
+        </div>
+      </Section>
+
       <Section label="Wordmark" inline>
         <span className="text-[40px]">
           <Wordmark />
@@ -80,16 +99,23 @@ export default function ShowcasePage() {
         <Button>Button element</Button>
       </Section>
 
-      <Section label="Section Heading (blob follows the cursor)">
-        <div className="relative overflow-hidden rounded-[8px] bg-section px-6 py-14">
-          <Blob
-            size={200}
-            interactive="follow"
-            className="follow-blob absolute -left-8 -top-12 z-0"
-          />
-          <SectionHeading as="h3" className="relative z-10">
-            Recent Work
-          </SectionHeading>
+      <Section label="Section Heading (blob behind; band belongs to the section)">
+        <div className="-mx-6 overflow-hidden bg-section px-6 py-12 sm:-mx-10 sm:px-10">
+          <div className="flex items-baseline gap-5">
+            <div className="relative">
+              <Blob
+                size={180}
+                interactive="follow"
+                className="follow-blob absolute -left-6 -top-10 z-0"
+              />
+              <SectionHeading as="h3" className="relative z-10">
+                Recent Work
+              </SectionHeading>
+            </div>
+            <SocialLink href="#" className="ml-auto">
+              FEATURED
+            </SocialLink>
+          </div>
         </div>
       </Section>
 

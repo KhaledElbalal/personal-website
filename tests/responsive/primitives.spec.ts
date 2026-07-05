@@ -29,6 +29,7 @@ test("showcase renders every component", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto("/showcase");
   for (const label of [
+    /Page Header/,
     "Wordmark",
     "Button",
     /Section Heading/,

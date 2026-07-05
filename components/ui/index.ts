@@ -1,4 +1,5 @@
 export { Button } from "./Button";
+export { PageHeader } from "./PageHeader";
 export { SectionHeading } from "./SectionHeading";
 export { Tag } from "./Tag";
 export { NavLink } from "./NavLink";
