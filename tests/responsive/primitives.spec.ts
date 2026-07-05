@@ -25,7 +25,7 @@ for (const route of ROUTES) {
   }
 }
 
-test("showcase renders every primitive", async ({ page }) => {
+test("showcase renders every component", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto("/showcase");
   for (const label of [
@@ -37,6 +37,8 @@ test("showcase renders every primitive", async ({ page }) => {
     "Social Link",
     "Link Arrow",
     "Blob",
+    "Project Card",
+    "Blog Row",
   ]) {
     await expect(
       page.getByRole("heading", { name: label, exact: true }),

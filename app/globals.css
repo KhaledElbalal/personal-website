@@ -20,7 +20,7 @@
   --text-body: var(--color-xiketic);
   --text-link: var(--accent);
   --text-on-accent: var(--color-ghost-white);
-  --text-muted: rgba(18, 20, 32, 0.55);
+  --text-muted: rgba(18, 20, 32, 0.65); /* darkened from 0.55 to clear WCAG AA */
   --surface-page: var(--color-white);
   --surface-section: var(--color-off-white);
   --surface-placeholder: var(--color-placeholder);
