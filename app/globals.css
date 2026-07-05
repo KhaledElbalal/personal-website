@@ -13,18 +13,18 @@
   --color-placeholder: #d9d9d9;
 
   /* ── Colors — semantic aliases ── */
-  --accent: var(--color-tufts-blue);
+  --accent: #0067a8; /* darkened from Tufts Blue #0093E9 to clear WCAG AA */
   --accent-bright: var(--color-maya-blue);
   --accent-soft: var(--color-blue-jeans);
   --text-heading: var(--color-black);
   --text-body: var(--color-xiketic);
-  --text-link: var(--color-tufts-blue);
+  --text-link: var(--accent);
   --text-on-accent: var(--color-ghost-white);
-  --text-muted: rgba(18, 20, 32, 0.55);
+  --text-muted: rgba(18, 20, 32, 0.65); /* darkened from 0.55 to clear WCAG AA */
   --surface-page: var(--color-white);
   --surface-section: var(--color-off-white);
   --surface-placeholder: var(--color-placeholder);
-  --tag-bg: var(--color-maya-blue);
+  --tag-bg: var(--accent);
   --tag-text: var(--color-ghost-white);
 
   /* Blob gradient stops */
@@ -107,6 +107,10 @@
   --color-muted: var(--text-muted);
   --color-page: var(--surface-page);
   --color-section: var(--surface-section);
+  --color-on-accent: var(--text-on-accent);
+  --color-placeholder: var(--color-placeholder);
+  --color-tag: var(--tag-bg);
+  --color-tag-fg: var(--tag-text);
   --font-mono: var(--font-mono);
   --font-body: var(--font-body);
   --font-logo: var(--font-logo);
@@ -171,5 +175,18 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Terminal caret blink. Defined as a direct utility (not a @theme
+   --animate-* variable) so Turbopack's dev build reliably emits the
+   animation, not just the production build. */
+@utility animate-caret-blink {
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
   }
 }
