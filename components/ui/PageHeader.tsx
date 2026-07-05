@@ -21,30 +21,25 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <header className={`relative overflow-hidden bg-section ${className}`}>
-      <Blob
-        size={320}
-        interactive="follow"
-        strength={32}
-        className="absolute -right-16 -top-16"
-      />
-      <Blob
-        size={300}
-        variant="cluster"
-        interactive="follow"
-        strength={32}
-        className="absolute -bottom-20 -left-24 hidden sm:block"
-      />
-      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-7 px-6 py-10 sm:px-10 sm:py-14 md:flex-row md:items-center md:justify-between md:gap-10 md:py-20">
-        <div className="max-w-[600px]">
-          <Heading className="m-0 font-mono text-[clamp(2rem,7vw,3rem)] font-bold leading-[1.1] text-ink">
+      {/* Soft blob in the open space beside the copy, centered on the content. */}
+      <div className="pointer-events-none absolute inset-y-0 -right-16 flex items-center">
+        <Blob size={480} interactive="follow" strength={32} />
+      </div>
+      {/* Fainter blob tucked behind the heading (desktop only). */}
+      <div className="pointer-events-none absolute -left-24 -top-16 hidden sm:block">
+        <Blob size={360} variant="cluster" interactive="follow" strength={28} />
+      </div>
+      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-6 px-6 py-10 sm:px-10 sm:py-12 md:flex-row md:items-center md:justify-between md:gap-12 md:py-16">
+        <div className="max-w-[560px]">
+          <Heading className="m-0 font-mono text-[clamp(2rem,6vw,2.75rem)] font-bold leading-[1.1] text-ink">
             {title}
           </Heading>
           {intro ? (
-            <p className="mt-5 max-w-[440px] font-body text-base leading-[1.6] text-ink md:text-[18px]">
+            <p className="mt-4 max-w-[440px] font-body text-base leading-[1.6] text-ink">
               {intro}
             </p>
           ) : null}
-          {actions ? <div className="mt-7">{actions}</div> : null}
+          {actions ? <div className="mt-6">{actions}</div> : null}
         </div>
         {aside ? <div className="shrink-0">{aside}</div> : null}
       </div>
