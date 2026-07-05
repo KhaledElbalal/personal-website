@@ -30,6 +30,7 @@ const eslintConfig = defineConfig([
     "sanity.types.ts",
     "studio/**",
     "design/**",
+    "design_qualifications/**",
   ]),
 ]);
 
