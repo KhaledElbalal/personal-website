@@ -178,9 +178,13 @@ body {
   }
 }
 
-@theme {
-  --animate-caret-blink: caret-blink 1.1s steps(1) infinite;
+/* Terminal caret blink. Defined as a direct utility (not a @theme
+   --animate-* variable) so Turbopack's dev build reliably emits the
+   animation, not just the production build. */
+@utility animate-caret-blink {
+  animation: caret-blink 1.1s steps(1) infinite;
 }
+
 @keyframes caret-blink {
   50% {
     opacity: 0;

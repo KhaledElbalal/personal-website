@@ -37,3 +37,13 @@ test("blob does not follow the cursor under reduced motion", async ({
   const t = await blob.evaluate((el) => (el as HTMLElement).style.transform);
   expect(t).toBe("");
 });
+
+test("terminal carets have the blink animation applied", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/showcase");
+  const name = await page
+    .locator('[class*="animate-caret-blink"]')
+    .first()
+    .evaluate((el) => getComputedStyle(el).animationName);
+  expect(name).toBe("caret-blink");
+});

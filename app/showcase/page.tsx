@@ -90,12 +90,6 @@ export default function ShowcasePage() {
           <span className="text-[40px]">
             <Wordmark />
           </span>
-          <span className="rounded-[4px] bg-[color:var(--color-xiketic)] px-4 py-3 text-[40px]">
-            <Wordmark tone="dark" />
-          </span>
-          <span className="text-[28px]">
-            <Wordmark variant="lockup" />
-          </span>
         </Section>
 
         <Section label="Button" inline>
