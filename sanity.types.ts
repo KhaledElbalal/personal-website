@@ -87,6 +87,7 @@ export type Qualification = {
   _rev: string;
   kind?: "education" | "experience" | "certificate" | "award";
   title?: string;
+  organization?: string;
   subtitle?: string;
   location?: string;
   startDate?: string;
@@ -522,11 +523,12 @@ export type POST_BY_SLUG_QUERY_RESULT = {
 
 // Source: ../sanity/queries.ts
 // Variable: QUALIFICATIONS_QUERY
-// Query: *[_type == "qualification"] | order(kind asc, order asc) {    _id, kind, title, subtitle, location, startDate, endDate, current,    bullets, tags, logo, metric, featured, order  }
+// Query: *[_type == "qualification"] | order(kind asc, order asc) {    _id, kind, title, organization, subtitle, location, startDate, endDate,    current, bullets, tags, logo, metric, featured, order  }
 export type QUALIFICATIONS_QUERY_RESULT = Array<{
   _id: string;
   kind: "award" | "certificate" | "education" | "experience" | null;
   title: string | null;
+  organization: string | null;
   subtitle: string | null;
   location: string | null;
   startDate: string | null;
@@ -599,7 +601,7 @@ declare module "@sanity/client" {
     '*[_type == "project" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n, body }': PROJECT_BY_SLUG_QUERY_RESULT;
     '*[_type == "blogPost" && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n }': BLOG_POSTS_QUERY_RESULT;
     '*[_type == "blogPost" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n, body }': POST_BY_SLUG_QUERY_RESULT;
-    '*[_type == "qualification"] | order(kind asc, order asc) {\n    _id, kind, title, subtitle, location, startDate, endDate, current,\n    bullets, tags, logo, metric, featured, order\n  }': QUALIFICATIONS_QUERY_RESULT;
+    '*[_type == "qualification"] | order(kind asc, order asc) {\n    _id, kind, title, organization, subtitle, location, startDate, endDate,\n    current, bullets, tags, logo, metric, featured, order\n  }': QUALIFICATIONS_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
     '*[_type == "skill"] | order(order asc) { _id, role, description, items, path }': SKILLS_QUERY_RESULT;
     '*[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;

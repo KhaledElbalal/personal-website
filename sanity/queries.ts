@@ -47,8 +47,8 @@ export const POST_BY_SLUG_QUERY = defineQuery(
 // (education / experience / certificate / award) by filtering on `kind`.
 export const QUALIFICATIONS_QUERY = defineQuery(
   `*[_type == "qualification"] | order(kind asc, order asc) {
-    _id, kind, title, subtitle, location, startDate, endDate, current,
-    bullets, tags, logo, metric, featured, order
+    _id, kind, title, organization, subtitle, location, startDate, endDate,
+    current, bullets, tags, logo, metric, featured, order
   }`,
 );
 

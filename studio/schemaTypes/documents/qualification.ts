@@ -29,8 +29,14 @@ export const qualification = defineType({
       name: "title",
       type: "string",
       description:
-        'e.g. "Software Engineer — Cegedim" or "AWS Certified Cloud Practitioner".',
+        'Primary heading line: degree, job title, certificate, or award name (e.g. "BSc Data Science", "Software Engineer").',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "organization",
+      type: "string",
+      description:
+        'Second heading line: institution (education) or company (experience), e.g. "Cairo University", "Cegedim". Rendered on its own line on mobile.',
     }),
     defineField({
       name: "subtitle",
