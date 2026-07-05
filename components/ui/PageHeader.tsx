@@ -22,19 +22,19 @@ export function PageHeader({
   return (
     <header className={`relative overflow-hidden bg-section ${className}`}>
       <Blob
-        size={360}
+        size={320}
         interactive="follow"
-        strength={36}
-        className="absolute -left-20 -top-24"
+        strength={32}
+        className="absolute -right-16 -top-16"
       />
       <Blob
-        size={340}
+        size={300}
         variant="cluster"
         interactive="follow"
-        strength={36}
-        className="absolute -right-16 top-0"
+        strength={32}
+        className="absolute -bottom-20 -left-24 hidden sm:block"
       />
-      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-8 px-6 py-16 sm:px-10 md:flex-row md:items-center md:justify-between md:py-20">
+      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-7 px-6 py-10 sm:px-10 sm:py-14 md:flex-row md:items-center md:justify-between md:gap-10 md:py-20">
         <div className="max-w-[600px]">
           <Heading className="m-0 font-mono text-[clamp(2rem,7vw,3rem)] font-bold leading-[1.1] text-ink">
             {title}
