@@ -80,8 +80,17 @@ export default function ShowcasePage() {
         <Button>Button element</Button>
       </Section>
 
-      <Section label="Section Heading" inline>
-        <SectionHeading as="h3">Recent Work</SectionHeading>
+      <Section label="Section Heading (blob follows the cursor)">
+        <div className="relative overflow-hidden rounded-[8px] bg-section px-6 py-14">
+          <Blob
+            size={200}
+            interactive="follow"
+            className="follow-blob absolute -left-8 -top-12 z-0"
+          />
+          <SectionHeading as="h3" className="relative z-10">
+            Recent Work
+          </SectionHeading>
+        </div>
       </Section>
 
       <Section label="Tag" inline>
@@ -109,10 +118,15 @@ export default function ShowcasePage() {
         <LinkArrow href="#">Let&apos;s get in touch</LinkArrow>
       </Section>
 
-      <Section label="Blob" inline>
+      <Section label="Blob (ball + cluster, cursor-following)" inline>
         <div className="relative h-[240px] w-full max-w-[520px] overflow-hidden rounded-[8px] bg-section">
-          <Blob size={300} className="absolute -left-6 -top-8" />
-          <Blob size={360} variant="cluster" className="absolute -right-6 top-2" />
+          <Blob size={300} interactive="follow" className="absolute -left-6 -top-8" />
+          <Blob
+            size={360}
+            variant="cluster"
+            interactive="follow"
+            className="absolute -right-6 top-2"
+          />
         </div>
       </Section>
 

@@ -31,17 +31,15 @@ test("showcase renders every component", async ({ page }) => {
   for (const label of [
     "Wordmark",
     "Button",
-    "Section Heading",
+    /Section Heading/,
     "Tag",
     "Nav Link",
     "Social Link",
     "Link Arrow",
-    "Blob",
+    /^Blob/,
     "Project Card",
     "Blog Row",
   ]) {
-    await expect(
-      page.getByRole("heading", { name: label, exact: true }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: label })).toBeVisible();
   }
 });
