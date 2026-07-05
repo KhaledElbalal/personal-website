@@ -4,7 +4,7 @@ const PORT = 3100;
 const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig({
-  testDir: "./tests/a11y",
+  testDir: "./tests",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
