@@ -1,0 +1,25 @@
+{
+  "name": "khaled-portfolio-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sanity Studio for the Khaled Elbalal portfolio (standalone, deploys to *.sanity.studio).",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "extract-schema": "sanity schema extract",
+    "typegen": "sanity schema extract && sanity typegen generate"
+  },
+  "dependencies": {
+    "@sanity/vision": "^6.3.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sanity": "^6.3.0",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
