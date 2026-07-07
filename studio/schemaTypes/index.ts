@@ -1,6 +1,6 @@
 import { blogPost } from "./documents/blogPost";
+import { experience } from "./documents/experience";
 import { project } from "./documents/project";
-import { qualification } from "./documents/qualification";
 import { skill } from "./documents/skill";
 import { qualificationsPage } from "./singletons/qualificationsPage";
 import { siteSettings } from "./singletons/siteSettings";
@@ -8,7 +8,7 @@ import { siteSettings } from "./singletons/siteSettings";
 export const schemaTypes = [
   project,
   blogPost,
-  qualification,
+  experience,
   skill,
   siteSettings,
   qualificationsPage,

@@ -43,12 +43,13 @@ export const POST_BY_SLUG_QUERY = defineQuery(
   `*[_type == "blogPost" && slug.current == $slug][0] { ${postFields}, body }`,
 );
 
-// All qualifications, grouped and ordered so the page can render each section
-// (education / experience / certificate / award) by filtering on `kind`.
-export const QUALIFICATIONS_QUERY = defineQuery(
-  `*[_type == "qualification"] | order(kind asc, order asc) {
-    _id, kind, title, organization, subtitle, location, startDate, endDate,
-    current, bullets, tags, logo, metric, featured, order
+// All career/credential entries, newest first. Each view is a filter on `type`:
+// the git-log Timeline = job|internship|degree|achievement; the Education card
+// = degree; Honors & Awards = award|achievement; Certificates = certificate.
+export const EXPERIENCE_QUERY = defineQuery(
+  `*[_type == "experience"] | order(startDate desc, order asc) {
+    _id, type, title, organization, detail, startDate, endDate, current,
+    location, tags, metric, logo, featured, order
   }`,
 );
 
