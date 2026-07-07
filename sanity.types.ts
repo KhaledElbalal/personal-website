@@ -79,22 +79,32 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
-export type Qualification = {
+export type Experience = {
   _id: string;
-  _type: "qualification";
+  _type: "experience";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  kind?: "education" | "experience" | "certificate" | "award";
+  type?:
+    | "job"
+    | "internship"
+    | "degree"
+    | "certificate"
+    | "award"
+    | "achievement"
+    | "extracurricular";
   title?: string;
   organization?: string;
-  subtitle?: string;
-  location?: string;
   startDate?: string;
   endDate?: string;
   current?: boolean;
-  bullets?: Array<string>;
+  location?: string;
+  detail?: string;
   tags?: Array<string>;
+  metric?: {
+    value?: string;
+    label?: string;
+  };
   logo?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -102,10 +112,6 @@ export type Qualification = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
-  };
-  metric?: {
-    value?: string;
-    label?: string;
   };
   featured?: boolean;
   order?: number;
@@ -340,7 +346,7 @@ export type AllSanitySchemaTypes =
   | SiteSettings
   | Skill
   | SanityImageAssetReference
-  | Qualification
+  | Experience
   | SanityImageCrop
   | SanityImageHotspot
   | BlogPost
@@ -522,20 +528,31 @@ export type POST_BY_SLUG_QUERY_RESULT = {
 } | null;
 
 // Source: ../sanity/queries.ts
-// Variable: QUALIFICATIONS_QUERY
-// Query: *[_type == "qualification"] | order(kind asc, order asc) {    _id, kind, title, organization, subtitle, location, startDate, endDate,    current, bullets, tags, logo, metric, featured, order  }
-export type QUALIFICATIONS_QUERY_RESULT = Array<{
+// Variable: EXPERIENCE_QUERY
+// Query: *[_type == "experience"] | order(startDate desc, order asc) {    _id, type, title, organization, detail, startDate, endDate, current,    location, tags, metric, logo, featured, order  }
+export type EXPERIENCE_QUERY_RESULT = Array<{
   _id: string;
-  kind: "award" | "certificate" | "education" | "experience" | null;
+  type:
+    | "achievement"
+    | "award"
+    | "certificate"
+    | "degree"
+    | "extracurricular"
+    | "internship"
+    | "job"
+    | null;
   title: string | null;
   organization: string | null;
-  subtitle: string | null;
-  location: string | null;
+  detail: string | null;
   startDate: string | null;
   endDate: string | null;
   current: boolean | null;
-  bullets: Array<string> | null;
+  location: string | null;
   tags: Array<string> | null;
+  metric: {
+    value?: string;
+    label?: string;
+  } | null;
   logo: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -543,10 +560,6 @@ export type QUALIFICATIONS_QUERY_RESULT = Array<{
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
-  } | null;
-  metric: {
-    value?: string;
-    label?: string;
   } | null;
   featured: boolean | null;
   order: number | null;
@@ -601,7 +614,7 @@ declare module "@sanity/client" {
     '*[_type == "project" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n, body }': PROJECT_BY_SLUG_QUERY_RESULT;
     '*[_type == "blogPost" && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n }': BLOG_POSTS_QUERY_RESULT;
     '*[_type == "blogPost" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n, body }': POST_BY_SLUG_QUERY_RESULT;
-    '*[_type == "qualification"] | order(kind asc, order asc) {\n    _id, kind, title, organization, subtitle, location, startDate, endDate,\n    current, bullets, tags, logo, metric, featured, order\n  }': QUALIFICATIONS_QUERY_RESULT;
+    '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
     '*[_type == "skill"] | order(order asc) { _id, role, description, items, path }': SKILLS_QUERY_RESULT;
     '*[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;
