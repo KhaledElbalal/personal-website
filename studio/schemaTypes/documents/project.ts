@@ -23,9 +23,23 @@ export const project = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "date",
+      name: "startDate",
       type: "date",
+      options: { dateFormat: "MMM YYYY" },
+      description: "Primary sort key (newest first).",
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "endDate",
+      type: "date",
+      options: { dateFormat: "MMM YYYY" },
+      description: "Leave empty for a single-date project; or tick “Ongoing”.",
+    }),
+    defineField({
+      name: "current",
+      title: "Ongoing (show “Present”)",
+      type: "boolean",
+      initialValue: false,
     }),
     defineField({
       name: "cover",
@@ -81,6 +95,13 @@ export const project = defineType({
         }),
       ],
     }),
+  ],
+  orderings: [
+    {
+      title: "Newest first",
+      name: "byDate",
+      by: [{ field: "startDate", direction: "desc" }],
+    },
   ],
   preview: {
     select: { title: "title", subtitle: "category", media: "cover" },

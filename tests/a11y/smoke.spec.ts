@@ -15,6 +15,12 @@ test("a11y: /showcase has no detectable axe violations", async ({ page }) => {
   expect(results.violations).toEqual([]);
 });
 
+test("a11y: /projects has no detectable axe violations", async ({ page }) => {
+  await page.goto("/projects");
+  const results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test("skip link is the first keyboard stop and targets main", async ({
   page,
 }) => {
