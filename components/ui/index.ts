@@ -7,3 +7,4 @@ export { SocialLink } from "./SocialLink";
 export { LinkArrow } from "./LinkArrow";
 export { Blob } from "./Blob";
 export { Wordmark } from "./Wordmark";
+export { GiantLabel } from "./GiantLabel";

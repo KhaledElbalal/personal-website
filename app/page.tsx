@@ -1,7 +1,12 @@
+import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { SkillTile } from "@/components/content/SkillTile";
-import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { Blob, LinkArrow, PageHeader, SectionHeading } from "@/components/ui";
+import { formatRange } from "@/sanity/experience";
+import { sanityFetch } from "@/sanity/fetch";
+import { urlFor } from "@/sanity/image";
+import { FEATURED_PROJECTS_QUERY } from "@/sanity/queries";
+import type { FEATURED_PROJECTS_QUERY_RESULT } from "@/sanity.types";
 
 const SKILLS = [
   {
@@ -27,27 +32,6 @@ const SKILLS = [
   },
 ];
 
-const PROJECTS = [
-  {
-    title: "Building a coding harness for Roomba",
-    path: "~/ml/roomba",
-    date: "Jun 2026 - Present",
-    description: "Optimized the harness for Roomba, an agentic AI for coding tasks.",
-  },
-  {
-    title: "SymplifAI: Automated ML Pipeline for Tabular Data",
-    path: "~/ml/symplifai",
-    date: "Oct 2024 - Jul 2025",
-    description: "Design and build in Next.js + Tailwind.",
-  },
-  {
-    title: "Deploying and Engineering Roomba: An Agentic AI for Coding Tasks",
-    path: "~/backend/roomba",
-    date: "Jun 2026 - Present",
-    description: "Developed a scalable backend for Roomba, deployed on AWS with Ruby on Rails, and PostgreSQL.",
-  },
-];
-
 function HeadingWithBlob({
   id,
   children,
@@ -69,7 +53,13 @@ function HeadingWithBlob({
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const featured = await sanityFetch<FEATURED_PROJECTS_QUERY_RESULT>(
+    FEATURED_PROJECTS_QUERY,
+    {},
+    ["project"],
+  );
+
   return (
     <>
       <PageHeader
@@ -111,18 +101,29 @@ export default function Home() {
       <section aria-labelledby="work-heading" className="bg-section">
         <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10">
           <HeadingWithBlob id="work-heading">Recent Work</HeadingWithBlob>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PROJECTS.map((p) => (
-              <ProjectCard
-                key={p.title}
-                title={p.title}
-                path={p.path}
-                date={p.date}
-                description={p.description}
-                href="/projects"
-              />
-            ))}
-          </div>
+          {featured.length ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((p) => (
+                <ProjectCard
+                  key={p._id}
+                  image={
+                    p.cover
+                      ? urlFor(p.cover).width(720).height(480).url()
+                      : undefined
+                  }
+                  title={p.title ?? ""}
+                  path={p.path ?? undefined}
+                  date={formatRange(p)}
+                  description={p.summary ?? undefined}
+                  href={p.slug ? `/projects/${p.slug}` : "/projects"}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="font-body text-base text-muted">
+              More work coming soon.
+            </p>
+          )}
         </div>
       </section>
     </>

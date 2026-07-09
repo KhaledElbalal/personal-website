@@ -199,7 +199,9 @@ export type Project = {
   title?: string;
   slug?: Slug;
   category?: string;
-  date?: string;
+  startDate?: string;
+  endDate?: string;
+  current?: boolean;
   cover?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -363,13 +365,15 @@ export type AllSanitySchemaTypes =
 
 // Source: ../sanity/queries.ts
 // Variable: PROJECTS_QUERY
-// Query: *[_type == "project" && defined(slug.current)] | order(date desc) {   _id,  title,  "slug": slug.current,  category,  date,  cover,  summary,  featured,  path }
+// Query: *[_type == "project" && defined(slug.current)] | order(startDate desc) {   _id,  title,  "slug": slug.current,  category,  startDate,  endDate,  current,  cover,  summary,  featured,  path }
 export type PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
   slug: string | null;
   category: string | null;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean | null;
   cover: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -385,13 +389,15 @@ export type PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: FEATURED_PROJECTS_QUERY
-// Query: *[_type == "project" && featured == true && defined(slug.current)] | order(date desc) {   _id,  title,  "slug": slug.current,  category,  date,  cover,  summary,  featured,  path }
+// Query: *[_type == "project" && featured == true && defined(slug.current)] | order(startDate desc) {   _id,  title,  "slug": slug.current,  category,  startDate,  endDate,  current,  cover,  summary,  featured,  path }
 export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
   slug: string | null;
   category: string | null;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean | null;
   cover: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -407,13 +413,15 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: PROJECT_BY_SLUG_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0] {   _id,  title,  "slug": slug.current,  category,  date,  cover,  summary,  featured,  path, body }
+// Query: *[_type == "project" && slug.current == $slug][0] {   _id,  title,  "slug": slug.current,  category,  startDate,  endDate,  current,  cover,  summary,  featured,  path, body }
 export type PROJECT_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
   slug: string | null;
   category: string | null;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean | null;
   cover: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -609,9 +617,9 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "project" && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n }': PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && featured == true && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "project" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary,\n  featured,\n  path\n, body }': PROJECT_BY_SLUG_QUERY_RESULT;
+    '*[_type == "project" && defined(slug.current)] | order(startDate desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': PROJECTS_QUERY_RESULT;
+    '*[_type == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
+    '*[_type == "project" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n, body }': PROJECT_BY_SLUG_QUERY_RESULT;
     '*[_type == "blogPost" && defined(slug.current)] | order(date desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n }': BLOG_POSTS_QUERY_RESULT;
     '*[_type == "blogPost" && slug.current == $slug][0] { \n  _id,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  cover,\n  summary\n, body }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;

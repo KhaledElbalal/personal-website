@@ -6,7 +6,9 @@ const projectFields = /* groq */ `
   title,
   "slug": slug.current,
   category,
-  date,
+  startDate,
+  endDate,
+  current,
   cover,
   summary,
   featured,
@@ -24,11 +26,11 @@ const postFields = /* groq */ `
 `;
 
 export const PROJECTS_QUERY = defineQuery(
-  `*[_type == "project" && defined(slug.current)] | order(date desc) { ${projectFields} }`,
+  `*[_type == "project" && defined(slug.current)] | order(startDate desc) { ${projectFields} }`,
 );
 
 export const FEATURED_PROJECTS_QUERY = defineQuery(
-  `*[_type == "project" && featured == true && defined(slug.current)] | order(date desc) { ${projectFields} }`,
+  `*[_type == "project" && featured == true && defined(slug.current)] | order(startDate desc) { ${projectFields} }`,
 );
 
 export const PROJECT_BY_SLUG_QUERY = defineQuery(

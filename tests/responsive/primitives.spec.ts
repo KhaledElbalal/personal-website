@@ -6,7 +6,7 @@ const VIEWPORTS = [
   { name: "desktop-lg", width: 1440, height: 900 },
 ];
 
-const ROUTES = ["/", "/showcase"];
+const ROUTES = ["/", "/showcase", "/projects"];
 
 for (const route of ROUTES) {
   for (const vp of VIEWPORTS) {
