@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { BlogRow } from "@/components/content/BlogRow";
+import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { SkillTile } from "@/components/content/SkillTile";
 import { AwardRow } from "@/components/qualifications/AwardRow";
@@ -19,6 +20,10 @@ import {
   Tag,
   Wordmark,
 } from "@/components/ui";
+import { formatMonth, formatRange } from "@/sanity/experience";
+import { sanityFetch } from "@/sanity/fetch";
+import { EXPERIENCE_QUERY } from "@/sanity/queries";
+import type { EXPERIENCE_QUERY_RESULT } from "@/sanity.types";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -50,10 +55,25 @@ function Section({
   );
 }
 
-export default function ShowcasePage() {
+export default async function ShowcasePage() {
+  // Live content, so the gallery previews the real published data.
+  const experience = await sanityFetch<EXPERIENCE_QUERY_RESULT>(
+    EXPERIENCE_QUERY,
+    {},
+    ["experience"],
+  );
+  const degree = experience.find((e) => e.type === "degree");
+  const roles = experience.filter(
+    (e) => e.type === "job" || e.type === "internship",
+  );
+  const certificates = experience.filter((e) => e.type === "certificate");
+  const honors = experience.filter(
+    (e) => e.type === "award" || e.type === "achievement",
+  );
+
   return (
     <div className="pb-14">
-      <div className="mx-auto max-w-[1280px] px-6 pt-14 sm:px-10">
+      <div className="mx-auto max-w-7xl px-6 pt-14 sm:px-10">
         <h1 className="font-mono text-[clamp(1.75rem,7vw,2.5rem)] font-bold leading-none text-heading">
           Design System
         </h1>
@@ -65,7 +85,7 @@ export default function ShowcasePage() {
 
       {/* Page header — full-bleed, breaks out of the content container. */}
       <section className="mt-8 border-t border-black/10 pt-8">
-        <div className="mx-auto mb-5 max-w-[1280px] px-6 sm:px-10">
+        <div className="mx-auto mb-5 max-w-7xl px-6 sm:px-10">
           <h2 className="font-mono text-sm font-bold uppercase tracking-[0.2em] text-ink">
             Page Header (hero — full-width #F7F7F7 band)
           </h2>
@@ -85,7 +105,7 @@ export default function ShowcasePage() {
         />
       </section>
 
-      <div className="mx-auto max-w-[1280px] px-6 sm:px-10">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <Section label="Wordmark" inline>
           <span className="text-[40px]">
             <Wordmark />
@@ -227,74 +247,75 @@ export default function ShowcasePage() {
           </div>
         </Section>
 
+        <Section label="Timeline — git log (Home “Experience”, live)">
+          <ExperienceTimeline />
+        </Section>
+
         <Section label="Qualifications — Stat blocks" inline>
           <StatBlock value="3.76" label="GPA, with honors" />
           <StatBlock value="100M+" label="records in prod" />
           <StatBlock value="6×" label="awards & certs" />
         </Section>
 
-        <Section label="Qualifications — Education">
-          <EducationCard
-            degree="BSc Data Science"
-            institution="Cairo University"
-            subtitle="Faculty of Computers & Artificial Intelligence · Distinction with Honors"
-            tags={["Deep Learning", "Optimization", "Database Systems", "Algorithms"]}
-            metricValue="3.76"
-            metricLabel="/ 4.0"
-            dateRange="Oct 2021 – Jul 2025"
-          />
+        <Section label="Qualifications — Education (live)">
+          {degree ? (
+            <EducationCard
+              degree={degree.title ?? ""}
+              institution={degree.organization ?? undefined}
+              subtitle={degree.detail ?? undefined}
+              tags={degree.tags ?? []}
+              metricValue={degree.metric?.value}
+              metricLabel={degree.metric?.label}
+              dateRange={formatRange(degree)}
+            />
+          ) : (
+            <p className="font-body text-sm text-muted">
+              No degree published yet.
+            </p>
+          )}
         </Section>
 
-        <Section label="Qualifications — Experience">
+        <Section label="Qualifications — Experience (live)">
           <div>
-            <ExperienceRow
-              dateRange="Aug 2024 – Present"
-              location="Cairo, EG"
-              title="Software Engineer"
-              company="Cegedim"
-              bullets={[
-                "Rewrote a production pipeline processing 100M+ records — from 12 hours to under 2.",
-                "Introduced DuckDB into a 181-table migration, cutting 2 hours to 10 minutes.",
-                "Backend features across a Java + Spring + RabbitMQ architecture.",
-              ]}
-            />
-            <ExperienceRow
-              dateRange="Apr – Aug 2023"
-              title="Competitive Programming Mentor"
-              company="ICPC FCAI-CU"
-              bullets={[
-                "Coached first-year students on algorithms and contest problem-solving.",
-              ]}
-            />
+            {roles.map((role) => (
+              <ExperienceRow
+                key={role._id}
+                dateRange={formatRange(role)}
+                location={role.location ?? undefined}
+                title={role.title ?? ""}
+                company={role.organization ?? undefined}
+                bullets={role.detail ? [role.detail] : []}
+              />
+            ))}
           </div>
         </Section>
 
-        <Section label="Qualifications — Certificates">
+        <Section label="Qualifications — Certificates (live)">
           <div>
-            <CertificateRow
-              name="AWS Certified Cloud Practitioner"
-              issuer="Amazon Web Services · CLF-C02"
-              date="Feb 2026"
-            />
-            <CertificateRow
-              name="IELTS Academic — Band 8"
-              issuer="British Council · Academic Module"
-              date="Dec 2024"
-            />
+            {certificates.map((cert) => (
+              <CertificateRow
+                key={cert._id}
+                name={cert.title ?? ""}
+                issuer={cert.organization ?? undefined}
+                date={formatMonth(cert.startDate)}
+              />
+            ))}
           </div>
         </Section>
 
-        <Section label="Qualifications — Awards & Competitions">
+        <Section label="Qualifications — Awards & Competitions (live)">
           <div>
-            <AwardRow
-              title="Microsoft TechBridge Hackathon — Best Overall Award"
-              date="Jun 2025"
-            />
-            <AwardRow
-              title="Egyptian Collegiate Programming Contest (ECPC) — Finalist"
-              date="Aug 2024"
-            />
-            <AwardRow title="Codeforces — Specialist" date="Mar 2023 – Present" />
+            {honors.map((honor) => (
+              <AwardRow
+                key={honor._id}
+                title={
+                  honor.type === "award" && honor.organization
+                    ? `${honor.organization} ${honor.title ?? ""}`.trim()
+                    : (honor.title ?? "")
+                }
+                date={formatRange(honor)}
+              />
+            ))}
           </div>
         </Section>
       </div>

@@ -40,6 +40,7 @@ test("showcase renders every component", async ({ page }) => {
     /^Blob/,
     "Project Card",
     "Blog Row",
+    /Timeline/,
   ]) {
     await expect(page.getByRole("heading", { name: label })).toBeVisible();
   }

@@ -29,7 +29,7 @@ export function PageHeader({
       <div className="pointer-events-none absolute -left-24 -top-16 hidden sm:block">
         <Blob size={360} variant="cluster" interactive="follow" strength={28} />
       </div>
-      <div className="relative mx-auto flex max-w-[1280px] flex-col gap-6 px-6 py-10 sm:px-10 sm:py-12 md:flex-row md:items-center md:justify-between md:gap-12 md:py-16">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 sm:px-10 sm:py-12 md:flex-row md:items-center md:justify-between md:gap-12 md:py-16">
         <div className="max-w-[560px]">
           <Heading className="m-0 font-mono text-[clamp(2rem,6vw,2.75rem)] font-bold leading-[1.1] text-ink">
             {title}
