@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Space_Mono, Poppins, Inter, Urbanist } from "next/font/google";
 import "./globals.css";
 
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
   style: ["normal", "italic"],
@@ -50,9 +53,11 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
+        <SiteHeader />
         <main id="main-content" className="flex flex-1 flex-col">
           {children}
         </main>
+        <SiteFooter />
       </body>
     </html>
   );
