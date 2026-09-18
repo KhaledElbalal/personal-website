@@ -9,7 +9,7 @@ type WordmarkProps = HTMLAttributes<HTMLSpanElement> & {
 export function Wordmark({
   variant = "mark",
   tone = "light",
-  name = "KHALED\nELBALAL",
+  name = "KHALED\nIBRAHIM",
   className = "",
   ...rest
 }: WordmarkProps) {
@@ -39,7 +39,7 @@ export function Wordmark({
   const dark = tone === "dark";
   return (
     <span
-      aria-label="Khaled Elbalal"
+      aria-label="Khaled Ibrahim"
       className={`inline-flex items-center whitespace-nowrap font-mono font-bold leading-none ${dark ? "text-on-accent" : "text-[color:var(--color-xiketic)]"} ${className}`}
       {...rest}
     >

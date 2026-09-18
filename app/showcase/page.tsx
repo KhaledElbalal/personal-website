@@ -27,7 +27,7 @@ import type { EXPERIENCE_QUERY_RESULT } from "@/sanity.types";
 
 export const metadata: Metadata = {
   title: "Design System",
-  description: "Component showcase for the Khaled Elbalal portfolio.",
+  description: "Component showcase for the Khaled Ibrahim portfolio.",
 };
 
 function Section({

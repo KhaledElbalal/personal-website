@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { Tag } from "@/components/ui";
@@ -30,7 +31,7 @@ export function BlogRow({
     : undefined;
 
   return (
-    <a
+    <Link
       href={href}
       className={`group grid grid-cols-1 items-start gap-6 border-t border-black/10 pt-6 no-underline md:grid-cols-[minmax(0,1fr)_260px] ${className}`}
     >
@@ -59,6 +60,6 @@ export function BlogRow({
         className="h-[210px] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] md:w-[260px]"
         style={cover}
       />
-    </a>
+    </Link>
   );
 }

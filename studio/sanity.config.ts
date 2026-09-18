@@ -7,7 +7,7 @@ import { structure } from "./structure";
 
 export default defineConfig({
   name: "default",
-  title: "Khaled Elbalal — Portfolio",
+  title: "Khaled Ibrahim — Portfolio",
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID ?? "",
   dataset: process.env.SANITY_STUDIO_DATASET ?? "production",

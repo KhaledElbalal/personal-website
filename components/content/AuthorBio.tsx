@@ -16,7 +16,7 @@ export function AuthorBio() {
       <div>
         <div className="font-mono text-xs text-accent-bright">$ whoami</div>
         <div className="mt-1.5 font-mono text-lg font-bold text-[color:var(--color-ghost-white)]">
-          Khaled Elbalal
+          Khaled Ibrahim
         </div>
         <p className="mt-2 max-w-prose font-body text-sm leading-[1.6] text-[color:rgba(247,247,255,0.65)]">
           Software Engineer at Cegedim, BSc Data Science from Cairo

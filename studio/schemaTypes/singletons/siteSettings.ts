@@ -10,7 +10,7 @@ export const siteSettings = defineType({
     defineField({
       name: "heroHeading",
       type: "string",
-      description: 'Hero title, e.g. "Hello 👋, I am Khaled Elbalal".',
+      description: 'Hero title, e.g. "Hello 👋, I am Khaled Ibrahim".',
       validation: (rule) => rule.required(),
     }),
     defineField({

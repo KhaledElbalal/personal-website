@@ -18,7 +18,7 @@ import type {
 export const metadata: Metadata = {
   title: "Qualifications",
   description:
-    "Education, experience, certificates, and awards for Khaled Elbalal.",
+    "Education, experience, certificates, and awards for Khaled Ibrahim.",
 };
 
 const DEFAULT_INTRO =

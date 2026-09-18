@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Mono, Poppins, Inter, Urbanist } from "next/font/google";
 import "./globals.css";
 
+import { IntroSplash } from "@/components/layout/IntroSplash";
+import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
@@ -32,11 +34,11 @@ const urbanist = Urbanist({
 
 export const metadata: Metadata = {
   title: {
-    default: "Khaled Elbalal — Data Science & Frontend",
-    template: "%s — Khaled Elbalal",
+    default: "Khaled Ibrahim — Data Science & Frontend",
+    template: "%s — Khaled Ibrahim",
   },
   description:
-    "Portfolio of Khaled Elbalal — Data Science undergraduate and frontend web developer.",
+    "Portfolio of Khaled Ibrahim — Data Science undergraduate and frontend web developer.",
 };
 
 export default function RootLayout({
@@ -50,12 +52,13 @@ export default function RootLayout({
       className={`${spaceMono.variable} ${poppins.variable} ${inter.variable} ${urbanist.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <IntroSplash />
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
         <SiteHeader />
         <main id="main-content" className="flex flex-1 flex-col">
-          {children}
+          <RouteTransition>{children}</RouteTransition>
         </main>
         <SiteFooter />
       </body>

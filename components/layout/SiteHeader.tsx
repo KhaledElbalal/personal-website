@@ -41,7 +41,7 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          aria-label="Khaled Elbalal — home"
+          aria-label="Khaled Ibrahim — home"
           className={`transition-[font-size] duration-200 ${
             scrolled ? "text-[24px] md:text-[28px]" : "text-[26px] md:text-[40px]"
           }`}

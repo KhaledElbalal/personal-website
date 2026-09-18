@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 
 type NavLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -20,7 +21,7 @@ export function NavLink({
     : "font-normal text-ink [text-shadow:var(--shadow-offset-social)] hover:text-accent hover:[text-shadow:none] focus-visible:text-accent focus-visible:[text-shadow:none]";
 
   return (
-    <a
+    <Link
       href={href}
       aria-current={active ? "page" : undefined}
       className={`${base} ${state} ${className}`}
@@ -30,6 +31,6 @@ export function NavLink({
         ~/
       </span>
       <span className="lowercase">{children}</span>
-    </a>
+    </Link>
   );
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 type ProjectCardProps = {
@@ -24,7 +25,7 @@ export function ProjectCard({
     : undefined;
 
   return (
-    <a
+    <Link
       href={href}
       aria-label={`Open project: ${title}`}
       className={`group relative block h-[344px] w-full overflow-hidden rounded-[8px] bg-page no-underline shadow-[var(--shadow-card),var(--shadow-card-glow)] ${className}`}
@@ -55,6 +56,6 @@ export function ProjectCard({
           </div>
         ) : null}
       </div>
-    </a>
+    </Link>
   );
 }
