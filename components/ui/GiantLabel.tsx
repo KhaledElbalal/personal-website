@@ -14,7 +14,7 @@ type GiantLabelProps = {
 export function GiantLabel({ children, className = "" }: GiantLabelProps) {
   return (
     <span
-      className={`block whitespace-nowrap font-mono font-bold leading-none tracking-[0.28em] text-heading text-[clamp(2.25rem,9vw,4rem)] ${className}`}
+      className={`-ml-8 mb-3 block whitespace-nowrap font-mono font-bold leading-none tracking-[0.28em] text-heading text-[clamp(2.25rem,9vw,4rem)] sm:-ml-14 sm:mb-4 ${className}`}
     >
       {children}
     </span>

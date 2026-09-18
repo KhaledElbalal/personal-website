@@ -13,7 +13,7 @@ const secret = process.env.SANITY_REVALIDATE_SECRET;
  *
  * Manual testing:
  *   curl -X POST "http://localhost:3000/api/revalidate?secret=$SECRET" \
- *     -H 'content-type: application/json' -d '{"_type":"project"}'
+ *     -H 'content-type: application/json' -d '{"_type":"post"}'
  */
 export async function POST(request: NextRequest) {
   if (!secret) {

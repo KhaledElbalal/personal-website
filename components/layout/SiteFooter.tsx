@@ -1,10 +1,5 @@
 import { SocialLink, Wordmark } from "@/components/ui";
-
-const SOCIALS = [
-  { label: "Github", href: "https://github.com/KhaledElbalal" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
-  { label: "Codeforces", href: "https://codeforces.com/" },
-];
+import { SOCIAL_LINKS } from "@/lib/social-links";
 
 export function SiteFooter() {
   return (
@@ -14,7 +9,7 @@ export function SiteFooter() {
           <Wordmark />
         </span>
         <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-          {SOCIALS.map((s) => (
+          {SOCIAL_LINKS.map((s) => (
             <li key={s.label}>
               <SocialLink href={s.href} target="_blank" rel="noopener noreferrer">
                 {s.label}

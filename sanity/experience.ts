@@ -37,7 +37,7 @@ export function formatRange(
 }
 
 /** First 6 hex chars of the document id, as a git-style short hash. */
-function shortHash(id: string): string {
+export function shortHash(id: string): string {
   const hex = id.replace(/[^a-f0-9]/gi, "").toLowerCase();
   return (hex.slice(0, 6) || "000000").padEnd(6, "0");
 }

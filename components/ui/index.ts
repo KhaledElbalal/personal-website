@@ -8,3 +8,4 @@ export { LinkArrow } from "./LinkArrow";
 export { Blob } from "./Blob";
 export { Wordmark } from "./Wordmark";
 export { GiantLabel } from "./GiantLabel";
+export { SectionHeadingWithBlob } from "./SectionHeadingWithBlob";

@@ -79,12 +79,11 @@ export function Timeline({
 }: TimelineProps) {
   return (
     <div className={className}>
-      <div className="mb-4 font-mono text-[13px] font-bold text-accent">
-        <span className="text-muted">$</span> {command}{" "}
-        <span className="font-normal text-muted">
-          # hover a commit to git show it
-        </span>
-      </div>
+      {command ? (
+        <div className="mb-4 font-mono text-[13px] font-bold text-accent">
+          <span className="text-muted">$</span> {command}
+        </div>
+      ) : null}
       <ul className="m-0 list-none p-0">
         {entries.map((e) => (
           <li

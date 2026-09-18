@@ -15,7 +15,7 @@ import {
   LinkArrow,
   NavLink,
   PageHeader,
-  SectionHeading,
+  SectionHeadingWithBlob,
   SocialLink,
   Tag,
   Wordmark,
@@ -123,16 +123,7 @@ export default async function ShowcasePage() {
         <Section label="Section Heading (blob behind; band belongs to the section)">
           <div className="-mx-6 overflow-hidden bg-section px-6 py-12 sm:-mx-10 sm:px-10">
             <div className="flex items-baseline gap-5">
-              <div className="relative">
-                <Blob
-                  size={180}
-                  interactive="follow"
-                  className="follow-blob absolute -left-6 -top-10 z-0"
-                />
-                <SectionHeading as="h3" className="relative z-10">
-                  Recent Work
-                </SectionHeading>
-              </div>
+              <SectionHeadingWithBlob>Recent Work</SectionHeadingWithBlob>
               <SocialLink href="#" className="ml-auto">
                 FEATURED
               </SocialLink>

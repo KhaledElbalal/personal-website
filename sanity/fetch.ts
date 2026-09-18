@@ -12,7 +12,7 @@ import { client } from "./client";
  * document of that `_type` changes, so edits go live without a redeploy.
  *
  * Pass the document `_type`(s) the query reads as `tags`, e.g.
- *   sanityFetch(PROJECTS_QUERY, {}, ["project"])
+ *   sanityFetch(POSTS_QUERY, {}, ["post"])
  */
 export async function sanityFetch<T>(
   query: string,

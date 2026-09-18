@@ -35,7 +35,7 @@ export function SkillTile({
           {children}
         </div>
         {description ? (
-          <p className="mt-3 font-body text-[13.5px] leading-[1.55] text-white/75">
+          <p className="mt-3 whitespace-pre-line font-body text-[13.5px] leading-[1.55] text-white/75">
             {description}
           </p>
         ) : null}

@@ -1,11 +1,14 @@
 import { defineQuery } from "next-sanity";
 
-
-const projectFields = /* groq */ `
+// Shared list-row fields for both `kind`s. Project-only: startDate/endDate/
+// current/featured/path. Post-only: date. See studio/schemaTypes/documents/post.ts.
+const postFields = /* groq */ `
   _id,
+  kind,
   title,
   "slug": slug.current,
   category,
+  date,
   startDate,
   endDate,
   current,
@@ -15,34 +18,26 @@ const projectFields = /* groq */ `
   path
 `;
 
-const postFields = /* groq */ `
-  _id,
-  title,
-  "slug": slug.current,
-  category,
-  date,
-  cover,
-  summary
-`;
-
-export const PROJECTS_QUERY = defineQuery(
-  `*[_type == "project" && defined(slug.current)] | order(startDate desc) { ${projectFields} }`,
+// `kind` param: "project" | "post". order() coalesces the two date shapes so
+// a single query serves both /projects and /blog list pages.
+export const POSTS_QUERY = defineQuery(
+  `*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { ${postFields} }`,
 );
 
 export const FEATURED_PROJECTS_QUERY = defineQuery(
-  `*[_type == "project" && featured == true && defined(slug.current)] | order(startDate desc) { ${projectFields} }`,
-);
-
-export const PROJECT_BY_SLUG_QUERY = defineQuery(
-  `*[_type == "project" && slug.current == $slug][0] { ${projectFields}, body }`,
-);
-
-export const BLOG_POSTS_QUERY = defineQuery(
-  `*[_type == "blogPost" && defined(slug.current)] | order(date desc) { ${postFields} }`,
+  `*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { ${postFields} }`,
 );
 
 export const POST_BY_SLUG_QUERY = defineQuery(
-  `*[_type == "blogPost" && slug.current == $slug][0] { ${postFields}, body }`,
+  `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series, body }`,
+);
+
+// Sibling posts sharing a series name, ordered by part — powers the series
+// nav bar + "also in this series" list on the post detail page.
+export const SERIES_POSTS_QUERY = defineQuery(
+  `*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {
+    _id, title, "slug": slug.current, date, "part": series.part
+  }`,
 );
 
 // All career/credential entries, newest first. Each view is a filter on `type`:

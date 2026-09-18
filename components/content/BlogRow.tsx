@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { Tag } from "@/components/ui";
+import { slugify } from "@/lib/slugify";
 
 type BlogRowProps = {
   image?: string;
@@ -12,14 +13,6 @@ type BlogRowProps = {
   href?: string;
   className?: string;
 };
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 export function BlogRow({
   image,

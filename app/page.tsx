@@ -1,7 +1,11 @@
 import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { SkillTile } from "@/components/content/SkillTile";
-import { Blob, LinkArrow, PageHeader, SectionHeading } from "@/components/ui";
+import {
+  LinkArrow,
+  PageHeader,
+  SectionHeadingWithBlob,
+} from "@/components/ui";
 import { formatRange } from "@/sanity/experience";
 import { sanityFetch } from "@/sanity/fetch";
 import { urlFor } from "@/sanity/image";
@@ -32,32 +36,11 @@ const SKILLS = [
   },
 ];
 
-function HeadingWithBlob({
-  id,
-  children,
-}: {
-  id: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="relative mb-10 w-fit">
-      <Blob
-        size={180}
-        interactive="follow"
-        className="absolute -left-6 -top-10 z-0"
-      />
-      <SectionHeading as="h2" id={id} className="relative z-10">
-        {children}
-      </SectionHeading>
-    </div>
-  );
-}
-
 export default async function Home() {
   const featured = await sanityFetch<FEATURED_PROJECTS_QUERY_RESULT>(
     FEATURED_PROJECTS_QUERY,
     {},
-    ["project"],
+    ["post"],
   );
 
   return (
@@ -75,7 +58,7 @@ export default async function Home() {
 
       <section aria-labelledby="about-heading">
         <div className="mx-auto max-w-7xl px-6 pb-10 pt-16 sm:px-10">
-          <HeadingWithBlob id="about-heading">About Me</HeadingWithBlob>
+          <SectionHeadingWithBlob id="about-heading">About Me</SectionHeadingWithBlob>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {SKILLS.map((s) => (
               <SkillTile
@@ -93,14 +76,14 @@ export default async function Home() {
 
       <section aria-labelledby="experience-heading">
         <div className="mx-auto max-w-7xl px-6 pb-16 pt-6 sm:px-10">
-          <HeadingWithBlob id="experience-heading">Experience</HeadingWithBlob>
+          <SectionHeadingWithBlob id="experience-heading">Experience</SectionHeadingWithBlob>
           <ExperienceTimeline />
         </div>
       </section>
 
       <section aria-labelledby="work-heading" className="bg-section">
         <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10">
-          <HeadingWithBlob id="work-heading">Recent Work</HeadingWithBlob>
+          <SectionHeadingWithBlob id="work-heading">Recent Work</SectionHeadingWithBlob>
           {featured.length ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((p) => (
