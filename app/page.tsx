@@ -6,14 +6,25 @@ import {
   PageHeader,
   SectionHeadingWithBlob,
 } from "@/components/ui";
+import { DEFAULT_HERO_HEADING, DEFAULT_HERO_INTRO } from "@/lib/site";
 import { formatRange } from "@/sanity/experience";
 import { sanityFetch } from "@/sanity/fetch";
 import { urlFor } from "@/sanity/image";
-import { FEATURED_PROJECTS_QUERY } from "@/sanity/queries";
-import type { FEATURED_PROJECTS_QUERY_RESULT } from "@/sanity.types";
+import {
+  FEATURED_PROJECTS_QUERY,
+  SITE_SETTINGS_QUERY,
+  SKILLS_QUERY,
+} from "@/sanity/queries";
+import type {
+  FEATURED_PROJECTS_QUERY_RESULT,
+  SITE_SETTINGS_QUERY_RESULT,
+  SKILLS_QUERY_RESULT,
+} from "@/sanity.types";
 
-const SKILLS = [
+// Fallback if no `skill` documents are published yet.
+const DEFAULT_SKILLS = [
   {
+    _id: "competitive",
     role: "Competitive Programmer",
     path: "~/competitive",
     description:
@@ -21,6 +32,7 @@ const SKILLS = [
     items: ["cpp", "stl", "algorithms", "codeforces", "leetcode"],
   },
   {
+    _id: "backend",
     role: "Backend Engineering",
     path: "~/backend",
     description:
@@ -28,6 +40,7 @@ const SKILLS = [
     items: ["fastapi", "postgresql", "ruby on rails", "couchbase", "redis", "rabbitmq", "aws"],
   },
   {
+    _id: "ml",
     role: "AI & Machine Learning",
     path: "~/ml",
     description:
@@ -37,22 +50,26 @@ const SKILLS = [
 ];
 
 export default async function Home() {
-  const featured = await sanityFetch<FEATURED_PROJECTS_QUERY_RESULT>(
-    FEATURED_PROJECTS_QUERY,
-    {},
-    ["post"],
-  );
+  const [settings, skills, featured] = await Promise.all([
+    sanityFetch<SITE_SETTINGS_QUERY_RESULT>(SITE_SETTINGS_QUERY, {}, [
+      "siteSettings",
+    ]),
+    sanityFetch<SKILLS_QUERY_RESULT>(SKILLS_QUERY, {}, ["skill"]),
+    sanityFetch<FEATURED_PROJECTS_QUERY_RESULT>(
+      FEATURED_PROJECTS_QUERY,
+      {},
+      ["post"],
+    ),
+  ]);
+
+  const skillTiles = skills.length ? skills : DEFAULT_SKILLS;
 
   return (
     <>
       <PageHeader
         as="h1"
-        title={
-          <>
-            Hello <span aria-hidden="true">👋</span>,<br />I am Khaled Ibrahim
-          </>
-        }
-        intro="I am a Software Engineer focusing on building high performance intelligent systems. With a BSc in Data Science from Cairo University and 2 years of experience in Cegedim."
+        title={settings?.heroHeading || DEFAULT_HERO_HEADING}
+        intro={settings?.heroIntro || DEFAULT_HERO_INTRO}
         actions={<LinkArrow href="#contact">Let&apos;s get in touch</LinkArrow>}
       />
 
@@ -60,12 +77,12 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl px-6 pb-10 pt-16 sm:px-10">
           <SectionHeadingWithBlob id="about-heading">About Me</SectionHeadingWithBlob>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SKILLS.map((s) => (
+            {skillTiles.map((s) => (
               <SkillTile
-                key={s.role}
-                path={s.path}
-                description={s.description}
-                items={s.items}
+                key={s._id}
+                path={s.path ?? undefined}
+                description={s.description ?? undefined}
+                items={s.items ?? undefined}
               >
                 {s.role}
               </SkillTile>

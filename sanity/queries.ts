@@ -64,5 +64,5 @@ export const SKILLS_QUERY = defineQuery(
 );
 
 export const SITE_SETTINGS_QUERY = defineQuery(
-  `*[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }`,
+  `*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }`,
 );

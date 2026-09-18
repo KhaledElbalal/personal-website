@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import {
   PostDetailView,
-  getPostBySlug,
+  getPostMetadata,
   getPostSlugs,
 } from "@/components/content/PostDetailView";
 
@@ -23,12 +23,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
-  if (!post || post.kind !== "post") return {};
-  return {
-    title: post.title ?? "Post",
-    description: post.summary ?? undefined,
-  };
+  return getPostMetadata("post", slug, "/blog");
 }
 
 export default async function BlogPostPage({

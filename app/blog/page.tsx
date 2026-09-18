@@ -4,7 +4,9 @@ import { PostListView } from "@/components/content/PostListView";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Writing on data science, frontend engineering, and everything between.",
+  description: "Writing on software engineering, computer systems, and everything in between.",
+  alternates: { canonical: "/blog" },
+  openGraph: { url: "/blog" },
 };
 
 export default async function BlogPage() {

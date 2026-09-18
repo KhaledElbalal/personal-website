@@ -6,6 +6,10 @@ import { IntroSplash } from "@/components/layout/IntroSplash";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { sanityFetch } from "@/sanity/fetch";
+import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
+import type { SITE_SETTINGS_QUERY_RESULT } from "@/sanity.types";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -32,14 +36,50 @@ const urbanist = Urbanist({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Khaled Ibrahim — Data Science & Frontend",
-    template: "%s — Khaled Ibrahim",
-  },
-  description:
-    "Portfolio of Khaled Ibrahim — Data Science undergraduate and frontend web developer.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await sanityFetch<SITE_SETTINGS_QUERY_RESULT>(
+    SITE_SETTINGS_QUERY,
+    {},
+    ["siteSettings"],
+  );
+  const name = settings?.siteName || SITE_NAME;
+  const description = settings?.heroIntro || SITE_DESCRIPTION;
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: name,
+      template: `%s — ${name}`,
+    },
+    description,
+    keywords: [
+      name,
+      "Software Engineer",
+      "Data Science",
+      "Frontend Developer",
+      "Machine Learning",
+      "Next.js Portfolio",
+      "Competitive Programming",
+    ],
+    authors: [{ name, url: SITE_URL }],
+    creator: name,
+    robots: { index: true, follow: true },
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: "/",
+      siteName: name,
+      title: name,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+    },
+  };
+}
 
 export default function RootLayout({
   children,

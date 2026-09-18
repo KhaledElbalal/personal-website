@@ -8,6 +8,12 @@ export const siteSettings = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "siteName",
+      type: "string",
+      description: 'Display name used in the title, wordmark, and byline, e.g. "Khaled Ibrahim".',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "heroHeading",
       type: "string",
       description: 'Hero title, e.g. "Hello 👋, I am Khaled Ibrahim".',

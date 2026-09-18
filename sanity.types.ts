@@ -48,6 +48,7 @@ export type SiteSettings = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  siteName?: string;
   heroHeading?: string;
   heroIntro?: string;
   socialLinks?: Array<{
@@ -523,8 +524,9 @@ export type SKILLS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }
+// Query: *[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }
 export type SITE_SETTINGS_QUERY_RESULT = {
+  siteName: string | null;
   heroHeading: string | null;
   heroIntro: string | null;
   socialLinks: Array<{
@@ -547,6 +549,6 @@ declare module "@sanity/client" {
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
     '*[_type == "skill"] | order(order asc) { _id, role, description, items, path }': SKILLS_QUERY_RESULT;
-    '*[_type == "siteSettings"][0] { heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;
+    '*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;
   }
 }

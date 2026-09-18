@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   title: "Qualifications",
   description:
     "Education, experience, certificates, and awards for Khaled Ibrahim.",
+  alternates: { canonical: "/qualifications" },
+  openGraph: { url: "/qualifications" },
 };
 
 const DEFAULT_INTRO =
@@ -121,7 +123,7 @@ export default async function QualificationsPage() {
                   key={cert._id}
                   logo={
                     cert.logo
-                      ? urlFor(cert.logo).width(128).height(128).url()
+                      ? urlFor(cert.logo).width(256).fit("max").url()
                       : undefined
                   }
                   logoAlt={cert.logo?.alt ?? ""}

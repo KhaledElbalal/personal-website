@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -30,6 +31,29 @@ export async function getPostSlugs(kind: Kind) {
   return posts
     .filter((p): p is typeof p & { slug: string } => Boolean(p.slug))
     .map((p) => ({ slug: p.slug }));
+}
+
+/** Shared generateMetadata body for both /blog/[slug] and /projects/[slug]. */
+export async function getPostMetadata(
+  kind: Kind,
+  slug: string,
+  basePath: string,
+): Promise<Metadata> {
+  const post = await getPostBySlug(slug);
+  if (!post || post.kind !== kind) return {};
+  const url = `${basePath}/${slug}`;
+  return {
+    title: post.title ?? "Post",
+    description: post.summary ?? undefined,
+    alternates: { canonical: url },
+    openGraph: {
+      url,
+      type: kind === "post" ? "article" : "website",
+      title: post.title ?? undefined,
+      description: post.summary ?? undefined,
+      ...(kind === "post" && post.date ? { publishedTime: post.date } : {}),
+    },
+  };
 }
 
 export async function PostDetailView({
