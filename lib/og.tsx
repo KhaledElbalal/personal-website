@@ -3,10 +3,12 @@ import { SITE_NAME } from "@/lib/site";
 export const OG_SIZE = { width: 1200, height: 630 };
 
 const OG_COLORS = {
+  page: "#ffffff",
   ink: "#121420",
-  ghostWhite: "#f7f7ff",
+  accent: "#0067a8",
   accentBright: "#38b6ff",
-  mutedOnDark: "rgba(247,247,255,0.6)",
+  onAccent: "#f7f7ff",
+  muted: "rgba(18,20,32,0.65)",
 };
 
 /** Fetches a Google Fonts TTF/OTF file for use with next/og's ImageResponse —
@@ -22,6 +24,20 @@ export async function loadGoogleFont(family: string, weight = 700) {
   return res.arrayBuffer();
 }
 
+/** The site pairs Space Mono (headings/wordmark) with Poppins (body copy) —
+ * see PageHeader.tsx. Loads both so OG cards can follow the same pairing
+ * instead of rendering every line in the mono display face. */
+export async function loadOgFonts() {
+  const [mono, body] = await Promise.all([
+    loadGoogleFont("Space+Mono", 700),
+    loadGoogleFont("Poppins", 500),
+  ]);
+  return [
+    { name: "Space Mono", data: mono, weight: 700 as const, style: "normal" as const },
+    { name: "Poppins", data: body, weight: 500 as const, style: "normal" as const },
+  ];
+}
+
 /** The [K▮] mark, sized for reuse across the site-wide OG image and the
  * smaller per-post cards. */
 function Mark({ fontSize }: { fontSize: number }) {
@@ -32,7 +48,7 @@ function Mark({ fontSize }: { fontSize: number }) {
         alignItems: "center",
         fontWeight: 700,
         fontSize,
-        color: OG_COLORS.ghostWhite,
+        color: OG_COLORS.ink,
       }}
     >
       <span style={{ color: OG_COLORS.accentBright }}>[</span>
@@ -52,7 +68,13 @@ function Mark({ fontSize }: { fontSize: number }) {
 }
 
 /** Site-wide default OG/Twitter card — Home and any page without its own. */
-export function SiteOgCard({ name = SITE_NAME }: { name?: string }) {
+export function SiteOgCard({
+  name = SITE_NAME,
+  url,
+}: {
+  name?: string;
+  url?: string;
+}) {
   return (
     <div
       style={{
@@ -62,7 +84,7 @@ export function SiteOgCard({ name = SITE_NAME }: { name?: string }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: OG_COLORS.ink,
+        backgroundColor: OG_COLORS.page,
         fontFamily: "Space Mono",
       }}
     >
@@ -74,7 +96,7 @@ export function SiteOgCard({ name = SITE_NAME }: { name?: string }) {
           fontSize: 44,
           fontWeight: 700,
           letterSpacing: 4,
-          color: OG_COLORS.ghostWhite,
+          color: OG_COLORS.ink,
         }}
       >
         {name.toUpperCase()}
@@ -84,11 +106,30 @@ export function SiteOgCard({ name = SITE_NAME }: { name?: string }) {
           display: "flex",
           marginTop: 16,
           fontSize: 24,
-          color: OG_COLORS.mutedOnDark,
+          fontFamily: "Poppins",
+          color: OG_COLORS.muted,
         }}
       >
-        Data Science &amp; Frontend Engineer
+        Software Engineer
       </div>
+      {url ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: 40,
+            padding: "10px 24px",
+            borderRadius: 4,
+            backgroundColor: OG_COLORS.accent,
+            fontFamily: "Poppins",
+            fontSize: 20,
+            fontWeight: 500,
+            color: OG_COLORS.onAccent,
+          }}
+        >
+          {url.replace(/^https?:\/\//, "")} ↗
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -113,7 +154,7 @@ export function PostOgCard({
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: OG_COLORS.ink,
+        backgroundColor: OG_COLORS.page,
         padding: 72,
         fontFamily: "Space Mono",
       }}
@@ -135,8 +176,8 @@ export function PostOgCard({
               alignSelf: "flex-start",
               padding: "8px 16px",
               borderRadius: 4,
-              backgroundColor: OG_COLORS.accentBright,
-              color: OG_COLORS.ink,
+              backgroundColor: OG_COLORS.accent,
+              color: OG_COLORS.onAccent,
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: 2,
@@ -152,13 +193,20 @@ export function PostOgCard({
             fontWeight: 700,
             lineHeight: 1.25,
             maxWidth: 1000,
-            color: OG_COLORS.ghostWhite,
+            color: OG_COLORS.ink,
           }}
         >
           {title}
         </div>
       </div>
-      <div style={{ display: "flex", fontSize: 22, color: OG_COLORS.mutedOnDark }}>
+      <div
+        style={{
+          display: "flex",
+          fontFamily: "Poppins",
+          fontSize: 22,
+          color: OG_COLORS.muted,
+        }}
+      >
         {kind === "project" ? "Project" : "Blog Post"} · {name}
       </div>
     </div>

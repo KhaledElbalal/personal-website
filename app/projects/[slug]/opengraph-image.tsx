@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { getPostBySlug } from "@/components/content/PostDetailView";
-import { OG_SIZE, PostOgCard, loadGoogleFont } from "@/lib/og";
+import { OG_SIZE, PostOgCard, loadOgFonts } from "@/lib/og";
 import { getSiteName } from "@/lib/site";
 
 export const size = OG_SIZE;
@@ -13,10 +13,10 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, name, fontData] = await Promise.all([
+  const [project, name, fonts] = await Promise.all([
     getPostBySlug(slug),
     getSiteName(),
-    loadGoogleFont("Space+Mono", 700),
+    loadOgFonts(),
   ]);
 
   return new ImageResponse(
@@ -28,9 +28,6 @@ export default async function Image({
         name={name}
       />
     ),
-    {
-      ...size,
-      fonts: [{ name: "Space Mono", data: fontData, weight: 700, style: "normal" }],
-    },
+    { ...size, fonts },
   );
 }

@@ -6,7 +6,12 @@ import { IntroSplash } from "@/components/layout/IntroSplash";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE_SUFFIX,
+  SITE_URL,
+} from "@/lib/site";
 import { sanityFetch } from "@/sanity/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
 import type { SITE_SETTINGS_QUERY_RESULT } from "@/sanity.types";
@@ -44,12 +49,16 @@ export async function generateMetadata(): Promise<Metadata> {
     ["siteSettings"],
   );
   const name = settings?.siteName || SITE_NAME;
-  const description = settings?.heroIntro || SITE_DESCRIPTION;
+  // Deliberately not settings.heroIntro: that's longer on-page hero copy,
+  // and reusing it here made <meta description>/og:description/twitter:description
+  // run well past the ~125–160 char range search engines and social crawlers
+  // show before truncating.
+  const description = SITE_DESCRIPTION;
 
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: name,
+      default: `${name} — ${SITE_TITLE_SUFFIX}`,
       template: `%s — ${name}`,
     },
     description,

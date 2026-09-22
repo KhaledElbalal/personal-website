@@ -3,8 +3,12 @@
 // render something reasonable if that singleton is ever empty/unpublished.
 export const SITE_NAME = "Khaled Ibrahim";
 export const SITE_TAGLINE = "";
+export const SITE_TITLE_SUFFIX = "Software Engineer | Projects & Blog";
+// Kept short (~120 chars) for <meta name="description">, og:description, and
+// twitter:description — independent of heroIntro, which is longer on-page
+// hero copy and would get truncated in search results / share previews.
 export const SITE_DESCRIPTION =
-  "Portfolio of Khaled Ibrahim. Software Engineer focusing on building high performance intelligent systems. With a BSc in Data Science from Cairo University and 2 years of experience in Cegedim.";
+  "Software Engineer building high-performance, intelligent systems. BSc in Data Science, Cairo University; 2 years at Cegedim.";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
