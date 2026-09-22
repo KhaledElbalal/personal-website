@@ -86,6 +86,10 @@ export function Blob({
     willChange: interactive === "none" ? undefined : "transform",
   } as CSSProperties;
 
+  // Marker class (not a style hook) so tests/tooling can target cursor-following
+  // blobs without callers having to remember to tag each instance themselves.
+  const markerClass = interactive === "follow" ? "follow-blob" : "";
+
   if (variant === "cluster") {
     // The outer element carries the caller's own positioning class (often
     // `absolute ...`) — it must not hardcode a conflicting `relative` here,
@@ -97,7 +101,7 @@ export function Blob({
         ref={ref}
         aria-hidden="true"
         style={style}
-        className={`pointer-events-none h-[calc(var(--blob-size)*0.9612)] w-[var(--blob-size)] ${className}`}
+        className={`pointer-events-none h-[calc(var(--blob-size)*0.9612)] w-[var(--blob-size)] ${markerClass} ${className}`}
       >
         <div className="relative h-full w-full">
           <span className="absolute left-[35.03%] top-0 aspect-square w-[64.97%] rounded-full [background:var(--blob-gradient-faint)]" />
@@ -113,7 +117,7 @@ export function Blob({
       ref={ref}
       aria-hidden="true"
       style={style}
-      className={`pointer-events-none aspect-square w-[var(--blob-size)] rounded-full [background:var(--blob-gradient)] ${className}`}
+      className={`pointer-events-none aspect-square w-[var(--blob-size)] rounded-full [background:var(--blob-gradient)] ${markerClass} ${className}`}
     />
   );
 }
