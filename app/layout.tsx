@@ -16,6 +16,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
 import type { SITE_SETTINGS_QUERY_RESULT } from "@/sanity.types";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -112,6 +113,7 @@ export default function RootLayout({
         </main>
         <SiteFooter />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
