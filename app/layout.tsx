@@ -10,6 +10,7 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import { sanityFetch } from "@/sanity/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
 import type { SITE_SETTINGS_QUERY_RESULT } from "@/sanity.types";
+import { Analytics } from "@vercel/analytics/next";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -101,6 +102,7 @@ export default function RootLayout({
           <RouteTransition>{children}</RouteTransition>
         </main>
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );
