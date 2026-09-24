@@ -15,6 +15,16 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type Diagram = {
+  _type: "diagram";
+  alt?: string;
+  caption?: string;
+  snapshot?: string;
+  svg?: string;
+  width?: number;
+  height?: number;
+};
+
 export type SanityFileAssetReference = {
   _ref: string;
   _type: "reference";
@@ -184,6 +194,9 @@ export type Post = {
         _type: "block";
         _key: string;
       }
+    | ({
+        _key: string;
+      } & Diagram)
     | {
         asset?: SanityImageAssetReference;
         media?: unknown;
@@ -308,6 +321,7 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | Diagram
   | SanityFileAssetReference
   | QualificationsPage
   | SiteSettings
@@ -381,7 +395,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  summary,  featured,  path, tags, series, body }
+// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  summary,  featured,  path, tags, series, "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }  } }
 export type POST_BY_SLUG_QUERY_RESULT = {
   _id: string;
   kind: "post" | "project" | null;
@@ -435,6 +449,15 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         output?: string;
         _type: "code";
         _key: string;
+      }
+    | {
+        _key: string;
+        _type: "diagram";
+        alt: string | null;
+        caption: string | null;
+        svg: string | null;
+        width: number | null;
+        height: number | null;
       }
     | {
         asset?: SanityImageAssetReference;
@@ -544,7 +567,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': POSTS_QUERY_RESULT;
     '*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n, tags, series, body }': POST_BY_SLUG_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n, tags, series, "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }\n  } }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {\n    _id, title, "slug": slug.current, date, "part": series.part\n  }': SERIES_POSTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;

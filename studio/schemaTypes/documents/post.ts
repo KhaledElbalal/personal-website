@@ -148,6 +148,7 @@ export const post = defineType({
       type: "array",
       of: [
         defineArrayMember({ type: "block" }),
+        defineArrayMember({ type: "diagram" }),
         defineArrayMember({
           type: "image",
           options: { hotspot: true },

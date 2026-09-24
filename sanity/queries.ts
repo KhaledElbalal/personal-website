@@ -28,8 +28,12 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(
   `*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { ${postFields} }`,
 );
 
+// Diagram blocks drop their editor `snapshot` — the page only needs the SVG.
 export const POST_BY_SLUG_QUERY = defineQuery(
-  `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series, body }`,
+  `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series, "body": body[]{
+    _type != "diagram" => @,
+    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }
+  } }`,
 );
 
 // Sibling posts sharing a series name, ordered by part — powers the series

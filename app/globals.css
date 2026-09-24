@@ -190,3 +190,33 @@ body {
     opacity: 0;
   }
 }
+
+/* Studio diagram exports (components/content/DiagramFigure.tsx). The editor
+   names its fonts sd_*; map them onto the site's next/font families. CSS
+   beats SVG presentation attributes; !important beats inline styles. */
+.sd-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* tldraw inlines computed styles (incl. border widths) into its text
+   labels; Tailwind preflight's `border: 0 solid` would make them visible.
+   (Matched by tldraw's class: the CSS pipeline lowercases `foreignObject`,
+   and SVG element selectors are case-sensitive.) */
+.sd-diagram .tl-export-embed-styles *,
+.sd-diagram .tl-export-embed-styles *::before,
+.sd-diagram .tl-export-embed-styles *::after {
+  border-style: none !important;
+}
+.sd-diagram [font-family*="sd_mono"],
+.sd-diagram [style*="sd_mono"] {
+  font-family: var(--font-mono) !important;
+}
+.sd-diagram [font-family*="sd_sans"],
+.sd-diagram [style*="sd_sans"] {
+  font-family: var(--font-ui) !important;
+}
+.sd-diagram [font-family*="sd_body"],
+.sd-diagram [style*="sd_body"] {
+  font-family: var(--font-body) !important;
+}
