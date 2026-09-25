@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AuthorBio } from "@/components/content/AuthorBio";
+import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { PostBody } from "@/components/content/PostBody";
 import { PostToc } from "@/components/content/PostToc";
 import { Blob, Tag } from "@/components/ui";
@@ -183,7 +184,20 @@ export async function PostDetailView({
         >
           {headings.length ? <PostToc headings={headings} /> : null}
           <article className="mx-auto max-w-3xl md:mx-0 md:max-w-none">
-            {cover ? (
+            {post.coverDiagram?.svg ? (
+              <div className="-mt-10 mb-10">
+                <DiagramFigure
+                  svg={post.coverDiagram.svg}
+                  alt={post.coverDiagram.alt ?? ""}
+                  caption={post.coverDiagram.caption}
+                  width={post.coverDiagram.width}
+                  animation={post.coverDiagram.animation}
+                  animateFlow={post.coverDiagram.animateFlow}
+                  flows={post.coverDiagram.flows}
+                  pages={post.coverDiagram.pages}
+                />
+              </div>
+            ) : cover ? (
               // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor
               <img
                 src={cover}

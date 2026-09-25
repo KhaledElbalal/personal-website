@@ -40,6 +40,7 @@ export async function PostListView({
                       : undefined
                   }
                   category={p.category ?? undefined}
+                  diagramSvg={p.coverSvg}
                   title={p.title ?? ""}
                   body={p.summary ?? undefined}
                   date={formatPostDate(p)}

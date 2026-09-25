@@ -13,6 +13,7 @@ const postFields = /* groq */ `
   endDate,
   current,
   cover,
+  "coverSvg": coverDiagram.svg,
   summary,
   featured,
   path
@@ -28,8 +29,14 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(
   `*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { ${postFields} }`,
 );
 
+// Diagram blocks drop their editor `snapshot` — the page only needs the SVG.
 export const POST_BY_SLUG_QUERY = defineQuery(
-  `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series, body }`,
+  `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series,
+    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages },
+    "body": body[]{
+    _type != "diagram" => @,
+    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }
+  } }`,
 );
 
 // Sibling posts sharing a series name, ordered by part — powers the series
@@ -64,5 +71,5 @@ export const SKILLS_QUERY = defineQuery(
 );
 
 export const SITE_SETTINGS_QUERY = defineQuery(
-  `*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }`,
+  `*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText, email, avatar, authorRole, authorBio }`,
 );

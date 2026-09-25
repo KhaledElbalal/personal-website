@@ -1,5 +1,6 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
 
+import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { urlFor } from "@/sanity/image";
 import type { POST_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
 
@@ -16,6 +17,21 @@ const components: PortableTextComponents = {
           src={url}
           alt={value.alt ?? ""}
           className="my-8 w-full rounded-[8px]"
+        />
+      );
+    },
+    diagram: ({ value }) => {
+      if (!value?.svg) return null;
+      return (
+        <DiagramFigure
+          svg={value.svg}
+          alt={value.alt ?? ""}
+          caption={value.caption}
+          width={value.width}
+          animation={value.animation}
+          animateFlow={value.animateFlow}
+          flows={value.flows}
+          pages={value.pages}
         />
       );
     },

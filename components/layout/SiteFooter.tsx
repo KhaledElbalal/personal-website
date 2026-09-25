@@ -1,5 +1,5 @@
 import { SocialLink, Wordmark } from "@/components/ui";
-import { resolveSocialLinks } from "@/lib/social-links";
+import { contactHref, resolveSocialLinks } from "@/lib/social-links";
 import { sanityFetch } from "@/sanity/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
 import type { SITE_SETTINGS_QUERY_RESULT } from "@/sanity.types";
@@ -27,6 +27,11 @@ export async function SiteFooter() {
               </SocialLink>
             </li>
           ))}
+          {settings?.email ? (
+            <li>
+              <SocialLink href={contactHref(settings.email)}>Email</SocialLink>
+            </li>
+          ) : null}
         </ul>
         <span className="flex items-center gap-2 font-mono text-[13px] text-muted">
           <span aria-hidden="true" className="text-accent">
