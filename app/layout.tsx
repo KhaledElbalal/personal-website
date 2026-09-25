@@ -5,7 +5,7 @@ import "./globals.css";
 import { IntroSplash } from "@/components/layout/IntroSplash";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteHeaderContainer } from "@/components/layout/SiteHeaderContainer";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -107,7 +107,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <SiteHeader />
+        <SiteHeaderContainer />
         <main id="main-content" className="flex flex-1 flex-col">
           <RouteTransition>{children}</RouteTransition>
         </main>

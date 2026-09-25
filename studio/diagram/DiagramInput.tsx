@@ -12,11 +12,20 @@ const DiagramEditor = lazy(() =>
 
 type DiagramValue = {
   _type: "diagram";
+  pages?: string;
   snapshot?: string;
   svg?: string;
   width?: number;
   height?: number;
 };
+
+function pageCount(json: string) {
+  try {
+    return (JSON.parse(json) as unknown[]).length;
+  } catch {
+    return 0;
+  }
+}
 
 export function svgDataUrl(svg: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
@@ -37,8 +46,12 @@ export function DiagramInput(props: ObjectInputProps) {
               set(exported.svg, ["svg"]),
               set(exported.width, ["width"]),
               set(exported.height, ["height"]),
+              exported.flows.length ? set(JSON.stringify(exported.flows), ["flows"]) : unset(["flows"]),
+              exported.pages.length > 1
+                ? set(JSON.stringify(exported.pages), ["pages"])
+                : unset(["pages"]),
             ]
-          : [unset(["svg"]), unset(["width"]), unset(["height"])]),
+          : [unset(["svg"]), unset(["width"]), unset(["height"]), unset(["flows"]), unset(["pages"])]),
       ]);
     },
     [onChange],
@@ -48,6 +61,11 @@ export function DiagramInput(props: ObjectInputProps) {
     <Stack space={4}>
       <Card border radius={2} padding={3} tone="transparent">
         <Stack space={3}>
+          {value?.pages ? (
+            <Text muted size={1}>
+              {pageCount(value.pages)} pages — the blog shows tabs to switch between them. Preview shows the first.
+            </Text>
+          ) : null}
           {value?.svg ? (
             <Box style={{ background: "#fff", borderRadius: 4, padding: 8 }}>
               <img

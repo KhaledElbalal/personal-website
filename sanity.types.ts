@@ -19,6 +19,10 @@ export type Diagram = {
   _type: "diagram";
   alt?: string;
   caption?: string;
+  animation?: "ambient" | "walkthrough" | "off";
+  animateFlow?: boolean;
+  flows?: string;
+  pages?: string;
   snapshot?: string;
   svg?: string;
   width?: number;
@@ -52,6 +56,13 @@ export type QualificationsPage = {
   }>;
 };
 
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
 export type SiteSettings = {
   _id: string;
   _type: "siteSettings";
@@ -61,6 +72,17 @@ export type SiteSettings = {
   siteName?: string;
   heroHeading?: string;
   heroIntro?: string;
+  email?: string;
+  avatar?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  authorRole?: string;
+  authorBio?: string;
   socialLinks?: Array<{
     platform?: "github" | "linkedin" | "codeforces";
     url?: string;
@@ -68,6 +90,22 @@ export type SiteSettings = {
     _key: string;
   }>;
   footerText?: string;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type Skill = {
@@ -81,13 +119,6 @@ export type Skill = {
   items?: Array<string>;
   path?: string;
   order?: number;
-};
-
-export type SanityImageAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
 export type Experience = {
@@ -126,22 +157,6 @@ export type Experience = {
   };
   featured?: boolean;
   order?: number;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type Post = {
@@ -324,12 +339,12 @@ export type AllSanitySchemaTypes =
   | Diagram
   | SanityFileAssetReference
   | QualificationsPage
-  | SiteSettings
-  | Skill
   | SanityImageAssetReference
-  | Experience
+  | SiteSettings
   | SanityImageCrop
   | SanityImageHotspot
+  | Skill
+  | Experience
   | Post
   | Slug
   | SanityImagePaletteSwatch
@@ -395,7 +410,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  summary,  featured,  path, tags, series, "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }  } }
+// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  summary,  featured,  path, tags, series, "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }  } }
 export type POST_BY_SLUG_QUERY_RESULT = {
   _id: string;
   kind: "post" | "project" | null;
@@ -458,6 +473,10 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         svg: string | null;
         width: number | null;
         height: number | null;
+        animation: "ambient" | "off" | "walkthrough" | null;
+        animateFlow: boolean | null;
+        flows: string | null;
+        pages: string | null;
       }
     | {
         asset?: SanityImageAssetReference;
@@ -547,7 +566,7 @@ export type SKILLS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }
+// Query: *[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText, email, avatar, authorRole, authorBio }
 export type SITE_SETTINGS_QUERY_RESULT = {
   siteName: string | null;
   heroHeading: string | null;
@@ -559,6 +578,17 @@ export type SITE_SETTINGS_QUERY_RESULT = {
     _key: string;
   }> | null;
   footerText: string | null;
+  email: string | null;
+  avatar: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  authorRole: string | null;
+  authorBio: string | null;
 } | null;
 
 // Query TypeMap
@@ -567,11 +597,11 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': POSTS_QUERY_RESULT;
     '*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n, tags, series, "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }\n  } }': POST_BY_SLUG_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  summary,\n  featured,\n  path\n, tags, series, "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }\n  } }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {\n    _id, title, "slug": slug.current, date, "part": series.part\n  }': SERIES_POSTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
     '*[_type == "skill"] | order(order asc) { _id, role, description, items, path }': SKILLS_QUERY_RESULT;
-    '*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }': SITE_SETTINGS_QUERY_RESULT;
+    '*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText, email, avatar, authorRole, authorBio }': SITE_SETTINGS_QUERY_RESULT;
   }
 }

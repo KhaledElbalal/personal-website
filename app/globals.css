@@ -220,3 +220,23 @@ body {
 .sd-diagram [style*="sd_body"] {
   font-family: var(--font-body) !important;
 }
+
+/* Diagram animation (components/content/diagram/engine.ts). */
+.sd-diagram [data-sd-node],
+.sd-diagram [data-sd-arrow] {
+  transition: opacity 0.2s ease;
+}
+/* Walkthrough step / hover-trace: dim everything not in focus. */
+.sd-diagram.sd-focus [data-sd-node]:not(.sd-on),
+.sd-diagram.sd-focus [data-sd-arrow]:not(.sd-on) {
+  opacity: 0.18;
+}
+/* Async arrows: marching ants (dash length set per path as --sd-dash). */
+.sd-diagram.sd-ants [data-sd-flow="async"] path[stroke-dasharray] {
+  animation: sd-ants 1.2s linear infinite;
+}
+@keyframes sd-ants {
+  to {
+    stroke-dashoffset: var(--sd-dash, -20px);
+  }
+}

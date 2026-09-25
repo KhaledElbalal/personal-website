@@ -20,7 +20,13 @@ export async function sanityFetch<T>(
   tags: string[] = [],
 ): Promise<T> {
   "use cache";
-  cacheLife("hours");
+  // Locally there's no revalidate webhook, so keep dev near-live — otherwise
+  // Studio edits don't show up for up to an hour.
+  // Next treats stale < 30s, revalidate 0 or expire < 5min as request-time
+  // data (breaks prerendering — see next/dist/server/use-cache/constants.js),
+  // so these are the shortest values that still prerender.
+  if (process.env.NODE_ENV === "development") cacheLife({ stale: 30, revalidate: 1, expire: 300 });
+  else cacheLife("hours");
   for (const tag of tags) {
     cacheTag(tag);
   }

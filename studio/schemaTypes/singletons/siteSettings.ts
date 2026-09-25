@@ -27,6 +27,41 @@ export const siteSettings = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "email",
+      title: "Contact email",
+      type: "string",
+      description: 'Where "Contact Me" (header, whoami card, footer) opens a new email to.',
+      validation: (rule) => rule.email(),
+    }),
+    defineField({
+      name: "avatar",
+      title: "Author photo",
+      type: "image",
+      description: "Shown in the whoami card at the end of each post. Square works best.",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative text",
+          type: "string",
+          description: 'Leave empty to use your name, e.g. "Khaled Ibrahim".',
+        }),
+      ],
+    }),
+    defineField({
+      name: "authorRole",
+      title: "Role / location",
+      type: "string",
+      description: 'Subtitle under your name in the whoami card, e.g. "ML engineer · Cairo".',
+    }),
+    defineField({
+      name: "authorBio",
+      title: "Author bio",
+      type: "text",
+      rows: 3,
+      description: "Short bio for the whoami card. Falls back to the hero intro when empty.",
+    }),
+    defineField({
       name: "socialLinks",
       title: "Social links",
       type: "array",

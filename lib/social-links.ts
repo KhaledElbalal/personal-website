@@ -29,3 +29,8 @@ export function resolveSocialLinks(links: SanitySocialLinks | undefined) {
     }));
   return rows.length ? rows : [...SOCIAL_LINKS];
 }
+
+/** "Contact Me" target: a mailto for the Site Settings email, else the footer. */
+export function contactHref(email?: string | null) {
+  return email ? `mailto:${email}` : "#contact";
+}

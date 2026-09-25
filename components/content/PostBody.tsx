@@ -28,6 +28,10 @@ const components: PortableTextComponents = {
           alt={value.alt ?? ""}
           caption={value.caption}
           width={value.width}
+          animation={value.animation}
+          animateFlow={value.animateFlow}
+          flows={value.flows}
+          pages={value.pages}
         />
       );
     },

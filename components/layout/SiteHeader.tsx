@@ -13,7 +13,7 @@ const NAV = [
   { label: "Blog", href: "/blog" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -65,7 +65,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:block">
-          <Button href="#contact">Contact Me</Button>
+          <Button href={contactHref}>Contact Me</Button>
         </div>
 
         <button
@@ -114,7 +114,7 @@ export function SiteHeader() {
             </li>
           ))}
           <li className="pt-1">
-            <Button href="#contact" onClick={() => setOpen(false)}>
+            <Button href={contactHref} onClick={() => setOpen(false)}>
               Contact Me
             </Button>
           </li>

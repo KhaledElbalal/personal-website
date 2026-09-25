@@ -15,6 +15,7 @@ import {
   useValue,
 } from "tldraw";
 
+import { resolveRole } from "./behavior";
 import { CARD_SHADOW, FONT, INK, MUTED, SITE_FONT_FACES } from "./theme";
 
 export const NODE_TYPE = "sd-node";
@@ -276,7 +277,18 @@ export class NodeShapeUtil extends ShapeUtil<NodeShape> {
   }
 
   override toSvg(shape: NodeShape) {
-    return <NodeSvg shape={shape} />;
+    // Tagged for the blog animation (roles, hover-trace, card pop).
+    return (
+      <g
+        data-sd-node={shape.id}
+        data-sd-role={resolveRole(this.editor, shape)}
+        data-sd-label={shape.props.label.split("\n")[0] || undefined}
+        data-sd-w={shape.props.w}
+        data-sd-h={layout(shape.props).h}
+      >
+        <NodeSvg shape={shape} />
+      </g>
+    );
   }
 
   getIndicatorPath(shape: NodeShape) {

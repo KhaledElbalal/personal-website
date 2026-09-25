@@ -32,7 +32,7 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(
 export const POST_BY_SLUG_QUERY = defineQuery(
   `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series, "body": body[]{
     _type != "diagram" => @,
-    _type == "diagram" => { _key, _type, alt, caption, svg, width, height }
+    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }
   } }`,
 );
 
@@ -68,5 +68,5 @@ export const SKILLS_QUERY = defineQuery(
 );
 
 export const SITE_SETTINGS_QUERY = defineQuery(
-  `*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText }`,
+  `*[_type == "siteSettings"][0] { siteName, heroHeading, heroIntro, socialLinks, footerText, email, avatar, authorRole, authorBio }`,
 );

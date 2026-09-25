@@ -17,6 +17,8 @@ export type IconItem = {
   /** Default icon colour for this item (applied via `currentColor`). */
   color: string;
   pack: IconPackId;
+  /** Pinned to the top of its tab when the search box is empty. */
+  favorite?: boolean;
 };
 
 /** Normalised icon stored on the node shape — self-contained, no catalog lookup needed. */
@@ -101,6 +103,20 @@ async function loadSystem(): Promise<IconItem[]> {
 
 // ── Tech logos (Simple Icons, CC0) ──
 
+// Khaled's everyday stack, pinned first.
+const BRAND_FAVORITES = [
+  "python",
+  "fastapi",
+  "django",
+  "celery",
+  "redis",
+  "ruby",
+  "nextdotjs",
+  "postgresql",
+  "docker",
+  "nginx",
+];
+
 async function loadBrands(): Promise<IconItem[]> {
   const mod = await import("simple-icons");
   return (Object.values(mod) as unknown[])
@@ -113,16 +129,19 @@ async function loadBrands(): Promise<IconItem[]> {
       raw: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="${icon.path}"/></svg>`,
       color: INK,
       pack: "brands" as const,
+      favorite: BRAND_FAVORITES.includes(icon.slug),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort(byFavoriteThen(BRAND_FAVORITES, (i) => i.id.slice("brands:".length)));
 }
 
 // ── AWS (official Architecture Icons, kept unmodified per AWS guidelines) ──
 
-// Short names people actually write on diagrams.
+// Short names people actually write on diagrams, keyed by icon file name.
 const AWS_SHORT_NAMES: Record<string, string> = {
+  // Services
   AmazonSimpleStorageService: "S3",
   AmazonEC2: "EC2",
+  AmazonEC2AutoScaling: "EC2 Auto Scaling",
   AWSLambda: "Lambda",
   AmazonDynamoDB: "DynamoDB",
   AmazonRDS: "RDS",
@@ -134,7 +153,10 @@ const AWS_SHORT_NAMES: Record<string, string> = {
   AmazonElastiCache: "ElastiCache",
   AmazonElasticKubernetesService: "EKS",
   AmazonElasticContainerService: "ECS",
+  AmazonElasticContainerRegistry: "ECR",
+  AmazonECR: "ECR",
   AWSFargate: "Fargate",
+  AWSAppRunner: "App Runner",
   AmazonRoute53: "Route 53",
   AmazonKinesis: "Kinesis",
   AmazonKinesisDataStreams: "Kinesis Data Streams",
@@ -143,54 +165,191 @@ const AWS_SHORT_NAMES: Record<string, string> = {
   AWSStepFunctions: "Step Functions",
   AmazonEventBridge: "EventBridge",
   AmazonVirtualPrivateCloud: "VPC",
+  AmazonVPCLattice: "VPC Lattice",
   AWSIdentityandAccessManagement: "IAM",
   ElasticLoadBalancing: "ELB",
   AmazonRedshift: "Redshift",
   AmazonAthena: "Athena",
   AWSGlue: "Glue",
   AmazonOpenSearchService: "OpenSearch",
-  AmazonBedrock: "Bedrock",
-  AmazonSageMaker: "SageMaker",
-  AmazonSageMakerAI: "SageMaker AI",
-  AmazonManagedStreamingforApacheKafka: "MSK",
   AWSWAF: "WAF",
   AWSSecretsManager: "Secrets Manager",
   AWSKeyManagementService: "KMS",
   AmazonElasticBlockStore: "EBS",
   AmazonElasticFileSystem: "EFS",
-  AmazonECR: "ECR",
-  AmazonElasticContainerRegistry: "ECR",
   AWSAppSync: "AppSync",
   AWSAmplify: "Amplify",
   AmazonSimpleEmailService: "SES",
+  AmazonManagedStreamingforApacheKafka: "MSK",
+  // AI / ML
+  AmazonBedrock: "Bedrock",
+  AmazonBedrockAgentCore: "Bedrock AgentCore",
+  AmazonSageMaker: "SageMaker",
+  AmazonSageMakerAI: "SageMaker AI",
+  AmazonAugmentedAIA2I: "Augmented AI (A2I)",
+  AmazonQ: "Amazon Q",
+  AmazonComprehend: "Comprehend",
+  AmazonComprehendMedical: "Comprehend Medical",
+  AmazonTextract: "Textract",
+  AmazonRekognition: "Rekognition",
+  AmazonTranscribe: "Transcribe",
+  AmazonPolly: "Polly",
+  AmazonKendra: "Kendra",
+  AmazonLex: "Lex",
+  // Resources
+  AmazonSimpleQueueServiceQueue: "SQS queue",
+  AmazonSimpleQueueServiceMessage: "SQS message",
+  AmazonSimpleNotificationServiceTopic: "SNS topic",
+  AmazonSimpleNotificationServiceEmailNotification: "SNS email",
+  AmazonSimpleNotificationServiceHTTPNotification: "SNS HTTP",
+  AmazonEC2Instance: "EC2 instance",
+  AmazonEC2Instances: "EC2 instances",
+  AmazonEC2AMI: "AMI",
+  AmazonEC2SpotInstance: "Spot instance",
+  AmazonEC2ElasticIPAddress: "Elastic IP",
+  AmazonElasticContainerRegistryImage: "ECR image",
+  AmazonElasticContainerRegistryRegistry: "ECR registry",
+  AmazonElasticContainerServiceService: "ECS service",
+  AmazonElasticContainerServiceTask: "ECS task",
+  AmazonElasticContainerServiceContainer1: "Container",
+  AmazonElasticContainerServiceContainer2: "Container",
+  AmazonElasticContainerServiceContainer3: "Container",
+  AmazonVPCNetworkAccessControlList: "Network ACL",
+  AmazonVPCNATGateway: "NAT gateway",
+  AmazonVPCInternetGateway: "Internet gateway",
+  AmazonVPCEndpoints: "VPC endpoints",
+  AmazonVPCRouter: "Router",
+  AmazonVPCPeeringConnection: "VPC peering",
+  AmazonVPCVPNGateway: "VPN gateway",
+  AmazonVPCFlowLogs: "VPC flow logs",
+  AmazonVPCElasticNetworkInterface: "ENI",
+  ElasticLoadBalancingApplicationLoadBalancer: "ALB",
+  ElasticLoadBalancingNetworkLoadBalancer: "NLB",
+  ElasticLoadBalancingGatewayLoadBalancer: "GWLB",
+  ElasticLoadBalancingClassicLoadBalancer: "Classic LB",
+  AmazonElastiCacheElastiCacheforRedis: "ElastiCache (Redis)",
+  AmazonElastiCacheElastiCacheforValkey: "ElastiCache (Valkey)",
+  AmazonElastiCacheElastiCacheforMemcached: "ElastiCache (Memcached)",
+  AWSLambdaLambdaFunction: "Lambda function",
+  AmazonSageMakerAIModel: "SageMaker model",
+  AmazonSageMakerAINotebook: "SageMaker notebook",
+  AmazonSageMakerAITrain: "SageMaker training",
+  AmazonEventBridgeRule: "EventBridge rule",
+  AmazonEventBridgeScheduler: "EventBridge Scheduler",
+  AmazonDynamoDBTable: "DynamoDB table",
+  AmazonDynamoDBStream: "DynamoDB stream",
+  AmazonCloudWatchLogs: "CloudWatch Logs",
+  AmazonCloudWatchAlarm: "CloudWatch alarm",
+  AmazonRoute53HostedZone: "Hosted zone",
+  AmazonAuroraPostgreSQLInstanceAlternate: "Aurora PostgreSQL",
+  AmazonAuroraMySQLInstanceAlternate: "Aurora MySQL",
+  AmazonAuroraMariaDBInstanceAlternate: "Aurora MariaDB",
+  AmazonAuroraAmazonRDSInstance: "RDS instance",
+  AmazonAuroraAmazonRDSInstanceAternate: "RDS instance",
+  AmazonRDSMultiAZ: "RDS Multi-AZ",
+  AmazonRDSProxyInstance: "RDS Proxy",
 };
 
-const humanize = (file: string) =>
-  file
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+// Pinned first in the AWS tab (Khaled's usual building blocks).
+const AWS_FAVORITES = [
+  "AmazonSimpleQueueService",
+  "AmazonSimpleNotificationService",
+  "AmazonEC2",
+  "AmazonElasticContainerRegistry",
+  "AmazonElasticContainerService",
+  "AWSFargate",
+  "AmazonBedrock",
+  "AmazonBedrockAgentCore",
+  "AmazonSageMakerAI",
+  "AmazonQ",
+  "AmazonTextract",
+  "AmazonComprehend",
+  "AmazonRekognition",
+  "AmazonTranscribe",
+  "AmazonKendra",
+  "AmazonVPCNetworkAccessControlList",
+  "AmazonVPCNATGateway",
+  "AmazonVPCInternetGateway",
+  "ElasticLoadBalancingApplicationLoadBalancer",
+  "AmazonElastiCacheElastiCacheforRedis",
+];
+
+// Words the camel-case splitter must not break ("MariaDB" ≠ "Maria DB").
+const KEEP_WORDS = [
+  "PostgreSQL", "MySQL", "MariaDB", "DynamoDB", "ElastiCache", "OpenSearch",
+  "CloudWatch", "CloudFront", "CloudTrail", "CloudFormation", "EventBridge",
+  "SageMaker", "AppSync", "AppRunner", "AgentCore", "GuardDuty", "IoT", "NAT",
+  "VPC", "API", "AMI", "IP", "SQS", "SNS", "EC2", "ECR", "ECS", "EKS", "S3",
+  "HTTP", "HTTPS", "DNS", "SQL", "NET", "RDS", "AWS", "A2I",
+];
+
+const KEEP_RE = new RegExp(
+  `(${[...KEEP_WORDS].sort((a, b) => b.length - a.length).join("|")})`,
+  "g",
+);
+
+function humanize(file: string) {
+  return file
+    .split(KEEP_RE)
+    .filter(Boolean)
+    .map((part) =>
+      KEEP_WORDS.includes(part)
+        ? part
+        : part.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2"),
+    )
+    .join(" ")
+    .replace(/\s+/g, " ")
     .trim();
+}
+
+/** Best short card name for an AWS icon file. */
+function awsName(file: string, services: string[]) {
+  if (AWS_SHORT_NAMES[file]) return AWS_SHORT_NAMES[file];
+  // Resource icons are "<Service><Resource>", e.g. AmazonVPCRouteTable.
+  const service = services
+    .filter((svc) => file !== svc && file.startsWith(svc))
+    .sort((a, b) => b.length - a.length)[0];
+  if (service) {
+    const svcName = AWS_SHORT_NAMES[service] ?? humanize(service).replace(/^(Amazon|AWS)\s+/, "");
+    const rest = humanize(file.slice(service.length)).replace(/\s*(alternate|aternate)$/i, "");
+    return rest ? `${svcName} ${rest}` : svcName;
+  }
+  return humanize(file).replace(/^(Amazon|AWS)\s+/, "").replace(/\s*(alternate|aternate)$/i, "");
+}
 
 async function loadAws(): Promise<IconItem[]> {
   const { AWS_FILES } = await import("./awsFiles");
-  return Object.entries(AWS_FILES)
-    .map(([path, raw]) => {
-      const [, folder, file] = path.match(/icons\/([^/]+)\/([^/]+)\.svg$/)!;
+  const entries = Object.entries(AWS_FILES).map(([path, raw]) => {
+    const [, folder, file] = path.match(/icons\/([^/]+)\/([^/]+)\.svg$/)!;
+    return { folder, file, raw };
+  });
+  const services = entries.filter((e) => e.folder === "architecture-service").map((e) => e.file);
+  return entries
+    .map(({ folder, file, raw }) => {
       const full = humanize(file);
-      const name =
-        AWS_SHORT_NAMES[file] ?? full.replace(/^(Amazon|AWS)\s+/, "");
+      const name = awsName(file, services);
       const kind = folder === "architecture-group" ? "Group" : folder === "resource" ? "Resource" : "Service";
       return {
         id: `aws:${folder}/${file}`,
-        label: name === full ? full : `${name} · ${full}`,
+        label: `${name} · ${full}`,
         name,
         keywords: `${file} ${full} ${kind}`,
         raw,
         color: INK,
         pack: "aws" as const,
+        favorite: AWS_FAVORITES.includes(file),
       };
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort(byFavoriteThen(AWS_FAVORITES, (i) => i.id.split("/").pop()!));
+}
+
+/** Favourites first (in list order), then alphabetical by name. */
+function byFavoriteThen(favorites: string[], key: (i: IconItem) => string) {
+  return (a: IconItem, b: IconItem) => {
+    const fa = a.favorite ? favorites.indexOf(key(a)) : Infinity;
+    const fb = b.favorite ? favorites.indexOf(key(b)) : Infinity;
+    return fa !== fb ? fa - fb : a.name.localeCompare(b.name);
+  };
 }
 
 const loaders: Record<IconPackId, () => Promise<IconItem[]>> = {
