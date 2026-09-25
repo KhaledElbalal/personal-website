@@ -92,6 +92,13 @@ export const post = defineType({
       ],
     }),
     defineField({
+      name: "coverDiagram",
+      title: "Cover diagram",
+      type: "diagram",
+      description:
+        "Optional — use a system diagram as the cover instead of the image. Takes precedence over the cover image: live on the post, static thumbnail on cards.",
+    }),
+    defineField({
       name: "summary",
       type: "text",
       rows: 3,

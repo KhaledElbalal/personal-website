@@ -240,3 +240,9 @@ body {
     stroke-dashoffset: var(--sd-dash, -20px);
   }
 }
+
+/* Diagram used as a card cover (components/content/DiagramThumb.tsx). */
+.sd-diagram.sd-thumb svg {
+  width: 100%;
+  height: 100%;
+}

@@ -111,6 +111,7 @@ export default async function Home() {
                       ? urlFor(p.cover).width(720).height(480).url()
                       : undefined
                   }
+                  diagramSvg={p.coverSvg}
                   title={p.title ?? ""}
                   path={p.path ?? undefined}
                   date={formatRange(p)}

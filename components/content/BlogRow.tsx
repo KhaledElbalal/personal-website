@@ -1,11 +1,14 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { DiagramThumb } from "@/components/content/DiagramThumb";
 import { Tag } from "@/components/ui";
 import { slugify } from "@/lib/slugify";
 
 type BlogRowProps = {
   image?: string;
+  /** Cover diagram SVG — shown instead of `image` when set. */
+  diagramSvg?: string | null;
   category?: string;
   title?: string;
   body?: string;
@@ -17,6 +20,7 @@ type BlogRowProps = {
 
 export function BlogRow({
   image,
+  diagramSvg,
   category = "FRONTEND",
   title = "Designing & Developing Anne's Website",
   body = "A short teaser describing the project or post in a sentence or two.",
@@ -56,10 +60,16 @@ export function BlogRow({
           </span>
         </div>
       </div>
-      <div
-        className="h-[210px] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] md:w-[260px]"
-        style={cover}
-      />
+      {diagramSvg ? (
+        <div className="h-[210px] w-full overflow-hidden rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)] md:w-[260px]">
+          <DiagramThumb svg={diagramSvg} className="h-full w-full" />
+        </div>
+      ) : (
+        <div
+          className="h-[210px] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] md:w-[260px]"
+          style={cover}
+        />
+      )}
     </Link>
   );
 }

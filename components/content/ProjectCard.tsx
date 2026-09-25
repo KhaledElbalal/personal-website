@@ -1,8 +1,12 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { DiagramThumb } from "@/components/content/DiagramThumb";
+
 type ProjectCardProps = {
   image?: string;
+  /** Cover diagram SVG — shown instead of `image` when set. */
+  diagramSvg?: string | null;
   title?: string;
   path?: string;
   date?: string;
@@ -13,6 +17,7 @@ type ProjectCardProps = {
 
 export function ProjectCard({
   image,
+  diagramSvg,
   title = "Predicting Diabetes Using Logistic Regression",
   path = "~/ml/diabetes.ipynb",
   date = "Oct 2022",
@@ -30,10 +35,15 @@ export function ProjectCard({
       aria-label={`Open project: ${title}`}
       className={`group relative block h-[344px] w-full overflow-hidden rounded-[8px] bg-page no-underline shadow-[var(--shadow-card),var(--shadow-card-glow)] ${className}`}
     >
-      <div
-        className="absolute inset-0 bg-[color:var(--surface-placeholder)] bg-cover bg-center"
-        style={cover}
-      />
+      {diagramSvg ? (
+        // Leave room for the title bar at the bottom of the card.
+        <DiagramThumb svg={diagramSvg} className="absolute inset-x-0 top-0 bottom-[84px]" />
+      ) : (
+        <div
+          className="absolute inset-0 bg-[color:var(--surface-placeholder)] bg-cover bg-center"
+          style={cover}
+        />
+      )}
       <div className="absolute inset-x-0 bottom-0 bg-page px-4 pb-3.5 pt-3">
         <div className="font-mono text-[15px] font-bold leading-tight text-black">
           {title}

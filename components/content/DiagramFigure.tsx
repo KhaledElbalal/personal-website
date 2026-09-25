@@ -1,5 +1,6 @@
 import type { FlowDef } from "@/components/content/diagram/engine";
 import { type DiagramAnimation, DiagramPages, DiagramViewer } from "@/components/content/DiagramViewer";
+import { sanitizeSvg } from "@/lib/svg";
 
 type DiagramFigureProps = {
   svg: string;
@@ -14,15 +15,6 @@ type DiagramFigureProps = {
   /** All pages as JSON [{name, svg, width, height}] when the canvas has > 1 page. */
   pages?: string | null;
 };
-
-// Diagrams are authored in Studio, but strip anything executable anyway
-// before inlining the SVG.
-function sanitizeSvg(svg: string) {
-  return svg
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/(href\s*=\s*["'])\s*javascript:[^"']*/gi, "$1#");
-}
 
 function parseFlows(json?: string | null): FlowDef[] {
   if (!json) return [];
