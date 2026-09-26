@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 
 import { AuthorBio } from "@/components/content/AuthorBio";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
+import { ReadWith } from "@/components/content/ReadWith";
+import { postMarkdownUrl } from "@/lib/post-markdown";
 import { PostBody } from "@/components/content/PostBody";
 import { PostToc } from "@/components/content/PostToc";
 import { Blob, Tag } from "@/components/ui";
@@ -46,7 +48,8 @@ export async function getPostMetadata(
   return {
     title: post.title ?? "Post",
     description: post.summary ?? undefined,
-    alternates: { canonical: url },
+    // Markdown twin for assistants (app/md/[section]/[slug]/route.ts).
+    alternates: { canonical: url, types: { "text/markdown": `${url}.md` } },
     openGraph: {
       url,
       type: kind === "post" ? "article" : "website",
@@ -138,6 +141,13 @@ export async function PostDetailView({
             <p className="mt-4 max-w-[560px] font-body text-base leading-[1.6] text-ink">
               {post.summary}
             </p>
+          ) : null}
+          {post.slug ? (
+            <ReadWith
+              title={post.title ?? "this post"}
+              markdownUrl={postMarkdownUrl(basePath === "/projects" ? "projects" : "blog", post.slug)}
+              kind={kind}
+            />
           ) : null}
         </div>
       </section>
