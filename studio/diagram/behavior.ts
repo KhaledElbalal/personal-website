@@ -102,3 +102,100 @@ export function exportFlows(editor: Editor): Flow[] {
     .map((f) => ({ ...f, steps: f.steps.filter((s) => editor.getShape(s.arrowId)?.type === "arrow") }))
     .filter((f) => f.steps.length > 0);
 }
+
+// ── Graph export (adjacency list for Markdown / LLMs, see lib/diagram-markdown.ts) ──
+
+export type GraphNode = { id: string; label: string; sub?: string; icon?: string; role: NodeRole; group?: string };
+export type GraphGroup = { id: string; label: string; parent?: string };
+export type GraphEdge = {
+  id: string;
+  /** tldraw arrow id — recorded flows reference arrows by it. */
+  arrowId: TLShapeId;
+  from?: string;
+  to?: string;
+  kind: string;
+  label?: string;
+  fails?: number;
+};
+export type DiagramGraph = { nodes: GraphNode[]; groups: GraphGroup[]; edges: GraphEdge[]; notes: string[] };
+
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 24) || "node";
+
+/** Readable, stable-per-export ids ("orders-api", "sqs-2") for a page's shapes. */
+export function buildGraph(editor: Editor, pageId: TLShape["parentId"]): DiagramGraph {
+  const shapes = [...editor.getPageShapeIds(pageId as never)]
+    .map((id) => editor.getShape(id))
+    .filter((s): s is TLShape => Boolean(s))
+    .sort((a, b) => {
+      const pa = editor.getShapePageBounds(a.id);
+      const pb = editor.getShapePageBounds(b.id);
+      return (pa?.minX ?? 0) - (pb?.minX ?? 0) || (pa?.minY ?? 0) - (pb?.minY ?? 0);
+    });
+
+  const used = new Map<string, number>();
+  const ids = new Map<TLShapeId, string>();
+  const idFor = (shape: TLShape, text: string) => {
+    let id = ids.get(shape.id);
+    if (id) return id;
+    const base = slug(text);
+    const n = (used.get(base) ?? 0) + 1;
+    used.set(base, n);
+    id = n === 1 ? base : `${base}-${n}`;
+    ids.set(shape.id, id);
+    return id;
+  };
+  const text = (s: TLShape, key: string) => String((s.props as Record<string, unknown>)[key] ?? "").replace(/\s*\n\s*/g, " ").trim();
+  const nearestGroup = (s: TLShape) => {
+    for (const ancestor of editor.getShapeAncestors(s.id).reverse()) {
+      if (ancestor.type === "sd-group") return idFor(ancestor, text(ancestor, "label") || "group");
+    }
+    return undefined;
+  };
+
+  const graph: DiagramGraph = { nodes: [], groups: [], edges: [], notes: [] };
+  // Groups first so their ids exist before members reference them.
+  for (const s of shapes.filter((s) => s.type === "sd-group")) {
+    graph.groups.push({ id: idFor(s, text(s, "label") || "group"), label: text(s, "label") || "Group", parent: nearestGroup(s) });
+  }
+  for (const s of shapes.filter((s) => s.type === NODE)) {
+    const label = text(s, "label") || "Node";
+    graph.nodes.push({
+      id: idFor(s, label),
+      label,
+      sub: text(s, "sublabel") || undefined,
+      icon: (s.meta as { iconId?: string }).iconId,
+      role: resolveRole(editor, s),
+      group: nearestGroup(s),
+    });
+  }
+  let n = 0;
+  for (const s of shapes.filter((s): s is TLArrowShape => s.type === "arrow")) {
+    const { from, to } = arrowEnds(editor, s);
+    const kind = flowOf(s.props);
+    const label = arrowLabel(editor, s);
+    const fromShape = from ? editor.getShape(from) : undefined;
+    const toShape = to ? editor.getShape(to) : undefined;
+    graph.edges.push({
+      id: `e${++n}`,
+      arrowId: s.id,
+      from: fromShape ? ids.get(fromShape.id) : undefined,
+      to: toShape ? ids.get(toShape.id) : undefined,
+      kind,
+      label: label || undefined,
+      fails: autoFailCount(kind, label) || undefined,
+    });
+  }
+  // Free text / sticky notes / labelled boxes carry context too.
+  for (const s of shapes) {
+    if (s.type === NODE || s.type === "sd-group" || s.type === "arrow") continue;
+    const richText = (s.props as { richText?: TLArrowShape["props"]["richText"] }).richText;
+    const t = richText ? renderPlaintextFromRichText(editor, richText).trim() : "";
+    if (t) graph.notes.push(t);
+  }
+  return graph;
+}
