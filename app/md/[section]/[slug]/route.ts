@@ -18,7 +18,7 @@ export async function generateStaticParams() {
   return params.length ? params : [{ section: "blog", slug: "__none__" }];
 }
 
-export async function GET(_: Request, ctx: RouteContext<"/md/[section]/[slug]">) {
+export async function GET(_: Request, ctx: { params: Promise<{ section: string; slug: string }> }) {
   const { section, slug } = await ctx.params;
   if (!(section in SECTIONS)) return new Response("Not found", { status: 404 });
   const post = await sanityFetch<POST_BY_SLUG_QUERY_RESULT>(POST_BY_SLUG_QUERY, { slug }, ["post"]);
