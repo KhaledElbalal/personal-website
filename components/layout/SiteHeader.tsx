@@ -21,6 +21,32 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Navigating (incl. back/forward) closes the overlay.
+  const [openedAt, setOpenedAt] = useState(pathname);
+  if (openedAt !== pathname) {
+    setOpenedAt(pathname);
+    setOpen(false);
+  }
+
+  // While the overlay is up: lock page scroll, Escape closes it, and growing
+  // past md (where the overlay doesn't exist) closes it too.
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onResize = () => desktop.matches && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    desktop.addEventListener("change", onResize);
+    return () => {
+      root.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+      desktop.removeEventListener("change", onResize);
+    };
+  }, [open]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
@@ -31,11 +57,12 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
   return (
     <header
       className={`sticky top-0 z-50 bg-page transition-shadow duration-200 ${
-        scrolled ? "shadow-[0_4px_16px_rgba(18,20,32,0.12)]" : ""
+        scrolled && !open ? "shadow-[0_4px_16px_rgba(18,20,32,0.12)]" : ""
       }`}
     >
+      {/* relative z-10: the bar (wordmark + toggle) stays above the overlay. */}
       <div
-        className={`mx-auto flex max-w-7xl items-center justify-between px-6 transition-[height] duration-200 sm:px-10 ${
+        className={`relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 transition-[height] duration-200 sm:px-10 ${
           scrolled ? "h-[60px] md:h-[64px]" : "h-[76px] md:h-[95px]"
         }`}
       >
@@ -96,29 +123,41 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
         </button>
       </div>
 
+      {/* Mobile: full-screen overlay under the bar rather than a panel that
+          pushes the page down. Kept mounted so it can fade; `invisible`
+          removes it from focus order and the a11y tree while closed. */}
       <nav
         id="mobile-nav"
         aria-label="Primary"
-        className={`${open ? "block" : "hidden"} border-t border-black/10 px-6 pb-5 pt-3 md:hidden`}
+        className={`fixed inset-0 flex flex-col bg-page px-6 pb-10 pt-[calc(76px+2rem)] transition-[opacity,visibility] duration-200 sm:px-10 md:hidden ${
+          open ? "visible opacity-100" : "invisible opacity-0"
+        }`}
       >
-        <ul className="flex flex-col gap-4">
-          {NAV.map((item) => (
-            <li key={item.href}>
+        <ul className="flex flex-col gap-7">
+          {NAV.map((item, i) => (
+            <li
+              key={item.href}
+              className={`transition-[opacity,translate] duration-300 ${
+                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+              }`}
+              style={{ transitionDelay: open ? `${60 + i * 40}ms` : "0ms" }}
+            >
               <NavLink
                 href={item.href}
                 active={isActive(item.href)}
                 onClick={() => setOpen(false)}
+                className="text-[2rem]!"
               >
                 {item.label}
               </NavLink>
             </li>
           ))}
-          <li className="pt-1">
-            <Button href={contactHref} onClick={() => setOpen(false)}>
-              Contact Me
-            </Button>
-          </li>
         </ul>
+        <div className="mt-auto">
+          <Button href={contactHref} onClick={() => setOpen(false)}>
+            Contact Me
+          </Button>
+        </div>
       </nav>
     </header>
   );
