@@ -43,7 +43,9 @@ export const diagram = defineType({
     defineField({ name: "animateFlow", type: "boolean", hidden: true }),
     // Recorded flows (JSON), written by the diagram editor on save.
     defineField({ name: "flows", type: "text", hidden: true }),
-    // Every page as [{name, svg, width, height}] JSON when the canvas has > 1 page.
+    // Adjacency-list graph (JSON) of the first page, for Markdown / llms.txt.
+    defineField({ name: "graph", type: "text", hidden: true }),
+    // Every page as [{name, svg, width, height, graph}] JSON when the canvas has > 1 page.
     defineField({ name: "pages", type: "text", hidden: true }),
     defineField({ name: "snapshot", type: "text", hidden: true }),
     defineField({

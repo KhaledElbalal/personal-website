@@ -46,12 +46,13 @@ export function DiagramInput(props: ObjectInputProps) {
               set(exported.svg, ["svg"]),
               set(exported.width, ["width"]),
               set(exported.height, ["height"]),
+              set(JSON.stringify(exported.graph), ["graph"]),
               exported.flows.length ? set(JSON.stringify(exported.flows), ["flows"]) : unset(["flows"]),
               exported.pages.length > 1
                 ? set(JSON.stringify(exported.pages), ["pages"])
                 : unset(["pages"]),
             ]
-          : [unset(["svg"]), unset(["width"]), unset(["height"]), unset(["flows"]), unset(["pages"])]),
+          : [unset(["svg"]), unset(["width"]), unset(["height"]), unset(["flows"]), unset(["pages"]), unset(["graph"])]),
       ]);
     },
     [onChange],

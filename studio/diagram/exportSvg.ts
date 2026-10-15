@@ -1,14 +1,16 @@
 import type { Editor } from "tldraw";
 
-import { exportFlows, type Flow } from "./behavior";
+import { buildGraph, type DiagramGraph, exportFlows, type Flow } from "./behavior";
 
-export type DiagramPage = { name: string; svg: string; width: number; height: number };
+export type DiagramPage = { name: string; svg: string; width: number; height: number; graph: DiagramGraph };
 
 export type DiagramExport = {
   /** First non-empty page — kept for the Studio preview and older blog code. */
   svg: string;
   width: number;
   height: number;
+  /** Adjacency-list graph of the first page (Markdown / llms.txt / explainers). */
+  graph: DiagramGraph;
   /** Every non-empty page, in tldraw page order; the blog shows tabs when > 1. */
   pages: DiagramPage[];
   flows: Flow[];
@@ -41,6 +43,7 @@ export async function exportDiagram(editor: Editor): Promise<DiagramExport | nul
           .replace(/<defs>\s*<\/defs>/g, ""),
         width: Math.round(result.width),
         height: Math.round(result.height),
+        graph: buildGraph(editor, page.id),
       });
     }
   } finally {
@@ -48,5 +51,12 @@ export async function exportDiagram(editor: Editor): Promise<DiagramExport | nul
   }
   if (!pages.length) return null;
   const [first] = pages;
-  return { svg: first.svg, width: first.width, height: first.height, pages, flows: exportFlows(editor) };
+  return {
+    svg: first.svg,
+    width: first.width,
+    height: first.height,
+    graph: first.graph,
+    pages,
+    flows: exportFlows(editor),
+  };
 }

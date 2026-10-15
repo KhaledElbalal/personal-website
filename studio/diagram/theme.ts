@@ -11,10 +11,10 @@ import spaceMonoBold from "@fontsource/space-mono/files/space-mono-latin-700-nor
 import spaceMonoRegular from "@fontsource/space-mono/files/space-mono-latin-400-normal.woff2?url";
 
 export const INK = "#121420"; // Xiketic
-export const ACCENT = "#0067a8"; // AA-safe Tufts Blue (site --accent)
+export const ACCENT = "#0093e9"; // Tufts Blue (site --accent)
 export const ACCENT_BRIGHT = "#38b6ff"; // Maya Blue
-export const MUTED = "rgba(18, 20, 32, 0.65)";
-export const CARD_SHADOW = "rgba(0, 103, 168, 0.30)";
+export const MUTED = "rgba(18, 20, 32, 0.55)";
+export const CARD_SHADOW = "rgba(0, 147, 233, 0.30)";
 
 // Family names the blog maps back onto its next/font variables
 // (see `.sd-diagram` rules in app/globals.css).

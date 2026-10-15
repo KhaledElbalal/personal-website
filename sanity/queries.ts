@@ -32,10 +32,10 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(
 // Diagram blocks drop their editor `snapshot` — the page only needs the SVG.
 export const POST_BY_SLUG_QUERY = defineQuery(
   `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series,
-    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages },
+    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },
     "body": body[]{
     _type != "diagram" => @,
-    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }
+    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }
   } }`,
 );
 

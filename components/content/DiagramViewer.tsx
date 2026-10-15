@@ -81,7 +81,7 @@ const SvgHost = memo(function SvgHost({
 // ── controls ──
 
 const ctrlBase =
-  "h-8 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] px-2 font-mono text-xs font-bold shadow-[-3px_3px_0_rgba(0,103,168,0.30)] disabled:opacity-40 disabled:shadow-none";
+  "h-8 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] px-2 font-mono text-xs font-bold shadow-[-3px_3px_0_rgba(0,147,233,0.30)] disabled:opacity-40 disabled:shadow-none";
 const ctrl = `${ctrlBase} bg-white text-ink hover:text-accent`;
 /** Selected pill/tab (separate so bg-white can't override bg-accent). */
 const ctrlOn = `${ctrlBase} bg-accent text-on-accent`;
@@ -458,11 +458,11 @@ export function DiagramPages({
   const go = (i: number) => setIndex((i + pages.length) % pages.length);
   const pad = (n: number) => String(n).padStart(2, "0");
 
-  const arrow = "grid h-full w-8 flex-none place-items-center text-sm hover:bg-[rgba(0,103,168,0.08)] hover:text-accent";
+  const arrow = "grid h-full w-8 flex-none place-items-center text-sm hover:bg-[rgba(0,147,233,0.08)] hover:text-accent";
   const pager = (
     <nav
       aria-label="Diagram pages"
-      className="inline-flex h-8 max-w-full items-stretch overflow-hidden rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white font-mono text-xs font-bold text-ink shadow-[-3px_3px_0_rgba(0,103,168,0.30)]"
+      className="inline-flex h-8 max-w-full items-stretch overflow-hidden rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white font-mono text-xs font-bold text-ink shadow-[-3px_3px_0_rgba(0,147,233,0.30)]"
     >
       <button type="button" aria-label="Previous page" onClick={() => go(index - 1)} className={arrow}>
         ‹

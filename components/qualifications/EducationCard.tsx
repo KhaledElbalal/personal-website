@@ -23,7 +23,7 @@ export function EducationCard({
 }: EducationCardProps) {
   return (
     <div
-      className={`grid grid-cols-1 gap-4 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[30px] shadow-[-6px_6px_0_rgba(0,103,168,0.30)] sm:grid-cols-[minmax(0,1fr)_auto] ${className}`}
+      className={`grid grid-cols-1 gap-4 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[30px] shadow-[-6px_6px_0_rgba(0,147,233,0.30)] sm:grid-cols-[minmax(0,1fr)_auto] ${className}`}
     >
       <div className="order-1 sm:col-start-1 sm:row-start-1">
         <h3 className="m-0 font-mono text-[22px] font-bold leading-tight text-[color:var(--color-xiketic)]">

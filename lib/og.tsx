@@ -5,7 +5,7 @@ export const OG_SIZE = { width: 1200, height: 630 };
 const OG_COLORS = {
   page: "#ffffff",
   ink: "#121420",
-  accent: "#0067a8",
+  accent: "#0093e9",
   accentBright: "#38b6ff",
   onAccent: "#f7f7ff",
   muted: "rgba(18,20,32,0.65)",

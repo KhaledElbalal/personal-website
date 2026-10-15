@@ -22,6 +22,7 @@ export type Diagram = {
   animation?: "ambient" | "walkthrough" | "off";
   animateFlow?: boolean;
   flows?: string;
+  graph?: string;
   pages?: string;
   snapshot?: string;
   svg?: string;
@@ -413,7 +414,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages },    "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }  } }
+// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }  } }
 export type POST_BY_SLUG_QUERY_RESULT = {
   _id: string;
   kind: "post" | "project" | null;
@@ -451,6 +452,7 @@ export type POST_BY_SLUG_QUERY_RESULT = {
     animateFlow: boolean | null;
     flows: string | null;
     pages: string | null;
+    graph: string | null;
   } | null;
   body: Array<
     | {
@@ -492,6 +494,7 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         animateFlow: boolean | null;
         flows: string | null;
         pages: string | null;
+        graph: string | null;
       }
     | {
         asset?: SanityImageAssetReference;
@@ -612,7 +615,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': POSTS_QUERY_RESULT;
     '*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages },\n    "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages }\n  } }': POST_BY_SLUG_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }\n  } }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {\n    _id, title, "slug": slug.current, date, "part": series.part\n  }': SERIES_POSTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
