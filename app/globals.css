@@ -13,18 +13,18 @@
   --color-placeholder: #d9d9d9;
 
   /* ── Colors — semantic aliases ── */
-  --accent: #0067a8; /* darkened from Tufts Blue #0093E9 to clear WCAG AA */
+  --accent: var(--color-tufts-blue);
   --accent-bright: var(--color-maya-blue);
   --accent-soft: var(--color-blue-jeans);
   --text-heading: var(--color-black);
   --text-body: var(--color-xiketic);
-  --text-link: var(--accent);
+  --text-link: var(--color-tufts-blue);
   --text-on-accent: var(--color-ghost-white);
-  --text-muted: rgba(18, 20, 32, 0.65); /* darkened from 0.55 to clear WCAG AA */
+  --text-muted: rgba(18, 20, 32, 0.55);
   --surface-page: var(--color-white);
   --surface-section: var(--color-off-white);
   --surface-placeholder: var(--color-placeholder);
-  --tag-bg: var(--accent);
+  --tag-bg: var(--color-maya-blue);
   --tag-text: var(--color-ghost-white);
 
   /* Blob gradient stops */
@@ -245,4 +245,19 @@ body {
 .sd-diagram.sd-thumb svg {
   width: 100%;
   height: 100%;
+}
+
+/* Highlighted code cells (components/content/CodeSource.tsx, lib/highlight.ts). */
+.code-hl pre {
+  margin: 0;
+  overflow-x: auto;
+  padding: 18px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+@media (min-width: 640px) {
+  .code-hl pre {
+    padding-inline: 24px;
+  }
 }

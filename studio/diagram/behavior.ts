@@ -93,7 +93,10 @@ export function getFlows(editor: Editor): Flow[] {
 
 export function setFlows(editor: Editor, flows: Flow[]) {
   const doc = editor.getDocumentSettings();
-  editor.updateDocumentSettings({ meta: { ...doc.meta, flows: flows as unknown as never } });
+  // tldraw meta must be strict JSON: a cleared note / "✓ ok" leaves
+  // `undefined` fields, which the store rejects — round-trip drops them.
+  const clean = JSON.parse(JSON.stringify(flows));
+  editor.updateDocumentSettings({ meta: { ...doc.meta, flows: clean } });
 }
 
 /** Flows with steps whose arrows still exist — what the blog receives. */

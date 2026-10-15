@@ -57,7 +57,7 @@ const icon = {
 };
 
 const btn =
-  "inline-flex h-8 items-center gap-1.5 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white px-2.5 font-mono text-xs font-bold text-ink no-underline shadow-[-3px_3px_0_rgba(0,103,168,0.30)] hover:text-accent";
+  "inline-flex h-8 items-center gap-1.5 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white px-2.5 font-mono text-xs font-bold text-ink no-underline shadow-[-3px_3px_0_rgba(0,147,233,0.30)] hover:text-accent";
 
 /** "Learn this with …": opens an assistant as a teacher, primed with the post. */
 export function ReadWith({ title, markdownUrl, kind }: ReadWithProps) {

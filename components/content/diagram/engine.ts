@@ -43,10 +43,10 @@ export const AUTO_FLOW = "auto";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const COLORS: Record<FlowKind, string> = {
-  request: "#0067a8",
+  request: "#0093e9",
   async: "#121420",
   response: "#8a8f98",
-  plain: "#0067a8",
+  plain: "#0093e9",
 };
 const FAIL = "#DD344C";
 const MAX_CHIPS = 6;

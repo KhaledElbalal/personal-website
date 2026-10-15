@@ -590,7 +590,7 @@ const styles = {
     color: ACCENT,
     fontWeight: 700,
     fontSize: 12.5,
-    boxShadow: "-3px 3px 0 rgba(0,103,168,0.3)",
+    boxShadow: "-3px 3px 0 rgba(0,147,233,0.3)",
   },
   search: {
     margin: 10,
@@ -663,7 +663,7 @@ const styles = {
     borderRadius: 8,
     background: "#fff",
     cursor: "pointer",
-    boxShadow: "-4px 4px 0 rgba(0,103,168,0.3)",
+    boxShadow: "-4px 4px 0 rgba(0,147,233,0.3)",
   },
   note: { gridColumn: "1 / -1", margin: 0, fontSize: 12, color: "rgba(18,20,32,0.65)" },
 } satisfies Record<string, React.CSSProperties>;

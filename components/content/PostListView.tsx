@@ -36,7 +36,7 @@ export async function PostListView({
                   key={p._id}
                   image={
                     p.cover
-                      ? urlFor(p.cover).width(520).height(420).url()
+                      ? urlFor(p.cover).width(1200).height(750).url()
                       : undefined
                   }
                   category={p.category ?? undefined}

@@ -7,6 +7,7 @@ import {
   SectionHeadingWithBlob,
 } from "@/components/ui";
 import { DEFAULT_HERO_HEADING, DEFAULT_HERO_INTRO } from "@/lib/site";
+import { contactHref } from "@/lib/social-links";
 import { formatRange } from "@/sanity/experience";
 import { sanityFetch } from "@/sanity/fetch";
 import { urlFor } from "@/sanity/image";
@@ -70,7 +71,7 @@ export default async function Home() {
         as="h1"
         title={settings?.heroHeading || DEFAULT_HERO_HEADING}
         intro={settings?.heroIntro || DEFAULT_HERO_INTRO}
-        actions={<LinkArrow href="#contact">Let&apos;s get in touch</LinkArrow>}
+        actions={<LinkArrow href={contactHref(settings?.email)}>Let&apos;s get in touch</LinkArrow>}
       />
 
       <section aria-labelledby="about-heading">

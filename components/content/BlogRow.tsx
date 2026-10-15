@@ -37,7 +37,7 @@ export function BlogRow({
   return (
     <Link
       href={href}
-      className={`group grid grid-cols-1 items-start gap-6 border-t border-black/10 pt-6 no-underline md:grid-cols-[minmax(0,1fr)_260px] ${className}`}
+      className={`group grid grid-cols-1 items-start gap-6 border-t border-black/10 pt-6 no-underline md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center md:gap-10 ${className}`}
     >
       <div className="flex min-w-0 flex-col items-start gap-3.5">
         <div className="flex items-center gap-4">
@@ -61,12 +61,12 @@ export function BlogRow({
         </div>
       </div>
       {diagramSvg ? (
-        <div className="h-[210px] w-full overflow-hidden rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)] md:w-[260px]">
+        <div className="aspect-[16/10] w-full overflow-hidden rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)] transition-transform duration-200 group-hover:-translate-y-0.5">
           <DiagramThumb svg={diagramSvg} className="h-full w-full" />
         </div>
       ) : (
         <div
-          className="h-[210px] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] md:w-[260px]"
+          className="aspect-[16/10] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] transition-transform duration-200 group-hover:-translate-y-0.5"
           style={cover}
         />
       )}

@@ -1,5 +1,6 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
 
+import { CodeSource } from "@/components/content/CodeSource";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { urlFor } from "@/sanity/image";
 import type { POST_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
@@ -49,16 +50,14 @@ const components: PortableTextComponents = {
             <span className="hidden sm:block" aria-hidden="true" />
           )}
           <div className="overflow-hidden rounded-[8px] bg-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)]">
-            <pre className="overflow-x-auto p-[18px] font-mono text-[13.5px] leading-[1.8] text-[color:var(--color-ghost-white)] sm:px-6">
-              <code>{value.code}</code>
-            </pre>
+            <CodeSource code={value.code} language={value.language} />
           </div>
           {value.output ? (
             <>
               <span className="pt-3 font-mono text-[13px] font-bold text-muted">
                 {outputLabel}
               </span>
-              <pre className="mt-2 overflow-x-auto rounded-[4px] bg-[rgba(0,103,168,0.06)] p-[10px_16px] font-mono text-sm text-[color:var(--color-xiketic)] sm:mt-0">
+              <pre className="mt-2 overflow-x-auto rounded-[4px] bg-[rgba(0,147,233,0.06)] p-[10px_16px] font-mono text-sm text-[color:var(--color-xiketic)] sm:mt-0">
                 {value.output}
               </pre>
             </>
@@ -90,7 +89,7 @@ const components: PortableTextComponents = {
       </p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-10 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[26px_30px] shadow-[-6px_6px_0_rgba(0,103,168,0.30)]">
+      <blockquote className="my-10 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[26px_30px] shadow-[-6px_6px_0_rgba(0,147,233,0.30)]">
         <p className="m-0 font-mono text-lg font-bold leading-[1.5] text-heading">
           {children}
         </p>

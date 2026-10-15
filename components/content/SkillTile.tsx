@@ -17,7 +17,7 @@ export function SkillTile({
 }: SkillTileProps) {
   return (
     <div
-      className={`flex min-h-[300px] flex-col overflow-hidden rounded-[8px] bg-[color:var(--color-xiketic)] transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:translate-x-0.5 hover:shadow-[-6px_6px_0_rgba(0,103,168,0.35)] ${className}`}
+      className={`flex min-h-[300px] flex-col overflow-hidden rounded-[8px] bg-[color:var(--color-xiketic)] transition-[box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:translate-x-0.5 hover:shadow-[-6px_6px_0_rgba(0,147,233,0.35)] ${className}`}
     >
       <div className="flex flex-none items-center gap-1.5 bg-white/[0.08] px-3.5 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-white/25" />

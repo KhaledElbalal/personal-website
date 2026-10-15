@@ -262,7 +262,7 @@ export async function PostDetailView({
                     const row = (
                       <span
                         className={`grid grid-cols-[36px_1fr_auto] items-baseline gap-3.5 border-t border-black/10 px-1 py-3.5 no-underline ${
-                          isCurrent ? "-ml-0.5 border-l-2 border-l-accent bg-[rgba(0,103,168,0.06)] pl-3" : ""
+                          isCurrent ? "-ml-0.5 border-l-2 border-l-accent bg-[rgba(0,147,233,0.06)] pl-3" : ""
                         }`}
                       >
                         <span className="font-mono text-[13px] font-bold text-accent">
