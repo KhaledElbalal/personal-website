@@ -20,6 +20,7 @@ type Block = {
   children?: { _type: string; marks?: string[] | null }[] | null;
   markDefs?: MarkDef[] | null;
   body?: Block[] | null;
+  steps?: { text?: Block[] | null }[] | null;
 };
 
 export type Citation = {
@@ -82,11 +83,15 @@ function identify(def: MarkDef): Omit<Citation, "n" | "detail"> | null {
   }
 }
 
-/** Walks blocks (and callout bodies) in reading order. */
+/** Walks blocks (and callout / walkthrough text) in reading order. */
 function eachMark(body: Block[] | null | undefined, fn: (def: MarkDef, topLevel: boolean) => void, topLevel = true) {
   for (const block of body ?? []) {
     if (block._type === "callout") {
       eachMark(block.body, fn, false);
+      continue;
+    }
+    if (block._type === "walkthrough") {
+      for (const step of block.steps ?? []) eachMark(step.text, fn, false);
       continue;
     }
     if (block._type !== "block") continue;

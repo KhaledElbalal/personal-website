@@ -11,6 +11,7 @@ import {
 import { CodeTabs } from "@/components/content/CodeTabs";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { Sidenote } from "@/components/content/Sidenote";
+import { WalkthroughBlock, type WalkthroughValue } from "@/components/content/WalkthroughBlock";
 import type { PostNotes } from "@/lib/citations";
 import { urlFor } from "@/sanity/image";
 import type { POST_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
@@ -71,6 +72,14 @@ function buildComponents(
           </CodeTabs>
         );
       },
+      walkthrough: ({ value }) => (
+        <WalkthroughBlock
+          value={value as WalkthroughValue}
+          renderText={(text) => (
+            <PortableText value={text as PostBodyValue & object} components={components} />
+          )}
+        />
+      ),
       callout: ({ value }) => {
         if (!value?.body?.length) return null;
         return (

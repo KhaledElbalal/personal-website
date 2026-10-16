@@ -9,6 +9,20 @@ const p = (key: string, ...children: ReturnType<typeof span>[]) => ({
   children,
 });
 
+// Two tiny hand-drawn pages standing in for a Studio multi-page export.
+const card = (x: number, label: string, on: boolean) =>
+  `<g><rect x="${x}" y="40" width="150" height="70" rx="8" fill="#fff" stroke="${on ? "#0093e9" : "#121420"}" stroke-width="${on ? 2.5 : 1.5}"/>` +
+  `<text x="${x + 75}" y="80" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#121420">${label}</text></g>`;
+const page = (active: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 150" width="560" height="150">` +
+  card(20, "Task", active === "task") + card(205, "Event loop", active === "loop") + card(390, "epoll", active === "epoll") +
+  `<path d="M170 75 H205 M355 75 H390" stroke="#121420" stroke-width="1.5" stroke-dasharray="5 4"/></svg>`;
+const PAGES = JSON.stringify([
+  { name: "Suspended", svg: page("loop"), width: 560, height: 150 },
+  { name: "Waiting in the kernel", svg: page("epoll"), width: 560, height: 150 },
+  { name: "Resumed", svg: page("task"), width: 560, height: 150 },
+]);
+
 export const POST_BODY_SAMPLE = [
   {
     _type: "block",
@@ -105,6 +119,32 @@ export const POST_BODY_SAMPLE = [
       "        raise RuntimeError('no running event loop')  # [!code ++]",
       "    return loop",
     ].join("\n"),
+  },
+  {
+    _type: "walkthrough",
+    _key: "w1",
+    title: "What happens on await",
+    code: {
+      _type: "code",
+      language: "python",
+      filename: "echo.py",
+      code: [
+        "async def echo(reader, writer):",
+        "    while True:",
+        "        data = await reader.read(4096)",
+        "        if not data:",
+        "            break",
+        "        writer.write(data)",
+        "        await writer.drain()",
+      ].join("\n"),
+    },
+    diagram: { alt: "Task, event loop and epoll", svg: page("loop"), width: 560, pages: PAGES },
+    steps: [
+      { _key: "s1", title: "The task reaches await", lines: "3", page: 1, text: [p("s1p", span("No bytes are buffered yet, so "), span("reader.read()", ["code"]), span(" returns a pending future and the coroutine suspends."))] },
+      { _key: "s2", title: "The loop parks in the kernel", lines: "3", page: 2, text: [p("s2p", span("With nothing runnable, the loop calls "), span("epoll_wait()", ["code"]), span(" and the thread sleeps."))] },
+      { _key: "s3", title: "Data arrives, the task resumes", lines: "3-6", page: 3, text: [p("s3p", span("The fd becomes readable, the future resolves, and execution continues on the next line."))] },
+      { _key: "s4", title: "Backpressure", lines: "7", text: [p("s4p", span("drain()", ["code"]), span(" suspends again only if the write buffer is above its high-water mark."))] },
+    ],
   },
   {
     _type: "callout",
