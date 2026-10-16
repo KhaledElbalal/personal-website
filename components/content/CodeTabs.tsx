@@ -53,7 +53,9 @@ export function CodeTabs({ labels, caption, children }: CodeTabsProps) {
       <div
         role="tablist"
         aria-label={caption ?? "Code variants"}
-        className="flex gap-1 overflow-x-auto rounded-t-[8px] border-b border-white/10 bg-[color:var(--color-xiketic)] px-2 pt-2"
+        // Scrolls sideways if there are many tabs, but never shows a bar; the
+        // divider is an inset shadow so the active underline needs no overlap.
+        className="flex gap-1 overflow-x-auto overflow-y-hidden rounded-t-[8px] bg-[color:var(--color-xiketic)] px-2 pt-2 shadow-[inset_0_-1px_0_rgba(255,255,255,0.1)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {labels.map((label, i) => {
           const selected = i === active;
@@ -71,7 +73,7 @@ export function CodeTabs({ labels, caption, children }: CodeTabsProps) {
               tabIndex={selected ? 0 : -1}
               onClick={() => select(i)}
               onKeyDown={onKeyDown}
-              className={`-mb-px whitespace-nowrap border-b-2 px-3 pb-2 pt-1.5 font-mono text-[12.5px] font-bold transition-colors ${
+              className={`whitespace-nowrap border-b-2 px-3 pb-2 pt-1.5 font-mono text-[12.5px] font-bold transition-colors ${
                 selected
                   ? "border-[color:var(--color-maya-blue)] text-[color:var(--color-ghost-white)]"
                   : "border-transparent text-[color:var(--color-ghost-white)]/55 hover:text-[color:var(--color-ghost-white)]"
