@@ -33,5 +33,13 @@ export const GROUP_PRESETS: GroupPreset[] = [
   { id: "boundary", label: "Boundary", stroke: ACCENT, fill: "transparent", dashed: true, w: 420, h: 280 },
   { id: "service", label: "Service", stroke: INK, fill: "#F7F7F7", dashed: false, icon: "system:box", iconColor: ACCENT, w: 420, h: 280 },
   { id: "k8s", label: "Kubernetes cluster", stroke: "#326CE5", fill: "transparent", dashed: true, icon: "system:container", iconColor: "#326CE5", w: 460, h: 300 },
+  // OS layers — stack them top to bottom for user space → kernel → hardware.
+  { id: "user-space", label: "User space", stroke: ACCENT, fill: "#F5FAFD", dashed: false, icon: "system:app-window", iconColor: ACCENT, w: 900, h: 300 },
+  { id: "kernel-space", label: "Kernel space", stroke: INK, fill: "#F7F7F7", dashed: false, icon: "system:shield", iconColor: INK, w: 900, h: 240 },
+  { id: "hardware", label: "Hardware", stroke: "#7D8998", fill: "transparent", dashed: true, icon: "system:microchip", iconColor: "#7D8998", w: 900, h: 200 },
+  { id: "process", label: "Process", stroke: INK, fill: "transparent", dashed: false, icon: "system:app-window", iconColor: ACCENT, w: 520, h: 280 },
+  { id: "thread", label: "Thread", stroke: ACCENT, fill: "transparent", dashed: true, icon: "system:spline", iconColor: ACCENT, w: 420, h: 200 },
+  { id: "event-loop", label: "Event loop", stroke: ACCENT, fill: "transparent", dashed: false, icon: "system:iteration-cw", iconColor: ACCENT, w: 460, h: 240 },
+  { id: "shared-memory", label: "Shared memory", stroke: "#7D8998", fill: "#FAFAFC", dashed: true, icon: "system:memory-stick", iconColor: "#7D8998", w: 420, h: 220 },
   { id: "compose", label: "Docker Compose", stroke: INK, fill: "transparent", dashed: true, icon: "system:container", iconColor: ACCENT, w: 460, h: 300 },
 ];

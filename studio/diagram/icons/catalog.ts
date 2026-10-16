@@ -82,6 +82,33 @@ const SYSTEM: [file: string, name: string, keywords?: string][] = [
   ["git-branch", "CI/CD", "deploy pipeline git"],
   ["package", "Artifact", "build release"],
   ["file-json", "Config", "json settings"],
+  // OS & async runtimes
+  ["app-window", "Process", "pid address space program"],
+  ["spline", "Thread", "pthread os thread worker"],
+  ["square-function", "Coroutine", "async def co_await generator frame"],
+  ["list-todo", "Task", "asyncio task scheduled coroutine"],
+  ["ticket", "Future", "promise awaitable result pending"],
+  ["iteration-cw", "Event loop", "reactor proactor asyncio libuv tokio uvloop"],
+  ["list-ordered", "Ready queue", "run queue runnable scheduler callbacks"],
+  ["pause", "Suspend", "await yield park block"],
+  ["play", "Resume", "wake send continue"],
+  ["split", "Spawn", "fork create_task clone"],
+  ["merge", "Join / gather", "await all wait"],
+  ["binoculars", "Selector", "epoll kqueue select poll readiness"],
+  ["circle-dashed", "Ring buffer", "io_uring sq cq submission completion queue iocp"],
+  ["arrow-down-up", "Syscall", "kernel boundary trap"],
+  ["shield", "Kernel", "os kernel space ring 0"],
+  ["file-code", "File descriptor", "fd handle"],
+  ["plug", "Socket", "tcp udp connection"],
+  ["cable", "Pipe", "ipc stream"],
+  ["bell-ring", "Interrupt", "irq signal wakeup"],
+  ["timer", "Timer", "timeout sleep deadline timerfd"],
+  ["lock-keyhole", "Lock", "mutex gil critical section"],
+  ["traffic-cone", "Semaphore", "limit permits backpressure"],
+  ["microchip", "CPU core", "core hardware thread"],
+  ["memory-stick", "Memory", "ram heap page mmap"],
+  ["ethernet-port", "NIC", "network card device"],
+  ["layers-2", "Call stack", "frames stack"],
 ];
 
 async function loadSystem(): Promise<IconItem[]> {
@@ -115,6 +142,12 @@ const BRAND_FAVORITES = [
   "postgresql",
   "docker",
   "nginx",
+  // Systems posts: OS and languages below Python.
+  "linux",
+  "cplusplus",
+  "c",
+  "rust",
+  "llvm",
 ];
 
 async function loadBrands(): Promise<IconItem[]> {

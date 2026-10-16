@@ -21,9 +21,10 @@ export type Flow = { id: string; name: string; steps: FlowStep[]; isDefault?: bo
 
 const NODE = "sd-node";
 
-// Icons/labels that read as a queue, broker or stream.
-const QUEUE_ICON = /SimpleQueueService|Kinesis|ManagedStreamingforApacheKafka|MQ\b|EventBridge(Default|Custom)EventBus|brands:(apachekafka|rabbitmq|redis|nats|celery-broker)|system:(inbox|radio)/i;
-const QUEUE_LABEL = /\b(sqs|queue|dlq|kafka|rabbit(mq)?|redis|broker|kinesis|stream|topic|bus)\b/i;
+// Icons/labels that read as a queue, broker or stream (incl. run queues and
+// io_uring-style rings).
+const QUEUE_ICON = /SimpleQueueService|Kinesis|ManagedStreamingforApacheKafka|MQ\b|EventBridge(Default|Custom)EventBus|brands:(apachekafka|rabbitmq|redis|nats|celery-broker)|system:(inbox|radio|list-ordered|circle-dashed)/i;
+const QUEUE_LABEL = /\b(sqs|queue|dlq|kafka|rabbit(mq)?|redis|broker|kinesis|stream|topic|bus|ring|sq|cq)\b/i;
 const FANOUT_ICON = /SimpleNotificationService|EventBridge\b|EventBridge$|system:radio/i;
 
 // ── Node roles ──
