@@ -322,6 +322,18 @@ body {
   opacity: 1;
   filter: none;
 }
+/* Walkthrough steps: lines outside the current step's range recede. */
+.walk-code pre:has(.line.highlighted) .line:not(.highlighted) {
+  opacity: 0.45;
+}
+.walk-code .line {
+  transition: opacity 0.2s, background-color 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .walk-code .line {
+    transition: none;
+  }
+}
 /* [!code word:await] */
 .code-hl .highlighted-word {
   border-radius: 3px;

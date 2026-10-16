@@ -4,6 +4,7 @@ import { skill } from "./documents/skill";
 import { callout } from "./objects/callout";
 import { code, codeTabs } from "./objects/code";
 import { diagram } from "./objects/diagram";
+import { walkthrough } from "./objects/walkthrough";
 import { qualificationsPage } from "./singletons/qualificationsPage";
 import { siteSettings } from "./singletons/siteSettings";
 
@@ -17,4 +18,5 @@ export const schemaTypes = [
   code,
   codeTabs,
   callout,
+  walkthrough,
 ];

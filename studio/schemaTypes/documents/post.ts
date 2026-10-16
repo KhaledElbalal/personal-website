@@ -173,6 +173,7 @@ export const post = defineType({
         defineArrayMember({ type: "code" }),
         defineArrayMember({ type: "codeTabs" }),
         defineArrayMember({ type: "callout" }),
+        defineArrayMember({ type: "walkthrough" }),
       ],
     }),
   ],

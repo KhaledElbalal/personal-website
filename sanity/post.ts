@@ -52,9 +52,11 @@ type BodyBlock = {
   _key: string;
   style?: string;
   children?: Array<{ text?: string }>;
-  code?: string;
+  /** A code cell's source; a walkthrough's code cell. */
+  code?: string | { code?: string | null } | null;
   tabs?: { code?: string | null }[] | null;
   body?: BodyBlock[] | null;
+  steps?: { title?: string | null; text?: BodyBlock[] | null }[] | null;
 };
 
 export type Heading = { id: string; text: string; level: "h2" | "h3" };
@@ -79,10 +81,15 @@ const countWords = (text?: string | null) => text?.split(/\s+/).filter(Boolean).
 function bodyWords(body: BodyBlock[]): number {
   return body.reduce((total, b) => {
     if (b._type === "block") return total + countWords(b.children?.map((c) => c.text ?? "").join(" "));
-    if (b._type === "code") return total + countWords(b.code);
+    if (b._type === "code") return total + countWords(typeof b.code === "string" ? b.code : null);
     // Tabs show one variant at a time: count the longest, not all of them.
     if (b._type === "codeTabs") return total + Math.max(0, ...(b.tabs ?? []).map((t) => countWords(t.code)));
     if (b._type === "callout") return total + bodyWords(b.body ?? []);
+    if (b._type === "walkthrough") {
+      const code = typeof b.code === "object" ? b.code?.code : null;
+      const steps = (b.steps ?? []).reduce((n, s) => n + countWords(s.title) + bodyWords(s.text ?? []), 0);
+      return total + countWords(code) + steps;
+    }
     return total;
   }, 0);
 }

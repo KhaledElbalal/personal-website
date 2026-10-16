@@ -27,6 +27,9 @@ type Block = {
   output?: string;
   // codeTabs
   tabs?: Block[];
+  // walkthrough
+  steps?: { title?: string; text?: Block[]; lines?: string; page?: number }[];
+  diagram?: DiagramBlockLike;
   // callout
   tone?: string;
   title?: string;
@@ -94,6 +97,15 @@ function spansToMarkdown(block: Block, notes?: Notes) {
     .join("");
 }
 
+function pageNamesOf(diagram?: DiagramBlockLike): string[] {
+  try {
+    const pages = JSON.parse(diagram?.pages ?? "[]") as { name?: string }[];
+    return Array.isArray(pages) ? pages.map((p, i) => p.name || `Page ${i + 1}`) : [];
+  } catch {
+    return [];
+  }
+}
+
 function blocksToMarkdown(blocks: Block[], notes?: Notes): string {
   const out: string[] = [];
   let numbered = 0;
@@ -133,6 +145,21 @@ function blocksToMarkdown(blocks: Block[], notes?: Notes): string {
         });
         if (b.caption) out.push("", `_${b.caption}_`);
         break;
+      case "walkthrough": {
+        out.push(`**Walkthrough${b.title ? `: ${b.title}` : ""}**`, "");
+        if (b.code && typeof b.code === "object") out.push(...codeToMarkdown(b.code as Block), "");
+        const pageNames = pageNamesOf(b.diagram);
+        (b.steps ?? []).forEach((s, n) => {
+          const where = [
+            s.lines ? `lines ${s.lines}` : null,
+            s.page && pageNames[s.page - 1] ? `diagram: ${pageNames[s.page - 1]}` : null,
+          ].filter(Boolean);
+          const text = blocksToMarkdown(s.text ?? [], notes).replace(/\n+/g, " ");
+          out.push(`${n + 1}. **${s.title ?? `Step ${n + 1}`}**${where.length ? ` _(${where.join(" · ")})_` : ""}${text ? ` — ${text}` : ""}`);
+        });
+        if (b.diagram?.svg) out.push("", diagramToMarkdown(b.diagram));
+        break;
+      }
       case "callout": {
         const [kind, name] = ALERT[b.tone ?? "note"] ?? ALERT.note;
         const inner = blocksToMarkdown(b.body ?? [], notes);

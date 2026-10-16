@@ -15,6 +15,48 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type Walkthrough = {
+  _type: "walkthrough";
+  title?: string;
+  code?: Code;
+  diagram?: Diagram;
+  steps?: Array<{
+    title?: string;
+    text?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<
+        | {
+            href?: string;
+            _type: "link";
+            _key: string;
+          }
+        | {
+            kind?: "pep" | "wg21" | "man" | "rfc" | "link";
+            id?: string;
+            url?: string;
+            title?: string;
+            _type: "citation";
+            _key: string;
+          }
+      >;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    lines?: string;
+    page?: number;
+    _type: "walkStep";
+    _key: string;
+  }>;
+};
+
 export type Callout = {
   _type: "callout";
   tone?: "note" | "tip" | "warning" | "deep";
@@ -318,6 +360,9 @@ export type Post = {
     | ({
         _key: string;
       } & Callout)
+    | ({
+        _key: string;
+      } & Walkthrough)
   >;
 };
 
@@ -425,6 +470,7 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | Walkthrough
   | Callout
   | CodeTabs
   | Code
@@ -504,7 +550,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    "body": body[]{    !(_type in ["diagram", "callout"]) => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{      _type != "diagram" => @,      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }    } }  } }
+// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    "body": body[]{    !(_type in ["diagram", "callout", "walkthrough"]) => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    _type == "walkthrough" => { _key, _type, title, code, steps,      "diagram": diagram{ alt, caption, svg, width, height, pages, graph } },    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{      _type != "diagram" => @,      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }    } }  } }
 export type POST_BY_SLUG_QUERY_RESULT = {
   _id: string;
   kind: "post" | "project" | null;
@@ -718,6 +764,56 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         _type: "image";
         _key: string;
       }
+    | {
+        _key: string;
+        _type: "walkthrough";
+        title: string | null;
+        code: Code | null;
+        steps: Array<{
+          title?: string;
+          text?: Array<{
+            children?: Array<{
+              marks?: Array<string>;
+              text?: string;
+              _type: "span";
+              _key: string;
+            }>;
+            style?: "normal";
+            listItem?: "bullet" | "number";
+            markDefs?: Array<
+              | {
+                  kind?: "link" | "man" | "pep" | "rfc" | "wg21";
+                  id?: string;
+                  url?: string;
+                  title?: string;
+                  _type: "citation";
+                  _key: string;
+                }
+              | {
+                  href?: string;
+                  _type: "link";
+                  _key: string;
+                }
+            >;
+            level?: number;
+            _type: "block";
+            _key: string;
+          }>;
+          lines?: string;
+          page?: number;
+          _type: "walkStep";
+          _key: string;
+        }> | null;
+        diagram: {
+          alt: string | null;
+          caption: string | null;
+          svg: string | null;
+          width: number | null;
+          height: number | null;
+          pages: string | null;
+          graph: string | null;
+        } | null;
+      }
   > | null;
 } | null;
 
@@ -828,7 +924,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': POSTS_QUERY_RESULT;
     '*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    "body": body[]{\n    !(_type in ["diagram", "callout"]) => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{\n      _type != "diagram" => @,\n      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }\n    } }\n  } }': POST_BY_SLUG_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    "body": body[]{\n    !(_type in ["diagram", "callout", "walkthrough"]) => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    _type == "walkthrough" => { _key, _type, title, code, steps,\n      "diagram": diagram{ alt, caption, svg, width, height, pages, graph } },\n    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{\n      _type != "diagram" => @,\n      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }\n    } }\n  } }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {\n    _id, title, "slug": slug.current, date, "part": series.part\n  }': SERIES_POSTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;

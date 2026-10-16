@@ -26,7 +26,8 @@ function parseFlows(json?: string | null): FlowDef[] {
   }
 }
 
-function parsePages(json?: string | null) {
+/** Pages JSON from the Studio export → sanitized page views. */
+export function parsePages(json?: string | null) {
   if (!json) return [];
   try {
     const pages = JSON.parse(json) as { name?: string; svg?: string; width?: number }[];

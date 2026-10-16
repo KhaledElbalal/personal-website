@@ -443,7 +443,7 @@ function Lightbox({
   );
 }
 
-type DiagramPageView = { name: string; html: string; width?: number | null };
+export type DiagramPageView = { name: string; html: string; width?: number | null };
 
 /**
  * Multi-page diagram. A segmented pager pinned to the frame's top-left
