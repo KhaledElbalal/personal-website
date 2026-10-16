@@ -1,6 +1,8 @@
 import { PortableText, type PortableTextComponents } from "next-sanity";
 
-import { CodeSource } from "@/components/content/CodeSource";
+import { Callout } from "@/components/content/Callout";
+import { CodeCard, CodeCell, CodeOutput, type CodeValue } from "@/components/content/CodeCell";
+import { CodeTabs } from "@/components/content/CodeTabs";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { urlFor } from "@/sanity/image";
 import type { POST_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
@@ -36,33 +38,27 @@ const components: PortableTextComponents = {
         />
       );
     },
-    code: ({ value }) => {
-      if (!value?.code) return null;
-      const cellNumber = value.label?.match(/\d+/)?.[0];
-      const outputLabel = cellNumber ? `Out[${cellNumber}]:` : "Out:";
+    code: ({ value }) => <CodeCell value={value} />,
+    codeTabs: ({ value }) => {
+      const tabs = ((value?.tabs ?? []) as (CodeValue & { _key: string })[]).filter((t) => t.code);
+      if (!tabs.length) return null;
       return (
-        <div className="my-6 grid grid-cols-1 gap-2 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-y-3 sm:gap-x-3.5">
-          {value.label ? (
-            <span className="pt-4 font-mono text-[13px] font-bold text-accent">
-              {value.label}
-            </span>
-          ) : (
-            <span className="hidden sm:block" aria-hidden="true" />
-          )}
-          <div className="overflow-hidden rounded-[8px] bg-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)]">
-            <CodeSource code={value.code} language={value.language} />
-          </div>
-          {value.output ? (
-            <>
-              <span className="pt-3 font-mono text-[13px] font-bold text-muted">
-                {outputLabel}
-              </span>
-              <pre className="mt-2 overflow-x-auto rounded-[4px] bg-[rgba(0,147,233,0.06)] p-[10px_16px] font-mono text-sm text-[color:var(--color-xiketic)] sm:mt-0">
-                {value.output}
-              </pre>
-            </>
-          ) : null}
-        </div>
+        <CodeTabs labels={tabs.map((t, i) => t.label || t.language || `Tab ${i + 1}`)} caption={value.caption}>
+          {tabs.map((t) => (
+            <div key={t._key}>
+              <CodeCard value={t} attached />
+              {t.output ? <CodeOutput output={t.output} className="mt-2" /> : null}
+            </div>
+          ))}
+        </CodeTabs>
+      );
+    },
+    callout: ({ value }) => {
+      if (!value?.body?.length) return null;
+      return (
+        <Callout tone={value.tone} title={value.title} collapsed={value.collapsed}>
+          <PortableText value={value.body} components={components} />
+        </Callout>
       );
     },
   },
@@ -97,6 +93,11 @@ const components: PortableTextComponents = {
     ),
   },
   marks: {
+    code: ({ children }) => (
+      <code className="rounded-[4px] bg-[rgba(0,147,233,0.08)] px-[0.35em] py-[0.1em] font-mono text-[0.9em] text-ink">
+        {children}
+      </code>
+    ),
     link: ({ children, value }) => (
       <a
         href={value?.href}

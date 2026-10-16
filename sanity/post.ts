@@ -53,6 +53,8 @@ type BodyBlock = {
   style?: string;
   children?: Array<{ text?: string }>;
   code?: string;
+  tabs?: { code?: string | null }[] | null;
+  body?: BodyBlock[] | null;
 };
 
 export type Heading = { id: string; text: string; level: "h2" | "h3" };
@@ -72,18 +74,21 @@ export function extractHeadings(body?: BodyBlock[] | null): Heading[] {
     }));
 }
 
+const countWords = (text?: string | null) => text?.split(/\s+/).filter(Boolean).length ?? 0;
+
+function bodyWords(body: BodyBlock[]): number {
+  return body.reduce((total, b) => {
+    if (b._type === "block") return total + countWords(b.children?.map((c) => c.text ?? "").join(" "));
+    if (b._type === "code") return total + countWords(b.code);
+    // Tabs show one variant at a time: count the longest, not all of them.
+    if (b._type === "codeTabs") return total + Math.max(0, ...(b.tabs ?? []).map((t) => countWords(t.code)));
+    if (b._type === "callout") return total + bodyWords(b.body ?? []);
+    return total;
+  }, 0);
+}
+
 /** ~200 wpm reading time, rounded up, minimum 1 minute. */
 export function estimateReadingTime(body?: BodyBlock[] | null): number {
   if (!body) return 1;
-  const words = body.reduce((total, b) => {
-    if (b._type === "block") {
-      const text = b.children?.map((c) => c.text ?? "").join(" ") ?? "";
-      return total + text.split(/\s+/).filter(Boolean).length;
-    }
-    if (b._type === "code") {
-      return total + (b.code?.split(/\s+/).filter(Boolean).length ?? 0);
-    }
-    return total;
-  }, 0);
-  return Math.max(1, Math.round(words / 200));
+  return Math.max(1, Math.round(bodyWords(body) / 200));
 }

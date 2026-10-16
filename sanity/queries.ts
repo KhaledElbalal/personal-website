@@ -30,12 +30,17 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(
 );
 
 // Diagram blocks drop their editor `snapshot` — the page only needs the SVG.
+// Callouts can hold diagrams too, so their bodies get the same treatment.
 export const POST_BY_SLUG_QUERY = defineQuery(
   `*[_type == "post" && slug.current == $slug][0] { ${postFields}, tags, series,
     "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },
     "body": body[]{
-    _type != "diagram" => @,
-    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }
+    !(_type in ["diagram", "callout"]) => @,
+    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },
+    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{
+      _type != "diagram" => @,
+      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }
+    } }
   } }`,
 );
 

@@ -15,6 +15,67 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type Callout = {
+  _type: "callout";
+  tone?: "note" | "tip" | "warning" | "deep";
+  title?: string;
+  collapsed?: boolean;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | ({
+        _key: string;
+      } & Code)
+    | ({
+        _key: string;
+      } & CodeTabs)
+    | ({
+        _key: string;
+      } & Diagram)
+  >;
+};
+
+export type CodeTabs = {
+  _type: "codeTabs";
+  tabs?: Array<{
+    label?: string;
+    language?: string;
+    filename?: string;
+    highlightLines?: string;
+    code?: string;
+    output?: string;
+    _type: "codeTab";
+    _key: string;
+  }>;
+  caption?: string;
+};
+
+export type Code = {
+  _type: "code";
+  label?: string;
+  language?: string;
+  filename?: string;
+  highlightLines?: string;
+  code?: string;
+  output?: string;
+};
+
 export type Diagram = {
   _type: "diagram";
   alt?: string;
@@ -223,14 +284,15 @@ export type Post = {
         _type: "image";
         _key: string;
       }
-    | {
-        label?: string;
-        language?: string;
-        code?: string;
-        output?: string;
-        _type: "code";
+    | ({
         _key: string;
-      }
+      } & Code)
+    | ({
+        _key: string;
+      } & CodeTabs)
+    | ({
+        _key: string;
+      } & Callout)
   >;
 };
 
@@ -338,6 +400,9 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
+  | Callout
+  | CodeTabs
+  | Code
   | Diagram
   | SanityFileAssetReference
   | QualificationsPage
@@ -414,7 +479,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../sanity/queries.ts
 // Variable: POST_BY_SLUG_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    "body": body[]{    _type != "diagram" => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }  } }
+// Query: *[_type == "post" && slug.current == $slug][0] {   _id,  kind,  title,  "slug": slug.current,  category,  date,  startDate,  endDate,  current,  cover,  "coverSvg": coverDiagram.svg,  summary,  featured,  path, tags, series,    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    "body": body[]{    !(_type in ["diagram", "callout"]) => @,    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{      _type != "diagram" => @,      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }    } }  } }
 export type POST_BY_SLUG_QUERY_RESULT = {
   _id: string;
   kind: "post" | "project" | null;
@@ -475,12 +540,110 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         _key: string;
       }
     | {
+        _key: string;
+        _type: "callout";
+        tone: "deep" | "note" | "tip" | "warning" | null;
+        title: string | null;
+        collapsed: boolean | null;
+        body: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>;
+                text?: string;
+                _type: "span";
+                _key: string;
+              }>;
+              style?: "normal";
+              listItem?: "bullet" | "number";
+              markDefs?: Array<{
+                href?: string;
+                _type: "link";
+                _key: string;
+              }>;
+              level?: number;
+              _type: "block";
+              _key: string;
+            }
+          | {
+              _key: string;
+              _type: "code";
+              label?: string;
+              language?: string;
+              filename?: string;
+              highlightLines?: string;
+              code?: string;
+              output?: string;
+            }
+          | {
+              _key: string;
+              _type: "codeTabs";
+              tabs?: Array<{
+                label?: string;
+                language?: string;
+                filename?: string;
+                highlightLines?: string;
+                code?: string;
+                output?: string;
+                _type: "codeTab";
+                _key: string;
+              }>;
+              caption?: string;
+            }
+          | {
+              _key: string;
+              _type: "diagram";
+              alt: string | null;
+              caption: string | null;
+              svg: string | null;
+              width: number | null;
+              height: number | null;
+              animation: "ambient" | "off" | "walkthrough" | null;
+              animateFlow: boolean | null;
+              flows: string | null;
+              pages: string | null;
+              graph: string | null;
+            }
+        > | null;
+      }
+    | {
+        _key: string;
+        _type: "code";
         label?: string;
         language?: string;
+        filename?: string;
+        highlightLines?: string;
         code?: string;
         output?: string;
-        _type: "code";
+      }
+    | {
         _key: string;
+        _type: "codeTabs";
+        tabs?: Array<{
+          label?: string;
+          language?: string;
+          filename?: string;
+          highlightLines?: string;
+          code?: string;
+          output?: string;
+          _type: "codeTab";
+          _key: string;
+        }>;
+        caption?: string;
+      }
+    | {
+        _key: string;
+        _type: "diagram";
+        alt: string | null;
+        caption: string | null;
+        animation: "ambient" | "off" | "walkthrough" | null;
+        animateFlow: boolean | null;
+        flows: string | null;
+        graph: string | null;
+        pages: string | null;
+        snapshot?: string;
+        svg: string | null;
+        width: number | null;
+        height: number | null;
       }
     | {
         _key: string;
@@ -615,7 +778,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && kind == $kind && defined(slug.current)] | order(coalesce(date, startDate) desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': POSTS_QUERY_RESULT;
     '*[_type == "post" && kind == "project" && featured == true && defined(slug.current)] | order(startDate desc) { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n }': FEATURED_PROJECTS_QUERY_RESULT;
-    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    "body": body[]{\n    _type != "diagram" => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }\n  } }': POST_BY_SLUG_QUERY_RESULT;
+    '*[_type == "post" && slug.current == $slug][0] { \n  _id,\n  kind,\n  title,\n  "slug": slug.current,\n  category,\n  date,\n  startDate,\n  endDate,\n  current,\n  cover,\n  "coverSvg": coverDiagram.svg,\n  summary,\n  featured,\n  path\n, tags, series,\n    "coverDiagram": coverDiagram{ alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    "body": body[]{\n    !(_type in ["diagram", "callout"]) => @,\n    _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph },\n    _type == "callout" => { _key, _type, tone, title, collapsed, "body": body[]{\n      _type != "diagram" => @,\n      _type == "diagram" => { _key, _type, alt, caption, svg, width, height, animation, animateFlow, flows, pages, graph }\n    } }\n  } }': POST_BY_SLUG_QUERY_RESULT;
     '*[_type == "post" && defined(slug.current) && series.name == $name] | order(series.part asc) {\n    _id, title, "slug": slug.current, date, "part": series.part\n  }': SERIES_POSTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, order asc) {\n    _id, type, title, organization, detail, startDate, endDate, current,\n    location, tags, metric, logo, featured, order\n  }': EXPERIENCE_QUERY_RESULT;
     '*[_type == "qualificationsPage"][0] {\n    intro,\n    "cvUrl": cv.asset->url,\n    stats\n  }': QUALIFICATIONS_PAGE_QUERY_RESULT;
