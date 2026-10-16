@@ -168,43 +168,9 @@ export const post = defineType({
             }),
           ],
         }),
-        defineArrayMember({
-          type: "object",
-          name: "code",
-          title: "Code cell",
-          fields: [
-            defineField({
-              name: "label",
-              type: "string",
-              description: 'Optional cell label, e.g. "In [1]:".',
-            }),
-            defineField({
-              name: "language",
-              type: "string",
-              description: 'e.g. "python", "bash", "ts".',
-            }),
-            defineField({
-              name: "code",
-              type: "text",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "output",
-              title: "Output",
-              type: "text",
-              description: 'Optional — rendered as an "Out [n]:" result below the cell.',
-            }),
-          ],
-          preview: {
-            select: { code: "code", language: "language" },
-            prepare({ code, language }) {
-              return {
-                title: language ? `Code (${language})` : "Code",
-                subtitle: code?.slice(0, 60),
-              };
-            },
-          },
-        }),
+        defineArrayMember({ type: "code" }),
+        defineArrayMember({ type: "codeTabs" }),
+        defineArrayMember({ type: "callout" }),
       ],
     }),
   ],

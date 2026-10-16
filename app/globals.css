@@ -247,17 +247,89 @@ body {
   height: 100%;
 }
 
-/* Highlighted code cells (components/content/CodeSource.tsx, lib/highlight.ts). */
+/* Highlighted code cells (components/content/CodeSource.tsx, lib/highlight.ts).
+   Padding lives on the lines, not the <pre>, so highlighted / diff rows can
+   paint edge to edge; `code` grows to the longest line so row backgrounds
+   follow horizontal scroll. */
 .code-hl pre {
+  --code-pad: 18px;
   margin: 0;
   overflow-x: auto;
-  padding: 18px;
+  padding-block: 18px;
   font-family: var(--font-mono);
   font-size: 13.5px;
   line-height: 1.8;
 }
 @media (min-width: 640px) {
   .code-hl pre {
-    padding-inline: 24px;
+    --code-pad: 24px;
+  }
+}
+.code-hl code {
+  display: block;
+  width: fit-content;
+  min-width: 100%;
+}
+.code-hl .line {
+  display: inline-block;
+  width: 100%;
+  padding-inline: var(--code-pad);
+}
+/* [!code highlight] / "Highlight lines" */
+.code-hl .line.highlighted {
+  background: rgba(56, 182, 255, 0.13);
+  box-shadow: inset 3px 0 0 var(--color-maya-blue);
+}
+.code-hl .line.highlighted.error {
+  background: rgba(255, 107, 107, 0.14);
+  box-shadow: inset 3px 0 0 #ff6b6b;
+}
+.code-hl .line.highlighted.warning {
+  background: rgba(255, 196, 87, 0.13);
+  box-shadow: inset 3px 0 0 #ffc457;
+}
+/* [!code ++] / [!code --] */
+.code-hl .line.diff {
+  position: relative;
+}
+.code-hl .line.diff::before {
+  position: absolute;
+  left: calc(var(--code-pad) - 14px);
+  font-weight: 700;
+}
+.code-hl .line.diff.add {
+  background: rgba(126, 224, 195, 0.12);
+}
+.code-hl .line.diff.add::before {
+  content: "+";
+  color: #7ee0c3;
+}
+.code-hl .line.diff.remove {
+  background: rgba(255, 107, 107, 0.12);
+  opacity: 0.75;
+}
+.code-hl .line.diff.remove::before {
+  content: "−";
+  color: #ff8f8f;
+}
+/* [!code focus]: everything else dims until the reader hovers the cell. */
+.code-hl pre.has-focused .line:not(.focused) {
+  opacity: 0.4;
+  filter: blur(0.6px);
+  transition: opacity 0.2s, filter 0.2s;
+}
+.code-hl pre.has-focused:hover .line:not(.focused) {
+  opacity: 1;
+  filter: none;
+}
+/* [!code word:await] */
+.code-hl .highlighted-word {
+  border-radius: 3px;
+  background: rgba(56, 182, 255, 0.18);
+  box-shadow: 0 0 0 1px rgba(56, 182, 255, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  .code-hl pre.has-focused .line:not(.focused) {
+    transition: none;
   }
 }

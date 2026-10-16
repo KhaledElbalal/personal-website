@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { BlogRow } from "@/components/content/BlogRow";
+import { PostBody } from "@/components/content/PostBody";
 import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { SkillTile } from "@/components/content/SkillTile";
@@ -23,7 +24,9 @@ import {
 import { formatMonth, formatRange } from "@/sanity/experience";
 import { sanityFetch } from "@/sanity/fetch";
 import { EXPERIENCE_QUERY } from "@/sanity/queries";
-import type { EXPERIENCE_QUERY_RESULT } from "@/sanity.types";
+import type { EXPERIENCE_QUERY_RESULT, POST_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
+
+import { POST_BODY_SAMPLE } from "./post-body-sample";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -309,6 +312,12 @@ export default async function ShowcasePage() {
                 date={formatRange(honor)}
               />
             ))}
+          </div>
+        </Section>
+
+        <Section label="Post body — code, tabs, callouts">
+          <div className="max-w-3xl">
+            <PostBody value={POST_BODY_SAMPLE as unknown as NonNullable<POST_BY_SLUG_QUERY_RESULT>["body"]} />
           </div>
         </Section>
       </div>

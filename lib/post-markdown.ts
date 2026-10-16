@@ -1,4 +1,5 @@
 // Posts as Markdown for assistants (/blog/<slug>.md, llms.txt, "Read with").
+import { stripNotation } from "@/lib/code-notation";
 import { diagramToMarkdown, type DiagramBlockLike } from "@/lib/diagram-markdown";
 import { SITE_URL } from "@/lib/site";
 import { urlFor } from "@/sanity/image";
@@ -16,12 +17,38 @@ type Block = {
   // image
   asset?: unknown;
   alt?: string;
-  // code
+  // code (and each codeTabs tab)
   label?: string;
   language?: string;
+  filename?: string;
   code?: string;
   output?: string;
+  // codeTabs
+  tabs?: Block[];
+  // callout
+  tone?: string;
+  title?: string;
+  collapsed?: boolean;
+  body?: Block[];
 } & DiagramBlockLike;
+
+// Callouts become GitHub-style alerts, which assistants read as asides.
+const ALERT: Record<string, [string, string]> = {
+  note: ["NOTE", "Note"],
+  tip: ["TIP", "Tip"],
+  warning: ["WARNING", "Gotcha"],
+  deep: ["NOTE", "Under the hood"],
+};
+
+function codeToMarkdown(b: Block, heading?: string): string[] {
+  const out: string[] = [];
+  const title = [heading, b.filename ? `\`${b.filename}\`` : null].filter(Boolean).join(" — ");
+  if (title) out.push(`_${title}_`);
+  const { code, isDiff } = stripNotation(b.code ?? "");
+  out.push(`\`\`\`${isDiff ? "diff" : (b.language ?? "")}`, code, "```");
+  if (b.output) out.push("", "Output:", "```", b.output, "```");
+  return out;
+}
 
 export type PostForMarkdown = {
   title?: string | null;
@@ -90,10 +117,23 @@ function blocksToMarkdown(blocks: Block[]): string {
         out.push(`![${b.alt ?? ""}](${url})`);
         break;
       }
-      case "code": {
-        if (b.label) out.push(`_${b.label}_`);
-        out.push(`\`\`\`${b.language ?? ""}`, b.code ?? "", "```");
-        if (b.output) out.push("", "Output:", "```", b.output, "```");
+      case "code":
+        out.push(...codeToMarkdown(b, b.label));
+        break;
+      case "codeTabs":
+        (b.tabs ?? []).forEach((tab, t) => {
+          if (t) out.push("");
+          out.push(...codeToMarkdown(tab, tab.label ?? tab.language));
+        });
+        if (b.caption) out.push("", `_${b.caption}_`);
+        break;
+      case "callout": {
+        const [kind, name] = ALERT[b.tone ?? "note"] ?? ALERT.note;
+        const inner = blocksToMarkdown(b.body ?? []);
+        // The alert marker already says "Tip"/"Note"; name it only alongside a
+        // title, or when it differs from the marker ("Under the hood").
+        const head = b.title ? [`**${name}: ${b.title}**`, ""] : name.toUpperCase() !== kind ? [`**${name}**`, ""] : [];
+        out.push(`> [!${kind}]`, ...[...head, ...inner.split("\n")].map((l) => (l ? `> ${l}` : ">")));
         break;
       }
       case "diagram":

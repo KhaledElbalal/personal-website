@@ -1,6 +1,8 @@
 import { experience } from "./documents/experience";
 import { post } from "./documents/post";
 import { skill } from "./documents/skill";
+import { callout } from "./objects/callout";
+import { code, codeTabs } from "./objects/code";
 import { diagram } from "./objects/diagram";
 import { qualificationsPage } from "./singletons/qualificationsPage";
 import { siteSettings } from "./singletons/siteSettings";
@@ -12,4 +14,7 @@ export const schemaTypes = [
   siteSettings,
   qualificationsPage,
   diagram,
+  code,
+  codeTabs,
+  callout,
 ];
