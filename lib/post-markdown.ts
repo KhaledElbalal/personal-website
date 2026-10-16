@@ -1,4 +1,5 @@
 // Posts as Markdown for assistants (/blog/<slug>.md, llms.txt, "Read with").
+import type { PostNotes } from "@/lib/citations";
 import { stripNotation } from "@/lib/code-notation";
 import { diagramToMarkdown, type DiagramBlockLike } from "@/lib/diagram-markdown";
 import { SITE_URL } from "@/lib/site";
@@ -6,6 +7,7 @@ import { urlFor } from "@/sanity/image";
 
 type Span = { _type: "span"; text?: string; marks?: string[] };
 type MarkDef = { _key: string; _type: string; href?: string };
+type Notes = Pick<PostNotes, "citationByMark" | "sidenoteByMark">;
 type Block = {
   _type: string;
   _key?: string;
@@ -69,7 +71,7 @@ const DECORATOR: Record<string, [string, string]> = {
   "strike-through": ["~~", "~~"],
 };
 
-function spansToMarkdown(block: Block) {
+function spansToMarkdown(block: Block, notes?: Notes) {
   const defs = new Map((block.markDefs ?? []).map((d) => [d._key, d]));
   return (block.children ?? [])
     .map((child) => {
@@ -82,13 +84,17 @@ function spansToMarkdown(block: Block) {
         if (deco) text = `${deco[0]}${text}${deco[1]}`;
         const def = defs.get(mark);
         if (def?._type === "link" && def.href) text = `[${text}](${def.href})`;
+        const cited = notes?.citationByMark[mark];
+        if (cited) text = `[${text}](${cited.url})`;
+        const n = notes?.sidenoteByMark[mark];
+        if (n) text = `${text}[^${n}]`;
       }
       return text;
     })
     .join("");
 }
 
-function blocksToMarkdown(blocks: Block[]): string {
+function blocksToMarkdown(blocks: Block[], notes?: Notes): string {
   const out: string[] = [];
   let numbered = 0;
   blocks.forEach((b, i) => {
@@ -99,7 +105,7 @@ function blocksToMarkdown(blocks: Block[]): string {
 
     switch (b._type) {
       case "block": {
-        const text = spansToMarkdown(b);
+        const text = spansToMarkdown(b, notes);
         if (b.listItem) {
           const indent = "  ".repeat(Math.max(0, (b.level ?? 1) - 1));
           numbered = b.listItem === "number" ? numbered + 1 : 0;
@@ -129,7 +135,7 @@ function blocksToMarkdown(blocks: Block[]): string {
         break;
       case "callout": {
         const [kind, name] = ALERT[b.tone ?? "note"] ?? ALERT.note;
-        const inner = blocksToMarkdown(b.body ?? []);
+        const inner = blocksToMarkdown(b.body ?? [], notes);
         // The alert marker already says "Tip"/"Note"; name it only alongside a
         // title, or when it differs from the marker ("Under the hood").
         const head = b.title ? [`**${name}: ${b.title}**`, ""] : name.toUpperCase() !== kind ? [`**${name}**`, ""] : [];
@@ -145,7 +151,7 @@ function blocksToMarkdown(blocks: Block[]): string {
 }
 
 /** Full Markdown document for a post, with front matter-ish header. */
-export function postToMarkdown(post: PostForMarkdown, url: string): string {
+export function postToMarkdown(post: PostForMarkdown, url: string, notes?: PostNotes): string {
   const meta = [
     post.category ? `Category: ${post.category}` : null,
     post.date ?? post.startDate ? `Date: ${post.date ?? post.startDate}${post.endDate ? ` → ${post.endDate}` : ""}` : null,
@@ -157,7 +163,18 @@ export function postToMarkdown(post: PostForMarkdown, url: string): string {
   if (post.summary) parts.push(`> ${post.summary}`, "");
   parts.push(...meta.map((m) => `- ${m}`), "");
   if (post.coverDiagram?.svg) parts.push(diagramToMarkdown(post.coverDiagram, "##"), "");
-  parts.push(blocksToMarkdown((post.body ?? []) as Block[]));
+  parts.push(blocksToMarkdown((post.body ?? []) as Block[], notes));
+  if (notes?.sidenotes.length) {
+    parts.push("", ...notes.sidenotes.map((s) => `[^${s.n}]: ${s.note.replace(/\s*\n\s*/g, " ")}`));
+  }
+  if (notes?.citations.length) {
+    parts.push("", "## Sources", "");
+    for (const c of notes.citations) {
+      const title = c.title ? ` — ${c.title}` : "";
+      const detail = c.detail ? ` (${c.detail})` : "";
+      parts.push(`${c.n}. [${c.label}](${c.url})${title}${detail}`);
+    }
+  }
   return `${parts.join("\n").trim()}\n`;
 }
 

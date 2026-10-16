@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import { AuthorBio } from "@/components/content/AuthorBio";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
 import { ReadWith } from "@/components/content/ReadWith";
+import { collectNotes } from "@/lib/citations";
 import { postMarkdownUrl } from "@/lib/post-markdown";
 import { PostBody } from "@/components/content/PostBody";
+import { PostSources } from "@/components/content/PostSources";
 import { PostToc } from "@/components/content/PostToc";
 import { Blob, Tag } from "@/components/ui";
 import { estimateReadingTime, extractHeadings, formatPostDate } from "@/sanity/post";
@@ -102,6 +104,7 @@ export async function PostDetailView({
 
   const headings = extractHeadings(post.body);
   const readingTime = estimateReadingTime(post.body);
+  const notes = await collectNotes(post.body);
   const cover = post.cover
     ? urlFor(post.cover).width(1280).height(640).url()
     : null;
@@ -215,7 +218,8 @@ export async function PostDetailView({
                 className="mb-10 w-full rounded-[8px]"
               />
             ) : null}
-            <PostBody value={post.body} />
+            <PostBody value={post.body} notes={notes} />
+            <PostSources citations={notes.citations} />
 
             {post.tags?.length ? (
               <div className="mt-10 flex flex-wrap gap-2.5">

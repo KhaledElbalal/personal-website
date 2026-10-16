@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { BlogRow } from "@/components/content/BlogRow";
 import { PostBody } from "@/components/content/PostBody";
+import { PostSources } from "@/components/content/PostSources";
 import { ExperienceTimeline } from "@/components/content/ExperienceTimeline";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { SkillTile } from "@/components/content/SkillTile";
@@ -21,6 +22,7 @@ import {
   Tag,
   Wordmark,
 } from "@/components/ui";
+import { collectNotes } from "@/lib/citations";
 import { formatMonth, formatRange } from "@/sanity/experience";
 import { sanityFetch } from "@/sanity/fetch";
 import { EXPERIENCE_QUERY } from "@/sanity/queries";
@@ -71,6 +73,7 @@ export default async function ShowcasePage() {
   const roles = experience.filter(
     (e) => e.type === "job" || e.type === "internship",
   );
+  const sampleNotes = await collectNotes(POST_BODY_SAMPLE);
   const certificates = experience.filter((e) => e.type === "certificate");
   const honors = experience.filter(
     (e) => e.type === "award" || e.type === "achievement",
@@ -315,9 +318,13 @@ export default async function ShowcasePage() {
           </div>
         </Section>
 
-        <Section label="Post body — code, tabs, callouts">
-          <div className="max-w-3xl">
-            <PostBody value={POST_BODY_SAMPLE as unknown as NonNullable<POST_BY_SLUG_QUERY_RESULT>["body"]} />
+        <Section label="Post body — citations, margin notes, code, tabs, callouts">
+          <div className="xl:max-w-[1000px]">
+            <PostBody
+              value={POST_BODY_SAMPLE as unknown as NonNullable<POST_BY_SLUG_QUERY_RESULT>["body"]}
+              notes={sampleNotes}
+            />
+            <PostSources citations={sampleNotes.citations} />
           </div>
         </Section>
       </div>
