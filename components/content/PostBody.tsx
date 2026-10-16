@@ -182,11 +182,8 @@ export function PostBody({
   notes?: PostNotes;
 }) {
   if (!value) return null;
-  const hasSidenotes = Boolean(
-    notes && Object.keys(notes.sidenoteByMark).length,
-  );
   return (
-    <div className={`post-body${hasSidenotes ? " has-sidenotes" : ""}`}>
+    <div className="post-body">
       <PortableText value={value} components={buildComponents(notes)} />
     </div>
   );
