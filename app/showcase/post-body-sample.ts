@@ -10,6 +10,37 @@ const p = (key: string, ...children: ReturnType<typeof span>[]) => ({
 });
 
 export const POST_BODY_SAMPLE = [
+  {
+    _type: "block",
+    _key: "r1",
+    style: "normal",
+    markDefs: [
+      { _type: "citation", _key: "c492", kind: "pep", id: "492" },
+      { _type: "citation", _key: "c3156", kind: "pep", id: "3156" },
+      { _type: "sidenote", _key: "sn1", note: "asyncio started life as “Tulip”, Guido van Rossum’s reference implementation for PEP 3156, and shipped provisionally in Python 3.4." },
+      { _type: "citation", _key: "cco", kind: "wg21", id: "P0057R8" },
+      { _type: "citation", _key: "cep", kind: "man", id: "epoll(7)" },
+      { _type: "citation", _key: "cur", kind: "man", id: "io_uring_enter(2)" },
+    ],
+    children: [
+      span("Python got "),
+      span("async", ["code"]),
+      span(" and "),
+      span("await", ["code"]),
+      span(" in "),
+      span("PEP 492", ["c492"]),
+      span(", on top of the event loop from "),
+      span("PEP 3156", ["c3156"]),
+      span(" (née Tulip)", ["sn1"]),
+      span(". C++ took the same idea into the language with "),
+      span("the Coroutines TS", ["cco"]),
+      span(", and both end up waiting in "),
+      span("epoll", ["cep"]),
+      span(" or "),
+      span("io_uring", ["cur"]),
+      span("."),
+    ],
+  },
   p("p1", span("An "), span("await", ["code"]), span(" is a suspension point: the coroutine hands control back to the event loop, which goes back to waiting on the kernel.")),
   {
     _type: "code",

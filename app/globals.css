@@ -333,3 +333,80 @@ body {
     transition: none;
   }
 }
+
+/* Margin notes (components/content/Sidenote.tsx). Below xl: the number is a
+   toggle and the note expands inline under its line. From xl, posts with
+   notes reserve a right gutter (.has-sidenotes) and notes float into it;
+   diagrams and images still span the full width, clearing any note above. */
+.sn-toggle {
+  margin-left: 1px;
+  padding: 0 3px;
+  border-radius: 3px;
+  vertical-align: super;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  cursor: pointer;
+}
+.sn-toggle:hover,
+.sn-toggle[aria-expanded="true"] {
+  background: rgba(0, 147, 233, 0.12);
+}
+.sn-num {
+  display: none;
+}
+.sidenote {
+  display: none;
+  margin: 10px 0 6px;
+  padding: 10px 14px;
+  border-left: 2px solid var(--accent);
+  background: rgba(0, 147, 233, 0.05);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+.sidenote[data-open] {
+  display: block;
+}
+.sn-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+@media (min-width: 1280px) {
+  .post-body.has-sidenotes {
+    padding-right: 260px;
+  }
+  .post-body.has-sidenotes .sn-toggle {
+    display: none;
+  }
+  .post-body.has-sidenotes .sn-num {
+    display: inline;
+    margin-left: 1px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .post-body.has-sidenotes .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    width: 220px;
+    margin: 4px -260px 12px 0;
+    padding: 0 0 0 12px;
+    background: none;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .post-body.has-sidenotes > figure,
+  .post-body.has-sidenotes > img {
+    clear: right;
+    margin-right: -260px;
+    width: calc(100% + 260px);
+  }
+}

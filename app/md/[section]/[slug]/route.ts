@@ -1,4 +1,5 @@
 import { getPostSlugs } from "@/components/content/PostDetailView";
+import { collectNotes } from "@/lib/citations";
 import { postToMarkdown, postUrl } from "@/lib/post-markdown";
 import { sanityFetch } from "@/sanity/fetch";
 import { POST_BY_SLUG_QUERY } from "@/sanity/queries";
@@ -25,7 +26,8 @@ export async function GET(_: Request, ctx: { params: Promise<{ section: string; 
   if (!post || post.kind !== SECTIONS[section as Section]) {
     return new Response("Not found", { status: 404 });
   }
-  return new Response(postToMarkdown(post, postUrl(section as Section, slug)), {
+  const notes = await collectNotes(post.body);
+  return new Response(postToMarkdown(post, postUrl(section as Section, slug), notes), {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
       Vary: "Accept",

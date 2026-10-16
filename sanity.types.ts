@@ -30,11 +30,21 @@ export type Callout = {
         }>;
         style?: "normal";
         listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
+        markDefs?: Array<
+          | {
+              href?: string;
+              _type: "link";
+              _key: string;
+            }
+          | {
+              kind?: "pep" | "wg21" | "man" | "rfc" | "link";
+              id?: string;
+              url?: string;
+              title?: string;
+              _type: "citation";
+              _key: string;
+            }
+        >;
         level?: number;
         _type: "block";
         _key: string;
@@ -263,11 +273,26 @@ export type Post = {
         style?:
           "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
         listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
+        markDefs?: Array<
+          | {
+              href?: string;
+              _type: "link";
+              _key: string;
+            }
+          | {
+              kind?: "pep" | "wg21" | "man" | "rfc" | "link";
+              id?: string;
+              url?: string;
+              title?: string;
+              _type: "citation";
+              _key: string;
+            }
+          | {
+              note?: string;
+              _type: "sidenote";
+              _key: string;
+            }
+        >;
         level?: number;
         _type: "block";
         _key: string;
@@ -530,11 +555,26 @@ export type POST_BY_SLUG_QUERY_RESULT = {
         style?:
           "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
         listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
+        markDefs?: Array<
+          | {
+              kind?: "link" | "man" | "pep" | "rfc" | "wg21";
+              id?: string;
+              url?: string;
+              title?: string;
+              _type: "citation";
+              _key: string;
+            }
+          | {
+              href?: string;
+              _type: "link";
+              _key: string;
+            }
+          | {
+              note?: string;
+              _type: "sidenote";
+              _key: string;
+            }
+        >;
         level?: number;
         _type: "block";
         _key: string;
@@ -555,11 +595,21 @@ export type POST_BY_SLUG_QUERY_RESULT = {
               }>;
               style?: "normal";
               listItem?: "bullet" | "number";
-              markDefs?: Array<{
-                href?: string;
-                _type: "link";
-                _key: string;
-              }>;
+              markDefs?: Array<
+                | {
+                    kind?: "link" | "man" | "pep" | "rfc" | "wg21";
+                    id?: string;
+                    url?: string;
+                    title?: string;
+                    _type: "citation";
+                    _key: string;
+                  }
+                | {
+                    href?: string;
+                    _type: "link";
+                    _key: string;
+                  }
+              >;
               level?: number;
               _type: "block";
               _key: string;

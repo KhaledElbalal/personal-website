@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { bodyBlock } from "../objects/richText";
+
 // Unified content type for both Projects and the Blog. `kind` selects which
 // list/detail template renders it and which date/meta fields apply — one
 // record shape covers both, matching how `experience` unifies career
@@ -154,7 +156,7 @@ export const post = defineType({
       title: "Body",
       type: "array",
       of: [
-        defineArrayMember({ type: "block" }),
+        bodyBlock,
         defineArrayMember({ type: "diagram" }),
         defineArrayMember({
           type: "image",

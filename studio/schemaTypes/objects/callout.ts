@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { calloutBlock } from "./richText";
+
 export const CALLOUT_TONES = [
   { title: "Note", value: "note" },
   { title: "Tip", value: "tip" },
@@ -39,10 +41,7 @@ export const callout = defineType({
       name: "body",
       type: "array",
       of: [
-        defineArrayMember({
-          type: "block",
-          styles: [{ title: "Normal", value: "normal" }],
-        }),
+        calloutBlock,
         defineArrayMember({ type: "code" }),
         defineArrayMember({ type: "codeTabs" }),
         defineArrayMember({ type: "diagram" }),
