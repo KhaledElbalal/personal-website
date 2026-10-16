@@ -127,6 +127,8 @@ export function connect(
   to: TLShapeId,
   kind: FlowKind,
   label?: string,
+  /** Curve the arrow (tldraw `bend`, page units) — e.g. to separate a request/response pair. */
+  bend = 0,
 ) {
   const a = editor.getShapePageBounds(from)!.center;
   const b = editor.getShapePageBounds(to)!.center;
@@ -144,6 +146,7 @@ export function connect(
       dash,
       size: "s",
       font: "mono",
+      bend,
       ...(label ? { richText: toRichText(label) } : {}),
     },
   });

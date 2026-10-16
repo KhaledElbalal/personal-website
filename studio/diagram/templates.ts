@@ -2,6 +2,7 @@
 // Coordinates are page units relative to the template's own origin.
 import type { Editor, TLShapeId } from "tldraw";
 
+import { getFlows, setFlows } from "./behavior";
 import type { FlowKind } from "./flows";
 import { GROUP_PRESETS } from "./groups";
 import { connect, createGroup, createNode, loadSiteFonts, NODE_H, NODE_W, resolveItems, safeReparent } from "./insert";
@@ -9,6 +10,8 @@ import { connect, createGroup, createNode, loadSiteFonts, NODE_H, NODE_W, resolv
 type TGroup = { key: string; preset: string; label?: string; x: number; y: number; w: number; h: number; in?: string };
 type TNode = { key: string; icon?: string; label?: string; sub?: string; x: number; y: number; in?: string };
 type TEdge = [from: string, to: string, kind: FlowKind, label?: string];
+/** A recorded flow: edges by "from->to", each with the walkthrough note. */
+type TFlow = { name: string; steps: [edge: string, note?: string][] };
 
 export type Template = {
   id: string;
@@ -17,11 +20,14 @@ export type Template = {
   groups?: TGroup[];
   nodes: TNode[];
   edges: TEdge[];
+  /** Added to the diagram's Flows; the first becomes the default if none exists. */
+  flows?: TFlow[];
 };
 
 const AWS = (path: string) => `aws:${path}`;
 const SVC = (file: string) => AWS(`architecture-service/${file}`);
 const RES = (file: string) => AWS(`resource/${file}`);
+const SYS = (file: string) => `system:${file}`;
 
 export const TEMPLATES: Template[] = [
   {
@@ -147,6 +153,123 @@ export const TEMPLATES: Template[] = [
       ["t1", "t2", "async", "jobs"],
     ],
   },
+  {
+    id: "await-epoll",
+    title: "await → epoll → resume",
+    description: "A Python task suspends on a socket read; the loop waits in epoll_wait until the kernel wakes it. Includes a narrated flow.",
+    groups: [
+      { key: "user", preset: "user-space", x: 0, y: 0, w: 1000, h: 480 },
+      { key: "proc", preset: "process", label: "Process · python3", x: 30, y: 50, w: 940, h: 400, in: "user" },
+      { key: "kernel", preset: "kernel-space", x: 0, y: 560, w: 1000, h: 240 },
+      { key: "hw", preset: "hardware", x: 0, y: 860, w: 1000, h: 200 },
+    ],
+    nodes: [
+      { key: "task", icon: SYS("list-todo"), label: "Task", sub: "handler()", x: 100, y: 110, in: "proc" },
+      { key: "loop", icon: SYS("iteration-cw"), label: "Event loop", sub: "asyncio", x: 560, y: 110, in: "proc" },
+      { key: "ready", icon: SYS("list-ordered"), label: "Ready queue", sub: "call_soon", x: 330, y: 310, in: "proc" },
+      { key: "epoll", icon: SYS("binoculars"), label: "epoll", sub: "epoll_wait()", x: 560, y: 640, in: "kernel" },
+      { key: "sock", icon: SYS("plug"), label: "Socket", sub: "fd 7 · rx buffer", x: 820, y: 640, in: "kernel" },
+      { key: "nic", icon: SYS("ethernet-port"), label: "NIC", x: 820, y: 910, in: "hw" },
+    ],
+    edges: [
+      ["task", "loop", "async", "await"],
+      ["loop", "epoll", "request", "epoll_wait()"],
+      ["nic", "sock", "async", "IRQ · packet"],
+      ["sock", "epoll", "async", "wakeup"],
+      ["epoll", "loop", "response", "fd 7 ready"],
+      ["loop", "ready", "async", "schedule"],
+      ["ready", "task", "request", "resume"],
+    ],
+    flows: [
+      {
+        name: "await → resume",
+        steps: [
+          ["task->loop", "The task awaits a read on a socket with no data yet, so it suspends and hands control back to the loop."],
+          ["loop->epoll", "Nothing else is runnable, so the loop blocks in epoll_wait() on every fd it watches."],
+          ["nic->sock", "A packet arrives: the NIC raises an interrupt and the kernel queues the bytes on the socket."],
+          ["sock->epoll", "The socket's wakeup callback puts fd 7 on epoll's ready list."],
+          ["epoll->loop", "epoll_wait() returns the ready fds to user space."],
+          ["loop->ready", "The loop schedules the waiting task's callback."],
+          ["ready->task", "On the next tick the task resumes right after its await, and the data is there."],
+        ],
+      },
+    ],
+  },
+  {
+    id: "io-uring",
+    title: "io_uring rings",
+    description: "Submission and completion rings shared with the kernel: push SQEs, one syscall, reap CQEs. Includes a narrated flow.",
+    groups: [
+      { key: "user", preset: "user-space", x: 0, y: 0, w: 900, h: 640 },
+      { key: "shm", preset: "shared-memory", label: "Shared rings (mmap)", x: 150, y: 340, w: 600, h: 270, in: "user" },
+      { key: "kernel", preset: "kernel-space", x: 0, y: 700, w: 900, h: 240 },
+      { key: "hw", preset: "hardware", x: 0, y: 1000, w: 900, h: 200 },
+    ],
+    nodes: [
+      { key: "app", icon: SYS("iteration-cw"), label: "App", sub: "event loop", x: 375, y: 50, in: "user" },
+      { key: "sq", icon: SYS("circle-dashed"), label: "SQ", sub: "submission ring", x: 220, y: 430, in: "shm" },
+      { key: "cq", icon: SYS("circle-dashed"), label: "CQ", sub: "completion ring", x: 530, y: 430, in: "shm" },
+      { key: "uring", icon: SYS("arrow-down-up"), label: "io_uring", sub: "kernel side", x: 220, y: 780, in: "kernel" },
+      { key: "dev", icon: SYS("hard-drive"), label: "Device", sub: "NVMe / NIC", x: 530, y: 1050, in: "hw" },
+    ],
+    edges: [
+      ["app", "sq", "async", "push SQE"],
+      ["sq", "uring", "request", "io_uring_enter()"],
+      ["uring", "dev", "request", "submit I/O"],
+      ["dev", "uring", "async", "IRQ · done"],
+      ["uring", "cq", "async", "post CQE"],
+      ["cq", "app", "response", "reap CQE"],
+    ],
+    flows: [
+      {
+        name: "Submit → complete",
+        steps: [
+          ["app->sq", "The app writes a submission entry (op, fd, buffer) into the shared SQ ring — plain memory, no syscall."],
+          ["sq->uring", "One io_uring_enter() hands the kernel every queued SQE at once (or none, with SQPOLL)."],
+          ["uring->dev", "The kernel issues the I/O to the device."],
+          ["dev->uring", "The device signals completion."],
+          ["uring->cq", "The kernel writes a completion entry with the result into the CQ ring."],
+          ["cq->app", "The app reaps CQEs from shared memory and resumes whatever was waiting on each one."],
+        ],
+      },
+    ],
+  },
+  {
+    id: "to-thread",
+    title: "Offload to a thread pool",
+    description: "asyncio.to_thread / run_in_executor: blocking work runs on a worker thread while the loop keeps serving. Includes a narrated flow.",
+    groups: [
+      { key: "proc", preset: "process", label: "Process · python3", x: 0, y: 0, w: 1180, h: 460 },
+      { key: "loopg", preset: "event-loop", label: "Event loop · main thread", x: 30, y: 60, w: 420, h: 370, in: "proc" },
+      { key: "pool", preset: "thread", label: "Thread pool · executor", x: 500, y: 60, w: 650, h: 370, in: "proc" },
+    ],
+    nodes: [
+      { key: "task", icon: SYS("list-todo"), label: "Task", sub: "await to_thread()", x: 70, y: 120, in: "loopg" },
+      { key: "fut", icon: SYS("ticket"), label: "Future", sub: "pending", x: 70, y: 290, in: "loopg" },
+      { key: "worker", icon: SYS("spline"), label: "Worker thread", x: 560, y: 130, in: "pool" },
+      { key: "idle", icon: SYS("spline"), label: "Worker thread", sub: "idle", x: 560, y: 290, in: "pool" },
+      { key: "call", icon: SYS("hourglass"), label: "Blocking call", sub: "open().read()", x: 930, y: 130, in: "pool" },
+    ],
+    edges: [
+      ["task", "worker", "async", "submit fn"],
+      ["worker", "call", "request", "read()"],
+      ["call", "worker", "response", "bytes"],
+      ["worker", "fut", "async", "call_soon_threadsafe"],
+      ["fut", "task", "request", "resume"],
+    ],
+    flows: [
+      {
+        name: "Offload → resume",
+        steps: [
+          ["task->worker", "The task hands the blocking function to the executor and awaits a future; the loop is free to run other tasks."],
+          ["worker->call", "A worker thread makes the blocking call (the GIL is released while it waits on I/O)."],
+          ["call->worker", "The call returns on the worker thread."],
+          ["worker->fut", "The worker can't touch the loop directly, so it resolves the future via call_soon_threadsafe."],
+          ["fut->task", "Back on the loop thread, the future completes and the task resumes."],
+        ],
+      },
+    ],
+  },
 ];
 
 /** Drop a template centred in the viewport, then select and frame it. */
@@ -198,8 +321,25 @@ export async function insertTemplate(editor: Editor, tpl: Template) {
     // children above their container.
     for (const g of groups) if (g.in) safeReparent(editor, [ids.get(g.key)!], ids.get(g.in)!);
     for (const n of tpl.nodes) if (n.in) safeReparent(editor, [ids.get(n.key)!], ids.get(n.in)!);
+    // A pair drawn both ways (request + response) gets curved apart; the same
+    // bend on opposite directions lands on opposite sides.
+    const keys = new Set(tpl.edges.map(([from, to]) => `${from}->${to}`));
     for (const [from, to, kind, label] of tpl.edges) {
-      ids.set(`${from}->${to}`, connect(editor, ids.get(from)!, ids.get(to)!, kind, label));
+      const bend = keys.has(`${to}->${from}`) ? 70 : 0;
+      ids.set(`${from}->${to}`, connect(editor, ids.get(from)!, ids.get(to)!, kind, label, bend));
+    }
+
+    if (tpl.flows?.length) {
+      const existing = getFlows(editor);
+      const added = tpl.flows.map((f, i) => ({
+        id: Math.random().toString(36).slice(2, 10),
+        name: f.name,
+        isDefault: !existing.some((e) => e.isDefault) && i === 0,
+        steps: f.steps
+          .map(([edge, note]) => ({ arrowId: ids.get(edge)!, note }))
+          .filter((step) => step.arrowId),
+      }));
+      setFlows(editor, [...existing, ...added]);
     }
   });
 
