@@ -27,7 +27,7 @@ async function Preview({ params }: { params: Promise<{ section: string; slug: st
   return <PostDetailView kind={target.kind} slug={slug} basePath={target.basePath} fetcher={draftFetcher} />;
 }
 
-export default function PreviewPage(props: PageProps<"/preview/[section]/[slug]">) {
+export default function PreviewPage(props: { params: Promise<{ section: string; slug: string }> }) {
   return (
     <Suspense fallback={null}>
       <Preview params={props.params} />
