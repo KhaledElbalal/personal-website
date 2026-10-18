@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { CodeBlockIcon, CodeIcon } from "@sanity/icons";
 
 // Fields shared by a standalone code cell and each tab of a code-tabs block.
 const codeFields = [
@@ -50,6 +51,7 @@ const codePreview = {
 export const code = defineType({
   name: "code",
   title: "Code cell",
+  icon: CodeIcon,
   type: "object",
   fields: codeFields,
   preview: codePreview,
@@ -59,6 +61,7 @@ export const code = defineType({
 export const codeTabs = defineType({
   name: "codeTabs",
   title: "Code tabs",
+  icon: CodeBlockIcon,
   type: "object",
   fields: [
     defineField({

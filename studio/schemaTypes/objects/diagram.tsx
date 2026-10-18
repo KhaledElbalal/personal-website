@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { ProjectsIcon } from "@sanity/icons";
 
 import { DiagramInput, svgDataUrl } from "../../diagram/DiagramInput";
 
@@ -7,6 +8,7 @@ import { DiagramInput, svgDataUrl } from "../../diagram/DiagramInput";
 export const diagram = defineType({
   name: "diagram",
   title: "Diagram",
+  icon: ProjectsIcon,
   type: "object",
   components: { input: DiagramInput },
   fields: [

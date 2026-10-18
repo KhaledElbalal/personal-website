@@ -1,4 +1,7 @@
+import { CommentIcon, LinkIcon, BookIcon } from "@sanity/icons";
 import { defineArrayMember, defineField } from "sanity";
+
+import { CitationIdInput } from "../../components/CitationIdInput";
 
 export const REFERENCE_KINDS = [
   { title: "PEP", value: "pep" },
@@ -12,6 +15,7 @@ const link = defineArrayMember({
   name: "link",
   type: "object",
   title: "Link",
+  icon: LinkIcon,
   fields: [
     defineField({
       name: "href",
@@ -30,6 +34,7 @@ const citation = defineArrayMember({
   name: "citation",
   type: "object",
   title: "Reference (PEP / paper / man page / RFC)",
+  icon: BookIcon,
   fields: [
     defineField({
       name: "kind",
@@ -44,6 +49,7 @@ const citation = defineArrayMember({
       type: "string",
       description: 'PEP: "492" · WG21: "P0057R8", "N4680", or "P2300" for the latest revision · man: "epoll(7)" · RFC: "9293"',
       hidden: ({ parent }) => parent?.kind === "link",
+      components: { input: CitationIdInput },
       validation: (rule) =>
         rule.custom((v, ctx) =>
           (ctx.parent as { kind?: string })?.kind !== "link" && !v ? "Required for this kind of reference." : true,
@@ -70,6 +76,7 @@ const sidenote = defineArrayMember({
   name: "sidenote",
   type: "object",
   title: "Margin note",
+  icon: CommentIcon,
   fields: [
     defineField({
       name: "note",
@@ -84,7 +91,26 @@ const sidenote = defineArrayMember({
 /** Post body paragraphs/headings: links, references and margin notes. */
 export const bodyBlock = defineArrayMember({
   type: "block",
-  marks: { annotations: [link, citation, sidenote] },
+  // Only what the site renders: h2/h3 (TOC), quote, bullet/number lists.
+  styles: [
+    { title: "Normal", value: "normal" },
+    { title: "Heading 2", value: "h2" },
+    { title: "Heading 3", value: "h3" },
+    { title: "Quote", value: "blockquote" },
+  ],
+  lists: [
+    { title: "Bullet", value: "bullet" },
+    { title: "Numbered", value: "number" },
+  ],
+  marks: {
+    decorators: [
+      { title: "Bold", value: "strong" },
+      { title: "Italic", value: "em" },
+      { title: "Code", value: "code" },
+      { title: "Strikethrough", value: "strike-through" },
+    ],
+    annotations: [link, citation, sidenote],
+  },
   // The note's number and text render after the annotated words; inside a
   // link or citation they'd end up inside the <a>.
   validation: (rule) =>

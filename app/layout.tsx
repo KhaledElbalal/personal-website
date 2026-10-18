@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Space_Mono, Poppins, Inter, Urbanist } from "next/font/google";
 import "./globals.css";
 
+import { Suspense } from "react";
+
+import { DraftTools } from "@/components/layout/DraftTools";
 import { IntroSplash } from "@/components/layout/IntroSplash";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -114,6 +117,9 @@ export default function RootLayout({
         <SiteFooter />
         <Analytics />
         <SpeedInsights />
+        <Suspense fallback={null}>
+          <DraftTools />
+        </Suspense>
       </body>
     </html>
   );

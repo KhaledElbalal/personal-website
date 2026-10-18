@@ -83,6 +83,21 @@ function identify(def: MarkDef): Omit<Citation, "n" | "detail"> | null {
   }
 }
 
+/**
+ * One source's label, link and fetched metadata — for the Studio's reference
+ * field to confirm an identifier resolves. Null if the identifier is invalid
+ * or the source doesn't know it.
+ */
+export async function resolveCitation(kind: string, id: string) {
+  const c = identify({ _key: "lookup", _type: "citation", kind, id });
+  if (!c) return null;
+  const meta = (await fetchMeta([{ key: c.key, kind: c.kind, label: c.label }]))[c.key];
+  // Man pages without a fetched summary may simply not exist; PEPs/WG21/RFCs
+  // are only "found" if the source index had them.
+  if (!meta && c.kind !== "link") return null;
+  return { label: c.label, url: c.url, title: meta?.title, detail: meta?.detail };
+}
+
 /** Walks blocks (and callout / walkthrough text) in reading order. */
 function eachMark(body: Block[] | null | undefined, fn: (def: MarkDef, topLevel: boolean) => void, topLevel = true) {
   for (const block of body ?? []) {

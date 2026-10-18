@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { PlayIcon } from "@sanity/icons";
 
 import { calloutBlock } from "./richText";
 
@@ -10,6 +11,7 @@ import { calloutBlock } from "./richText";
 export const walkthrough = defineType({
   name: "walkthrough",
   title: "Walkthrough (code + diagram steps)",
+  icon: PlayIcon,
   type: "object",
   fields: [
     defineField({ name: "title", type: "string", description: 'e.g. "What happens on await".' }),
