@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { InfoOutlineIcon } from "@sanity/icons";
 
 import { calloutBlock } from "./richText";
 
@@ -16,6 +17,7 @@ export const CALLOUT_TONES = [
 export const callout = defineType({
   name: "callout",
   title: "Callout / deep dive",
+  icon: InfoOutlineIcon,
   type: "object",
   fields: [
     defineField({

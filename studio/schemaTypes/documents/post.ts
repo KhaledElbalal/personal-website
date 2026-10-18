@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { BodyInput } from "../../components/BodyInput";
 import { bodyBlock } from "../objects/richText";
 
 // Unified content type for both Projects and the Blog. `kind` selects which
@@ -16,9 +17,16 @@ export const post = defineType({
   name: "post",
   title: "Project / Post",
   type: "document",
+  groups: [
+    { name: "content", title: "Write", default: true },
+    { name: "details", title: "Details" },
+    { name: "cover", title: "Cover" },
+    { name: "series", title: "Series" },
+  ],
   fields: [
     defineField({
       name: "kind",
+      group: "details",
       title: "Kind",
       type: "string",
       options: {
@@ -33,23 +41,27 @@ export const post = defineType({
     }),
     defineField({
       name: "title",
+      group: ["content", "details"],
       type: "string",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "slug",
+      group: ["content", "details"],
       type: "slug",
       options: { source: "title", maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "category",
+      group: "details",
       type: "string",
       description: 'Tag label, e.g. "FRONTEND", "ML PROJECT", "DATA SCIENCE".',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "date",
+      group: "details",
       title: "Date",
       type: "date",
       description: "Publish date.",
@@ -57,6 +69,7 @@ export const post = defineType({
     }),
     defineField({
       name: "startDate",
+      group: "details",
       title: "Start date",
       type: "date",
       options: { dateFormat: "MMM YYYY" },
@@ -65,6 +78,7 @@ export const post = defineType({
     }),
     defineField({
       name: "endDate",
+      group: "details",
       title: "End date",
       type: "date",
       options: { dateFormat: "MMM YYYY" },
@@ -73,6 +87,7 @@ export const post = defineType({
     }),
     defineField({
       name: "current",
+      group: "details",
       title: "Ongoing (show “Present”)",
       type: "boolean",
       initialValue: false,
@@ -80,9 +95,16 @@ export const post = defineType({
     }),
     defineField({
       name: "cover",
+      group: "cover",
       title: "Cover image",
       type: "image",
       options: { hotspot: true },
+      validation: (rule) =>
+        rule.custom((value, ctx) =>
+          !value && !(ctx.document as { coverDiagram?: unknown } | undefined)?.coverDiagram
+            ? "No cover image or cover diagram — cards and social previews will fall back to the default."
+            : true,
+        ).warning(),
       fields: [
         defineField({
           name: "alt",
@@ -95,6 +117,7 @@ export const post = defineType({
     }),
     defineField({
       name: "coverDiagram",
+      group: "cover",
       title: "Cover diagram",
       type: "diagram",
       description:
@@ -102,13 +125,18 @@ export const post = defineType({
     }),
     defineField({
       name: "summary",
+      group: ["content", "details"],
       type: "text",
       rows: 3,
       description: "One-line teaser shown on cards and list rows.",
-      validation: (rule) => rule.required().max(200),
+      validation: (rule) => [
+        rule.required().max(200),
+        rule.max(160).warning("Over ~160 characters — it will likely be cut off on cards and in search results."),
+      ],
     }),
     defineField({
       name: "featured",
+      group: "details",
       type: "boolean",
       initialValue: false,
       description: 'Show in the Home "Recent Work" grid.',
@@ -116,6 +144,7 @@ export const post = defineType({
     }),
     defineField({
       name: "path",
+      group: "details",
       type: "string",
       description:
         "Optional terminal-path override for the open CTA, e.g. ~/ml/diabetes.ipynb.",
@@ -123,6 +152,7 @@ export const post = defineType({
     }),
     defineField({
       name: "tags",
+      group: "details",
       title: "Tags",
       type: "array",
       of: [defineArrayMember({ type: "string" })],
@@ -132,11 +162,19 @@ export const post = defineType({
     }),
     defineField({
       name: "series",
+      group: "series",
       title: "Series",
       type: "object",
       description: "Optional — set on every post that belongs to the same multi-part series.",
       options: { collapsible: true, collapsed: true },
       hidden: shownFor("post"),
+      validation: (rule) =>
+        rule.custom((value) => {
+          const v = value as { name?: string; part?: number } | undefined;
+          if (v?.name && !v.part) return "Add this post’s part number — the series nav orders by it.";
+          if (v?.part && !v.name) return "Add the series name, or clear the part number.";
+          return true;
+        }).warning(),
       fields: [
         defineField({
           name: "name",
@@ -153,8 +191,20 @@ export const post = defineType({
     }),
     defineField({
       name: "body",
+      group: "content",
       title: "Body",
       type: "array",
+      components: { input: BodyInput },
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const blocks = (value ?? []) as { _type: string; style?: string; children?: { text?: string }[] }[];
+          const words = blocks.reduce(
+            (n, b) => n + (b._type === "block" ? (b.children ?? []).map((c) => c.text ?? "").join(" ").split(/\s+/).filter(Boolean).length : 0),
+            0,
+          );
+          const hasHeading = blocks.some((b) => b._type === "block" && (b.style === "h2" || b.style === "h3"));
+          return words > 600 && !hasHeading ? "Long post with no H2/H3 — the table of contents will be empty." : true;
+        }).warning(),
       of: [
         bodyBlock,
         defineArrayMember({ type: "diagram" }),

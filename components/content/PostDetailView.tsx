@@ -23,6 +23,9 @@ import type {
 
 type Kind = "project" | "post";
 
+/** Data source for the page: the cached published reader, or the Draft Mode one. */
+export type Fetcher = <T>(query: string, params?: Record<string, unknown>, tags?: string[]) => Promise<T>;
+
 export async function getPostBySlug(slug: string) {
   return sanityFetch<POST_BY_SLUG_QUERY_RESULT>(POST_BY_SLUG_QUERY, { slug }, [
     "post",
@@ -66,20 +69,22 @@ export async function PostDetailView({
   kind,
   slug,
   basePath,
+  fetcher = sanityFetch,
 }: {
   kind: Kind;
   slug: string;
   basePath: string;
+  fetcher?: Fetcher;
 }) {
   const [post, siblings] = await Promise.all([
-    getPostBySlug(slug),
-    sanityFetch<POSTS_QUERY_RESULT>(POSTS_QUERY, { kind }, ["post"]),
+    fetcher<POST_BY_SLUG_QUERY_RESULT>(POST_BY_SLUG_QUERY, { slug }, ["post"]),
+    fetcher<POSTS_QUERY_RESULT>(POSTS_QUERY, { kind }, ["post"]),
   ]);
   if (!post || post.kind !== kind) notFound();
 
   const seriesName = post.series?.name;
   const seriesPosts = seriesName
-    ? await sanityFetch<SERIES_POSTS_QUERY_RESULT>(
+    ? await fetcher<SERIES_POSTS_QUERY_RESULT>(
         SERIES_POSTS_QUERY,
         { name: seriesName },
         ["post"],

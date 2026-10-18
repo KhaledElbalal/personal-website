@@ -26,6 +26,20 @@ Set the same project id / dataset in the **site's** `.env.local`
 - `skill` — "About Me" terminal tiles.
 - `siteSettings` — singleton (hero, social links, footer).
 
+## Writing experience
+
+- **Editor tabs** — Write / Details / Cover / Series. Blog posts and Projects are separate lists (plus a Drafts list); "New" offers one entry per kind.
+- **Live preview** — the Presentation tool (and a "Preview on site" document action) loads the real site with drafts and click-to-edit. One-time setup:
+  1. Create a **Viewer** token at sanity.io/manage → API → Tokens.
+  2. Site `.env.local`: `SANITY_API_READ_TOKEN=<token>`, `NEXT_PUBLIC_SANITY_STUDIO_URL=<studio url>`.
+  3. Studio `.env`: `SANITY_STUDIO_PREVIEW_ORIGIN=<site url>` (default `http://localhost:3000`).
+  4. Add the Studio origin to the project's CORS origins **with credentials**.
+  Published pages stay static: `proxy.ts` only reroutes requests carrying the Draft Mode cookie to `/preview/...`.
+- **Markdown paste** — pasting Markdown into the body converts it to blocks (h1–h6 → H2/H3, lists, quotes, bold/italic/code, links, fenced code → Code cell).
+- **References** — the identifier field checks PEP / WG21 / RFC / man-page ids against the site's `/api/citation`.
+- **Warnings** (not blockers) — missing cover, long summary, half-filled series, long post without headings.
+- **Diagram editor** — set `SANITY_STUDIO_TLDRAW_LICENSE_KEY` in `studio/.env`.
+
 ## Deploy the Studio
 
 ```bash
