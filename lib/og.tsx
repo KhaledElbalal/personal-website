@@ -2,14 +2,15 @@ import { SITE_NAME } from "@/lib/site";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
+// Same palette as the site: a navy field, ghost-white type, one bright blue.
 const OG_COLORS = {
-  page: "#ffffff",
-  ink: "#121420",
-  accent: "#0093e9",
+  field: "#121420",
+  ink: "#f7f7ff",
   accentBright: "#38b6ff",
-  onAccent: "#f7f7ff",
-  muted: "rgba(18,20,32,0.65)",
+  muted: "rgba(247,247,255,0.7)",
 };
+
+const PAD = 72;
 
 /** Fetches a Google Fonts TTF/OTF file for use with next/og's ImageResponse —
  * Satori can't load woff2, so we ask Google's CSS2 endpoint for the legacy
@@ -24,17 +25,18 @@ export async function loadGoogleFont(family: string, weight = 700) {
   return res.arrayBuffer();
 }
 
-/** The site pairs Space Mono (headings/wordmark) with Poppins (body copy) —
- * see PageHeader.tsx. Loads both so OG cards can follow the same pairing
- * instead of rendering every line in the mono display face. */
+/** Poppins carries every line of text, as on the site; Space Mono is only for
+ * the [K▮] mark, which is how the logo is drawn. */
 export async function loadOgFonts() {
-  const [mono, body] = await Promise.all([
+  const [mono, bold, medium] = await Promise.all([
     loadGoogleFont("Space+Mono", 700),
+    loadGoogleFont("Poppins", 700),
     loadGoogleFont("Poppins", 500),
   ]);
   return [
     { name: "Space Mono", data: mono, weight: 700 as const, style: "normal" as const },
-    { name: "Poppins", data: body, weight: 500 as const, style: "normal" as const },
+    { name: "Poppins", data: bold, weight: 700 as const, style: "normal" as const },
+    { name: "Poppins", data: medium, weight: 500 as const, style: "normal" as const },
   ];
 }
 
@@ -46,6 +48,7 @@ function Mark({ fontSize }: { fontSize: number }) {
       style={{
         display: "flex",
         alignItems: "center",
+        fontFamily: "Space Mono",
         fontWeight: 700,
         fontSize,
         color: OG_COLORS.ink,
@@ -67,7 +70,8 @@ function Mark({ fontSize }: { fontSize: number }) {
   );
 }
 
-/** Site-wide default OG/Twitter card — Home and any page without its own. */
+/** Site-wide default OG/Twitter card — Home and any page without its own.
+ * Mirrors the home page: the name set huge on the navy field. */
 export function SiteOgCard({
   name = SITE_NAME,
   url,
@@ -75,6 +79,9 @@ export function SiteOgCard({
   name?: string;
   url?: string;
 }) {
+  const label = name.toUpperCase();
+  // Poppins bold caps average ~0.6em wide with this tracking; fit the name to the card.
+  const fontSize = Math.min(200, Math.floor((OG_SIZE.width - 2 * PAD) / (label.length * 0.62)));
   return (
     <div
       style={{
@@ -82,54 +89,45 @@ export function SiteOgCard({
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: OG_COLORS.page,
-        fontFamily: "Space Mono",
+        justifyContent: "space-between",
+        backgroundColor: OG_COLORS.field,
+        padding: PAD,
+        fontFamily: "Poppins",
       }}
     >
-      <Mark fontSize={120} />
-      <div
-        style={{
-          display: "flex",
-          marginTop: 36,
-          fontSize: 44,
-          fontWeight: 700,
-          letterSpacing: 4,
-          color: OG_COLORS.ink,
-        }}
-      >
-        {name.toUpperCase()}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Mark fontSize={56} />
+        {url ? (
+          <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: OG_COLORS.muted }}>
+            {url.replace(/^https?:\/\//, "")}
+          </div>
+        ) : null}
       </div>
-      <div
-        style={{
-          display: "flex",
-          marginTop: 16,
-          fontSize: 24,
-          fontFamily: "Poppins",
-          color: OG_COLORS.muted,
-        }}
-      >
-        Software Engineer
-      </div>
-      {url ? (
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            marginTop: 40,
-            padding: "10px 24px",
-            borderRadius: 4,
-            backgroundColor: OG_COLORS.accent,
-            fontFamily: "Poppins",
-            fontSize: 20,
+            fontSize: 36,
             fontWeight: 500,
-            color: OG_COLORS.onAccent,
+            color: OG_COLORS.accentBright,
           }}
         >
-          {url.replace(/^https?:\/\//, "")} ↗
+          Software Engineer
         </div>
-      ) : null}
+        <div
+          style={{
+            display: "flex",
+            marginTop: 8,
+            fontSize,
+            fontWeight: 700,
+            lineHeight: 1,
+            letterSpacing: -fontSize * 0.03,
+            color: OG_COLORS.ink,
+          }}
+        >
+          {label}
+        </div>
+      </div>
     </div>
   );
 }
@@ -147,6 +145,8 @@ export function PostOgCard({
   title: string;
   name?: string;
 }) {
+  // Long titles drop a size so they stay within four lines.
+  const fontSize = title.length > 80 ? 52 : title.length > 48 ? 62 : 72;
   return (
     <div
       style={{
@@ -154,60 +154,41 @@ export function PostOgCard({
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: OG_COLORS.page,
-        padding: 72,
-        fontFamily: "Space Mono",
+        justifyContent: "space-between",
+        backgroundColor: OG_COLORS.field,
+        padding: PAD,
+        fontFamily: "Poppins",
       }}
     >
-      <Mark fontSize={40} />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          justifyContent: "center",
-          gap: 24,
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Mark fontSize={44} />
         {category ? (
           <div
             style={{
               display: "flex",
-              alignSelf: "flex-start",
-              padding: "8px 16px",
-              borderRadius: 4,
-              backgroundColor: OG_COLORS.accent,
-              color: OG_COLORS.onAccent,
-              fontSize: 22,
-              fontWeight: 700,
-              letterSpacing: 2,
+              fontSize: 26,
+              fontWeight: 500,
+              color: OG_COLORS.accentBright,
             }}
           >
             {category}
           </div>
         ) : null}
-        <div
-          style={{
-            display: "flex",
-            fontSize: 56,
-            fontWeight: 700,
-            lineHeight: 1.25,
-            maxWidth: 1000,
-            color: OG_COLORS.ink,
-          }}
-        >
-          {title}
-        </div>
       </div>
       <div
         style={{
           display: "flex",
-          fontFamily: "Poppins",
-          fontSize: 22,
-          color: OG_COLORS.muted,
+          fontSize,
+          fontWeight: 700,
+          lineHeight: 1.05,
+          letterSpacing: -fontSize * 0.03,
+          color: OG_COLORS.ink,
         }}
       >
-        {kind === "project" ? "Project" : "Blog Post"} · {name}
+        {title}
+      </div>
+      <div style={{ display: "flex", fontSize: 24, fontWeight: 500, color: OG_COLORS.muted }}>
+        {kind === "project" ? "Project" : "Blog post"} · {name}
       </div>
     </div>
   );
