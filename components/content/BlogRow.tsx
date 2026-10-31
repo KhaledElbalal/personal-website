@@ -44,7 +44,7 @@ export function BlogRow({
   return (
     <Link
       href={href}
-      className={`reveal group -mx-4 grid grid-cols-1 gap-x-10 gap-y-4 px-4 py-9 no-underline transition-colors duration-300 hover:bg-[rgba(0,147,233,0.08)] focus-visible:bg-[rgba(0,147,233,0.08)] md:-mx-6 md:grid-cols-12 md:px-6 md:py-12 ${className}`}
+      className={`reveal group -mx-[calc(var(--margin)*0.7)] grid grid-cols-1 gap-x-10 gap-y-4 px-[calc(var(--margin)*0.7)] py-9 no-underline transition-colors duration-300 hover:bg-[rgba(0,147,233,0.08)] focus-visible:bg-[rgba(0,147,233,0.08)] md:grid-cols-12 md:py-12 ${className}`}
     >
       <div className="order-1 text-sm text-muted md:col-span-2">
         <span className="block font-medium text-ink">{sentenceCase(category)}</span>

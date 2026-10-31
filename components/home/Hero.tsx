@@ -31,7 +31,7 @@ export function Hero({ name, sentence, action, kind, links }: HeroProps) {
         <div className="mt-4">{action}</div>
       </div>
 
-      <div className="flex items-center">
+      <div className="fit-name flex items-center">
         <h1
           id="hero-name"
           aria-label={name}

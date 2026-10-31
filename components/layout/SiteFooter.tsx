@@ -89,14 +89,16 @@ export async function SiteFooter() {
 
       </div>
 
-      <div
-        aria-hidden="true"
-        className="reveal mt-24 flex flex-col font-body font-bold uppercase leading-[0.84] tracking-[-0.045em] text-accent-bright md:mt-40 md:flex-row md:gap-[0.2em] md:whitespace-nowrap"
-        style={{ fontSize: "var(--step-name)" }}
-      >
-        {name.split(" ").map((w) => (
-          <span key={w}>{w}</span>
-        ))}
+      <div className="fit-name mt-24 md:mt-40">
+        <div
+          aria-hidden="true"
+          className="reveal flex flex-col font-body font-bold uppercase leading-[0.84] tracking-[-0.045em] text-accent-bright md:flex-row md:gap-[0.2em] md:whitespace-nowrap"
+          style={{ fontSize: "var(--step-name)" }}
+        >
+          {name.split(" ").map((w) => (
+            <span key={w}>{w}</span>
+          ))}
+        </div>
       </div>
       <p className="mt-6 flex flex-wrap items-center gap-x-2 font-mono text-sm text-[color:#b9bccb]">
         <span aria-hidden="true" className="text-accent-bright">

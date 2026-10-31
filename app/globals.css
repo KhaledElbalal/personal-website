@@ -130,7 +130,8 @@
   --step-body: 1.0625rem;
   --step-lead: clamp(1.375rem, 1.05rem + 1.1vw, 2rem);
   --step-head: clamp(2.25rem, 0.8rem + 3.8vw, 5rem);
-  --step-name: 23vw;
+  /* Sized from the .fit-name container, not the viewport: 100vw includes a classic scrollbar. */
+  --step-name: 25cqw;
   /* Inner-page titles: "QUALIFICATIONS" (14 letters) must still fit a phone. */
   --step-title: 11vw;
   /* List-row titles: long project names must stay within two lines. */
@@ -141,8 +142,11 @@
 @media (min-width: 768px) {
   :root {
     /* The name is ~8.02em wide: fit it to the content box. */
-    --step-name: calc((100vw - 2 * var(--margin)) / 8.02);
+    --step-name: calc(100cqw / 8.02);
   }
+}
+.fit-name {
+  container-type: inline-size;
 }
 
 .page-margin {
