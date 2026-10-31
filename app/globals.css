@@ -147,6 +147,8 @@
 }
 .fit-name {
   container-type: inline-size;
+  /* The fallback font is wider than Poppins; never let it widen the page before the font loads. */
+  overflow-x: clip;
 }
 
 .page-margin {
