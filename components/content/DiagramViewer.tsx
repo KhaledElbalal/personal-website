@@ -26,8 +26,6 @@ type DiagramViewerProps = {
   flows: FlowDef[];
 };
 
-// Below this width, labels get too small to read — scroll instead of shrinking.
-const MIN_READABLE_WIDTH = 560;
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
@@ -80,15 +78,17 @@ const SvgHost = memo(function SvgHost({
 
 // ── controls ──
 
+// Chips that look pressable: a tone of the accent that deepens on hover,
+// sinks 1px when pressed, and dims (with a not-allowed cursor) when disabled.
 const ctrlBase =
-  "h-8 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] px-2 font-mono text-xs font-bold shadow-[-3px_3px_0_rgba(0,147,233,0.30)] disabled:opacity-40 disabled:shadow-none";
-const ctrl = `${ctrlBase} bg-white text-ink hover:text-accent`;
-/** Selected pill/tab (separate so bg-white can't override bg-accent). */
-const ctrlOn = `${ctrlBase} bg-accent text-on-accent`;
+  " inline-flex h-9 items-center justify-center gap-1.5 px-3 text-sm font-semibold leading-none transition-colors duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40";
+const ctrl = `${ctrlBase} bg-[#dff1fd] text-ink hover:bg-[#c9e8fb] active:bg-[#b4def8] disabled:hover:bg-[#dff1fd]`;
+/** Selected pill/tab. */
+const ctrlOn = `${ctrlBase} bg-[color:var(--color-xiketic)] text-on-accent`;
 
 function IconButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
   return (
-    <button type="button" aria-label={label} title={label} onClick={onClick} className={`${ctrl} grid w-8 place-items-center px-0`}>
+    <button type="button" aria-label={label} title={label} onClick={onClick} className={`${ctrl} w-9 px-0`}>
       {children}
     </button>
   );
@@ -239,7 +239,7 @@ function useDiagramStage({
                 <button type="button" className={ctrl} onClick={() => goTo(step.index - 1)} disabled={step.index === 0}>
                   ← Prev
                 </button>
-                <span className="font-mono text-xs font-bold text-muted" aria-live="polite">
+                <span className="font-body text-sm font-semibold text-muted" aria-live="polite">
                   {step.index + 1}/{step.total}
                 </span>
                 <button
@@ -269,8 +269,8 @@ function useDiagramStage({
           ) : null}
         </div>
         {step ? (
-          <p className="m-0 font-mono text-[13px] text-ink" aria-live="polite">
-            <span className="font-bold text-accent">{step.index + 1}.</span> {step.caption}
+          <p className="m-0 font-body text-[13px] text-ink" aria-live="polite">
+            <span className="font-bold text-[color:var(--accent-text)]">{step.index + 1}.</span> {step.caption}
           </p>
         ) : null}
       </div>
@@ -291,35 +291,41 @@ export function DiagramViewer({
 }: DiagramViewerProps & { pager?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const { containerRef, controls } = useDiagramStage({ html, flows, animation, active: !open });
-  const minWidth = width ? Math.min(width, MIN_READABLE_WIDTH) : undefined;
 
   return (
     <figure className="my-10 w-full [contain:inline-size]">
       {controls ? <div className="mb-3">{controls}</div> : null}
       <div className="relative">
         <div
-          className={`overflow-x-auto rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white p-4 sm:p-6 ${pager ? "pt-14 sm:pt-14" : ""}`}
+          className={`overflow-x-auto bg-section p-4 sm:p-6 ${pager ? "pt-16 sm:pt-16" : ""}`}
         >
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label={`Enlarge diagram: ${alt}`}
             className="mx-auto block w-full cursor-zoom-in"
-            style={{ minWidth, maxWidth: width ?? undefined }}
+            style={{ maxWidth: width ?? undefined }}
           >
             <SvgHost html={html} hostRef={containerRef} className="sd-diagram" />
           </button>
         </div>
         <div className="absolute right-3 top-3">
-          <IconButton label="Enlarge diagram" onClick={() => setOpen(true)}>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Enlarge diagram"
+            title="Enlarge diagram"
+            className={ctrl}
+          >
             {icon.expand}
-          </IconButton>
+            <span className="hidden sm:inline">Enlarge</span>
+          </button>
         </div>
         {/* Pinned top-left so it never moves when pages differ in height. */}
         {pager ? <div className="absolute left-3 top-3 right-14">{pager}</div> : null}
       </div>
       {caption ? (
-        <figcaption className="mt-3 text-center font-mono text-[13px] text-muted">{caption}</figcaption>
+        <figcaption className="mt-3 text-center font-body text-[13px] text-muted">{caption}</figcaption>
       ) : null}
       {open ? (
         <Lightbox
@@ -391,23 +397,23 @@ function Lightbox({
     >
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-2 border-b-[1.5px] border-[color:var(--color-xiketic)] px-4 py-3">
-          <p className="m-0 min-w-0 flex-1 truncate font-mono text-sm font-bold text-ink">
-            <span className="text-accent">##</span> {caption || "Diagram"}
+          <p className="m-0 min-w-0 flex-1 truncate font-body text-sm font-bold text-ink">
+            <span className="text-[color:var(--accent-text)]">##</span> {caption || "Diagram"}
           </p>
           <IconButton label="Zoom out" onClick={() => stepZoom(-1)}>
-            <span className="font-mono text-lg leading-none">−</span>
+            <span className="font-body text-lg leading-none">−</span>
           </IconButton>
           <button type="button" onClick={fit} className={ctrl} title="Fit to screen">
             {Math.round(zoom * 100)}%
           </button>
           <IconButton label="Zoom in" onClick={() => stepZoom(1)}>
-            <span className="font-mono text-lg leading-none">+</span>
+            <span className="font-body text-lg leading-none">+</span>
           </IconButton>
           <IconButton label="Close" onClick={() => dialogRef.current?.close()}>
             {icon.close}
           </IconButton>
         </div>
-        {controls ? <div className="border-b border-black/10 px-4 py-3">{controls}</div> : null}
+        {controls ? <div className="px-4 py-3">{controls}</div> : null}
         <div
           ref={scrollRef}
           role="region"
@@ -458,26 +464,23 @@ export function DiagramPages({
   const go = (i: number) => setIndex((i + pages.length) % pages.length);
   const pad = (n: number) => String(n).padStart(2, "0");
 
-  const arrow = "grid h-full w-8 flex-none place-items-center text-sm hover:bg-[rgba(0,147,233,0.08)] hover:text-accent";
+  const arrow = `${ctrl} w-9 px-0 text-base`;
   const pager = (
     <nav
       aria-label="Diagram pages"
-      className="inline-flex h-8 max-w-full items-stretch overflow-hidden rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white font-mono text-xs font-bold text-ink shadow-[-3px_3px_0_rgba(0,147,233,0.30)]"
+      className="inline-flex h-9 max-w-full items-stretch gap-[2px] text-sm font-semibold text-ink"
     >
-      <button type="button" aria-label="Previous page" onClick={() => go(index - 1)} className={arrow}>
+      <button type="button" aria-label="Previous page" title="Previous page" onClick={() => go(index - 1)} className={arrow}>
         ‹
       </button>
-      <span
-        className="flex min-w-0 items-center gap-2 border-x-[1.5px] border-[color:var(--color-xiketic)] px-3"
-        aria-live="polite"
-      >
-        <span className="flex-none text-accent">
+      <span className="flex min-w-0 items-center gap-2 bg-white px-3" aria-live="polite">
+        <span className="flex-none text-[color:var(--accent-text)]">
           {pad(index + 1)}
           <span className="text-muted">/{pad(pages.length)}</span>
         </span>
         <span className="truncate">{page.name}</span>
       </span>
-      <button type="button" aria-label="Next page" onClick={() => go(index + 1)} className={arrow}>
+      <button type="button" aria-label="Next page" title="Next page" onClick={() => go(index + 1)} className={arrow}>
         ›
       </button>
     </nav>

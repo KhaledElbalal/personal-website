@@ -32,10 +32,10 @@ export function PostToc({ headings }: { headings: Heading[] }) {
   return (
     <nav
       aria-label="Table of contents"
-      className="sticky top-[140px] hidden flex-col gap-2.5 pt-1.5 md:flex"
+      className="sticky top-[140px] hidden max-w-[15rem] flex-col gap-2.5 pt-1.5 md:flex wide:mr-12 wide:w-[15rem] wide:justify-self-end"
     >
-      <span className="font-mono text-[11px] tracking-[0.18em] text-muted">
-        CONTENTS
+      <span className="font-body text-sm font-semibold text-black">
+        Contents
       </span>
       {headings.map((h) => {
         const active = h.id === activeId;
@@ -43,13 +43,13 @@ export function PostToc({ headings }: { headings: Heading[] }) {
           <a
             key={h.id}
             href={`#${h.id}`}
-            className={`border-l-2 pl-2.5 font-mono text-[13px] no-underline transition-colors duration-150 ${
+            className={`pl-2.5 font-body text-[0.9375rem] leading-snug no-underline transition-colors duration-150 ${
               active
-                ? "border-accent font-bold text-accent"
-                : "border-transparent text-muted hover:text-accent"
+                ? "font-semibold text-black underline decoration-2 underline-offset-4"
+                : "text-ink hover:text-[color:var(--accent-text)]"
             } ${h.level === "h3" ? "ml-2.5" : ""}`}
           >
-            {h.level === "h3" ? "###" : "##"} {h.text}
+            {h.text}
           </a>
         );
       })}

@@ -17,42 +17,29 @@ export function ExperienceRow({
 }: ExperienceRowProps) {
   return (
     <div
-      className={`grid grid-cols-1 gap-x-10 gap-y-3 border-t border-black/10 py-6 sm:grid-cols-[200px_minmax(0,1fr)] ${className}`}
+      className={`reveal grid grid-cols-1 gap-x-10 gap-y-3 py-8 first:pt-0 sm:grid-cols-[170px_minmax(0,1fr)] lg:grid-cols-[170px_minmax(0,5fr)_minmax(0,6fr)] ${className}`}
     >
-      <div>
-        <div className="font-mono text-sm font-bold text-accent">{dateRange}</div>
-        {location ? (
-          <div className="mt-1.5 font-mono text-xs text-muted">{location}</div>
-        ) : null}
+      <div className="text-sm">
+        <div className="font-semibold tabular-nums text-[color:var(--accent-text)]">
+          {dateRange}
+        </div>
+        {location ? <div className="mt-1 text-muted">{location}</div> : null}
       </div>
       <div>
-        <h3 className="m-0 font-mono text-xl font-bold leading-tight text-[color:var(--color-xiketic)]">
-          <span className="block sm:inline">{title}</span>
-          {company ? (
-            <>
-              <span aria-hidden="true" className="hidden sm:inline">
-                {" — "}
-              </span>
-              <span className="block sm:inline">{company}</span>
-            </>
-          ) : null}
+        <h3 className="m-0 text-[length:var(--step-row)] font-semibold leading-tight text-black">
+          {title}
         </h3>
+        {company ? <p className="m-0 mt-1 text-[1.0625rem] text-ink">{company}</p> : null}
+      </div>
         {bullets.length > 0 ? (
-          <ul className="mt-3.5 flex list-none flex-col gap-2.5 p-0">
+          <ul className="flex max-w-[60ch] list-none flex-col gap-2.5 p-0 sm:col-start-2 lg:col-start-3 lg:row-start-1">
             {bullets.map((b) => (
-              <li
-                key={b}
-                className="flex gap-3 font-body text-[15px] leading-[1.6] text-ink"
-              >
-                <span aria-hidden="true" className="font-mono font-bold text-accent">
-                  »
-                </span>
-                <span>{b}</span>
+              <li key={b} className="text-[1.0625rem] leading-relaxed text-ink">
+                {b}
               </li>
             ))}
           </ul>
         ) : null}
-      </div>
     </div>
   );
 }

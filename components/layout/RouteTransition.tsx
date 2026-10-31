@@ -1,27 +1,24 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { ViewTransition, type ReactNode } from "react";
 
-/** Minimal fade/slide between routes. Keyed by pathname so AnimatePresence
- * treats each page as a distinct element to exit/enter. */
+/** Page-level crossfade between routes, driven by the browser's View
+ * Transitions API (see the `.page-*` / `.slide-*` rules in globals.css).
+ * Keyed by pathname so each route is a distinct element to swap; unrelated
+ * updates on a page don't animate. Shared elements (the title morph) and the
+ * anchored header are handled outside this boundary. */
 export function RouteTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pathname}
-        className="flex flex-1 flex-col"
-        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
-        transition={{ duration: 0.18, ease: "easeOut" }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <ViewTransition
+      key={pathname}
+      enter={{ "nav-forward": "slide-in-fwd", "nav-back": "slide-in-back", default: "page-in" }}
+      exit={{ "nav-forward": "slide-out-fwd", "nav-back": "slide-out-back", default: "page-out" }}
+      default="none"
+    >
+      <div className="flex flex-1 flex-col">{children}</div>
+    </ViewTransition>
   );
 }

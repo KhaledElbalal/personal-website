@@ -57,7 +57,7 @@ const icon = {
 };
 
 const btn =
-  "inline-flex h-8 items-center gap-1.5 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white px-2.5 font-mono text-xs font-bold text-ink no-underline shadow-[-3px_3px_0_rgba(0,147,233,0.30)] hover:text-accent";
+  "inline-flex h-10 items-center gap-1.5 bg-[#dff1fd] hover:bg-[#c9e8fb] px-2.5 font-body text-sm font-semibold text-ink no-underline hover:text-[color:var(--accent-text)]";
 
 /** "Learn this with …": opens an assistant as a teacher, primed with the post. */
 export function ReadWith({ title, markdownUrl, kind }: ReadWithProps) {
@@ -77,10 +77,8 @@ export function ReadWith({ title, markdownUrl, kind }: ReadWithProps) {
   };
 
   return (
-    <div className="mt-6 flex flex-wrap items-center gap-2">
-      <span className="mr-1 font-mono text-xs text-muted">
-        <span className="text-accent">$</span> learn with
-      </span>
+    <div className="reveal mt-6 flex flex-wrap items-center gap-2">
+      <span className="mr-1 text-sm text-ink">Read with</span>
       {PROVIDERS.map((p) => (
         <a
           key={p.id}

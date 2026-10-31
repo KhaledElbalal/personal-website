@@ -65,6 +65,12 @@ export function toTimelineEntries(docs: ExperienceDoc[]): TimelineEntry[] {
 
     let text: string;
     let ref: string | undefined;
+    const kind: TimelineEntry["kind"] =
+      doc.type === "achievement"
+        ? "contest"
+        : doc.type === "degree"
+          ? "education"
+          : "work";
     if (doc.type === "achievement") {
       text = `tag: ${title}`;
       ref = "contest";
@@ -79,6 +85,7 @@ export function toTimelineEntries(docs: ExperienceDoc[]): TimelineEntry[] {
       ref,
       date: formatMonth(doc.startDate),
       detail: doc.detail ?? undefined,
+      kind,
     };
   });
 }

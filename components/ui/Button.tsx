@@ -10,12 +10,13 @@ type ButtonProps = HTMLAttributes<HTMLElement> & {
   disabled?: boolean;
 };
 
+// One shape site-wide: flat, square-cornered, 44px tall.
 const base =
-  "inline-flex h-[35px] items-center justify-center whitespace-nowrap rounded-[4px] px-[14px] font-mono text-base font-bold leading-none no-underline transition duration-100 hover:brightness-105 active:translate-y-px";
+  "press inline-flex h-11 items-center justify-center whitespace-nowrap px-5 font-body text-[1.0625rem] font-semibold leading-none no-underline";
 
 const variants = {
-  primary: "bg-accent text-on-accent",
-  neutral: "bg-placeholder text-black",
+  primary: "bg-ink text-on-accent hover:bg-[color:var(--accent-text)]",
+  neutral: "bg-placeholder text-black hover:bg-accent-soft",
 } as const;
 
 export function Button({

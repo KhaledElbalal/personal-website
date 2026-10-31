@@ -27,7 +27,7 @@ export async function AuthorBio() {
   );
 
   return (
-    <div className="mt-14 flex items-center gap-6 rounded-[8px] bg-[color:var(--color-xiketic)] p-7 shadow-[var(--shadow-card-flat)]">
+    <div className="reveal mt-14 wide-block flex items-center gap-6 bg-[color:var(--color-xiketic)] p-7 ">
       {avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor
         <img
@@ -35,23 +35,23 @@ export async function AuthorBio() {
           alt={settings?.avatar?.alt || name}
           width={68}
           height={68}
-          className="hidden h-[68px] w-[68px] shrink-0 rounded-full border-[1.5px] border-[color:var(--color-maya-blue)] object-cover sm:block"
+          className="hidden h-[68px] w-[68px] shrink-0 rounded-full object-cover sm:block"
         />
       ) : (
         <div
           aria-hidden="true"
-          className="hidden h-[68px] w-[68px] shrink-0 rounded-full bg-[repeating-linear-gradient(135deg,rgba(247,247,255,0.12),rgba(247,247,255,0.12)_6px,rgba(247,247,255,0.05)_6px,rgba(247,247,255,0.05)_12px)] sm:block"
+          className="hidden h-[68px] w-[68px] shrink-0 rounded-full bg-[rgba(247,247,255,0.12)] sm:block"
         />
       )}
       <div>
-        <div className="font-mono text-xs text-accent-bright">$ whoami</div>
-        <div className="mt-1.5 font-mono text-lg font-bold text-[color:var(--color-ghost-white)]">
+        
+        <div className="mt-1.5 font-body text-[1.0625rem] font-semibold text-[color:var(--color-ghost-white)]">
           {name}
         </div>
         {role ? (
-          <div className="mt-0.5 font-mono text-xs text-[color:rgba(247,247,255,0.65)]">{role}</div>
+          <div className="mt-0.5 font-body text-[13px] text-[color:#d4d6e2]">{role}</div>
         ) : null}
-        <p className="mt-2 max-w-prose font-body text-sm leading-[1.6] text-[color:rgba(247,247,255,0.65)]">
+        <p className="mt-2 max-w-prose font-body text-[1.0625rem] leading-[1.6] text-[color:#d4d6e2]">
           {bio}
         </p>
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
@@ -61,7 +61,7 @@ export async function AuthorBio() {
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-xs font-bold text-accent-bright no-underline hover:underline"
+              className="font-body text-[13px] font-semibold text-accent-bright underline underline-offset-4"
             >
               {s.label}
             </a>
@@ -69,14 +69,14 @@ export async function AuthorBio() {
           {email ? (
             <a
               href={contactHref(email)}
-              className="font-mono text-xs font-bold text-accent-bright no-underline hover:underline"
+              className="font-body text-[13px] font-semibold text-accent-bright underline underline-offset-4"
             >
               contact →
             </a>
           ) : null}
           <Link
             href="/blog"
-            className="font-mono text-xs font-bold text-accent-bright no-underline hover:underline"
+            className="font-body text-[13px] font-semibold text-accent-bright underline underline-offset-4"
           >
             all posts →
           </Link>

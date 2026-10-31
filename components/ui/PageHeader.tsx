@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import { Blob } from "./Blob";
-
 type PageHeaderProps = {
   as?: "h1" | "h2";
   title: ReactNode;
@@ -11,6 +9,11 @@ type PageHeaderProps = {
   className?: string;
 };
 
+/**
+ * Inner-page opener: the title set as the page's one big thing, rising from
+ * behind its baseline; the sentence, action and facts sit under it on the
+ * same 12-column grid as the rest of the page.
+ */
 export function PageHeader({
   as: Heading = "h1",
   title,
@@ -20,29 +23,26 @@ export function PageHeader({
   className = "",
 }: PageHeaderProps) {
   return (
-    <header className={`relative overflow-hidden bg-section ${className}`}>
-      {/* Soft blob in the open space beside the copy, centered on the content. */}
-      <div className="pointer-events-none absolute inset-y-0 -right-16 flex items-center">
-        <Blob size={480} interactive="follow" strength={32} />
-      </div>
-      {/* Fainter blob tucked behind the heading (desktop only). */}
-      <div className="pointer-events-none absolute -left-24 -top-16 hidden sm:block">
-        <Blob size={360} variant="cluster" interactive="follow" strength={28} />
-      </div>
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 sm:px-10 sm:py-12 md:flex-row md:items-center md:justify-between md:gap-12 md:py-16">
-        <div className="max-w-[560px]">
-          <Heading className="m-0 whitespace-pre-line font-mono text-[clamp(2rem,6vw,2.75rem)] font-bold leading-[1.1] text-ink">
-            {title}
-          </Heading>
+    <header className={`page-margin pb-16 pt-10 md:pb-24 md:pt-16 ${className}`}>
+      <Heading
+        className="m-0 whitespace-pre-line font-body font-bold uppercase leading-[0.84] tracking-[-0.045em] text-heading"
+        style={{ fontSize: "var(--step-title)" }}
+      >
+        <span className="mask-line">
+          <span>{title}</span>
+        </span>
+      </Heading>
+      {intro || aside ? (
+        <div className="mt-10 grid gap-8 md:mt-16 md:grid-cols-12 md:items-end">
           {intro ? (
-            <p className="mt-4 max-w-[440px] font-body text-base leading-[1.6] text-ink">
+            <p className="reveal m-0 max-w-[40ch] text-[1.125rem] leading-snug text-ink md:col-span-5">
               {intro}
             </p>
           ) : null}
-          {actions ? <div className="mt-6">{actions}</div> : null}
+          {aside ? <div className="md:col-span-6 md:col-start-7">{aside}</div> : null}
         </div>
-        {aside ? <div className="shrink-0">{aside}</div> : null}
-      </div>
+      ) : null}
+      {actions ? <div className="reveal mt-8">{actions}</div> : null}
     </header>
   );
 }

@@ -15,7 +15,7 @@ export default async function ProjectsPage() {
       kind="project"
       basePath="/projects"
       title="Projects"
-      eyebrow="FEATURED"
+      intro="Selected projects, from agentic AI to data pipelines."
       emptyMessage="Projects are coming soon."
     />
   );

@@ -4,6 +4,8 @@ export type TimelineEntry = {
   ref?: string;
   date?: string;
   detail?: string;
+  /** What the commit is, for filtering: derived from the experience type. */
+  kind?: "work" | "education" | "contest";
 };
 
 const DEFAULT_ENTRIES: TimelineEntry[] = [

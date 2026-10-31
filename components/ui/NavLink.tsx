@@ -4,34 +4,48 @@ import type { AnchorHTMLAttributes, ReactNode } from "react";
 type NavLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   children?: ReactNode;
   active?: boolean;
+  /** Passed to the router so view transitions can animate by direction. */
+  transitionTypes?: string[];
+  /** Draw the active underline as a named element that view transitions can
+   * slide between tabs. Use on one nav only: names must be unique per page. */
+  morph?: boolean;
 };
 
-// Same treatment as the footer's SocialLink (bold Space Mono, blue offset
-// shadow that drops away on hover); text-base until lg so the header row
-// still fits beside the wordmark and Contact button at md.
 const base =
-  "whitespace-nowrap font-mono text-base font-bold leading-none no-underline transition-[color,text-shadow] duration-200 active:-translate-x-px active:translate-y-px lg:text-lg";
+  "whitespace-nowrap font-body text-[1.0625rem] font-medium leading-none no-underline underline-offset-[10px] decoration-2 transition-colors duration-150 hover:text-accent-text focus-visible:text-accent-text";
 
 export function NavLink({
   children = "Home",
   href = "#",
   active = false,
+  transitionTypes,
+  morph = false,
   className = "",
   ...rest
 }: NavLinkProps) {
-  // Current page reads as the hover state: accent colour, shadow gone.
+  // The current page is underlined; no shadows, no colour-only state.
   const state = active
-    ? "text-accent"
-    : "text-black [text-shadow:var(--shadow-offset-social)] hover:text-accent hover:[text-shadow:none] focus-visible:text-accent focus-visible:[text-shadow:none]";
+    ? morph
+      ? "text-black"
+      : "text-black underline"
+    : "text-ink";
 
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`${base} ${state} ${className}`}
+      transitionTypes={transitionTypes}
+      className={`relative ${base} ${state} ${className}`}
       {...rest}
     >
       {children}
+      {active && morph ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -bottom-[7px] h-[3px] bg-black"
+          style={{ viewTransitionName: "nav-underline" }}
+        />
+      ) : null}
     </Link>
   );
 }

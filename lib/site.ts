@@ -30,3 +30,8 @@ export async function getSiteName(): Promise<string> {
   );
   return settings?.siteName || SITE_NAME;
 }
+
+/** One-line hero sentence (the longer heroIntro lives in Site Settings). */
+export const HERO_SENTENCE =
+  "Software engineer building high-performance, intelligent systems.";
+export const HERO_KIND = "Backend · AI & ML · Competitive programming";

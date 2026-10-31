@@ -39,18 +39,18 @@ export function Walkthrough({ title, steps, filename, plainCode, pages, alt }: W
   const go = (i: number) => setIndex(Math.max(0, Math.min(steps.length - 1, i)));
 
   const btn =
-    "inline-flex h-8 items-center gap-1 rounded-[4px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white px-3 font-mono text-xs font-bold text-ink shadow-[-3px_3px_0_rgba(0,147,233,0.30)] hover:text-accent disabled:pointer-events-none disabled:opacity-35 disabled:shadow-none";
+    "inline-flex h-9 items-center gap-1 transition-colors duration-150 active:translate-y-px bg-[#dff1fd] hover:bg-[#c9e8fb] px-3 font-body text-[13px] font-bold text-ink hover:text-[color:var(--accent-text)] disabled:pointer-events-none disabled:opacity-35 disabled:shadow-none";
 
   return (
     <section
       aria-roledescription="walkthrough"
       aria-label={title ?? "Walkthrough"}
-      className="my-10 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-4 shadow-[-6px_6px_0_rgba(0,147,233,0.30)] sm:p-6"
+      className="my-10 bg-section p-4 sm:p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Walkthrough</span>
-          {title ? <p className="m-0 font-mono text-lg font-bold leading-snug text-heading">{title}</p> : null}
+          <span className="font-body text-[13px] font-bold text-[color:var(--accent-text)]">Walkthrough</span>
+          {title ? <p className="m-0 font-body text-lg font-bold leading-snug text-heading">{title}</p> : null}
         </div>
         <ol className="m-0 flex list-none flex-wrap gap-1.5 p-0" aria-label="Steps">
           {steps.map((s, i) => (
@@ -60,12 +60,12 @@ export function Walkthrough({ title, steps, filename, plainCode, pages, alt }: W
                 onClick={() => go(i)}
                 aria-current={i === index ? "step" : undefined}
                 aria-label={`Step ${i + 1}: ${s.title}`}
-                className={`grid h-7 w-7 place-items-center rounded-full border-[1.5px] font-mono text-[11px] font-bold transition-colors ${
+                className={`grid h-7 w-7 place-items-center rounded-full border-[1.5px] font-body text-[13px] font-bold transition-colors ${
                   i === index
                     ? "border-accent bg-accent text-white"
                     : i < index
-                      ? "border-accent text-accent"
-                      : "border-black/25 text-muted hover:border-accent hover:text-accent"
+                      ? "border-accent text-[color:var(--accent-text)]"
+                      : "border-black/25 text-muted hover:border-accent hover:text-[color:var(--accent-text)]"
                 }`}
               >
                 {i + 1}
@@ -76,8 +76,8 @@ export function Walkthrough({ title, steps, filename, plainCode, pages, alt }: W
       </div>
 
       <div className="mt-4 border-l-[3px] border-accent pl-4" aria-live="polite">
-        <p className="m-0 font-mono text-[13px] font-bold text-heading">
-          <span className="text-accent">
+        <p className="m-0 font-body text-[13px] font-bold text-heading">
+          <span className="text-[color:var(--accent-text)]">
             {pad(index + 1)}
             <span className="text-muted">/{pad(steps.length)}</span>
           </span>{" "}
@@ -89,10 +89,10 @@ export function Walkthrough({ title, steps, filename, plainCode, pages, alt }: W
       {/* Stacked, not side by side: diagrams need the full width to stay legible. */}
       <div className="mt-5 grid gap-4">
         {hasCode ? (
-          <div className="relative overflow-hidden rounded-[8px] bg-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)]">
+          <div className="relative overflow-hidden bg-[color:var(--color-xiketic)] ">
             {filename ? (
               <div className="flex items-center justify-between gap-3 border-b border-white/10 py-1.5 pl-[18px] pr-2">
-                <span className="truncate font-mono text-[12px] text-[color:var(--color-ghost-white)]/75">{filename}</span>
+                <span className="truncate font-mono text-[13px] text-[color:var(--color-ghost-white)]/75">{filename}</span>
                 {plainCode ? <CopyCode text={plainCode} /> : null}
               </div>
             ) : null}
@@ -112,7 +112,7 @@ export function Walkthrough({ title, steps, filename, plainCode, pages, alt }: W
         <button type="button" className={btn} onClick={() => go(index - 1)} disabled={index === 0}>
           ← Prev
         </button>
-        <span className="font-mono text-[11px] text-muted">
+        <span className="font-body text-[13px] text-muted">
           {page && pages.length > 1 ? page.name : ""}
         </span>
         <button type="button" className={btn} onClick={() => go(index + 1)} disabled={index === steps.length - 1}>

@@ -13,13 +13,22 @@ const NAV = [
   { label: "Blog", href: "/blog" },
 ];
 
-export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string }) {
+export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  // Tabs read left to right: moving right slides the page left, and back.
+  const indexOf = (path: string) =>
+    NAV.findIndex((n) => (n.href === "/" ? path === "/" : path.startsWith(n.href)));
+  const directionTo = (href: string) => {
+    const from = indexOf(pathname);
+    const to = indexOf(href);
+    if (from < 0 || to < 0 || from === to) return undefined;
+    return [to > from ? "nav-forward" : "nav-back"];
+  };
 
   // Navigating (incl. back/forward) closes the overlay.
   const [openedAt, setOpenedAt] = useState(pathname);
@@ -47,31 +56,21 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
     };
   }, [open]);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <header
-      className={`sticky top-0 z-50 bg-page transition-shadow duration-200 ${
-        scrolled && !open ? "shadow-[0_4px_16px_rgba(18,20,32,0.12)]" : ""
-      }`}
+      className="sticky top-0 z-50 bg-page"
+      // Named so view transitions keep the bar fixed while the page swaps.
+      style={{ viewTransitionName: "site-header" }}
     >
       {/* relative z-10: the bar (wordmark + toggle) stays above the overlay. */}
       <div
-        className={`relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 transition-[height] duration-200 sm:px-10 ${
-          scrolled ? "h-[60px] md:h-[64px]" : "h-[76px] md:h-[95px]"
-        }`}
+        className="page-margin relative z-10 flex h-[4.5rem] items-center justify-between md:h-20"
       >
         <Link
           href="/"
+          transitionTypes={directionTo("/")}
           aria-label="Khaled Ibrahim — home"
-          className={`transition-[font-size] duration-200 ${
-            scrolled ? "text-[24px] md:text-[28px]" : "text-[26px] md:text-[40px]"
-          }`}
+          className="text-[28px] md:text-[32px]"
         >
           <Wordmark />
         </Link>
@@ -85,6 +84,8 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
               key={item.href}
               href={item.href}
               active={isActive(item.href)}
+              transitionTypes={directionTo(item.href)}
+              morph
             >
               {item.label}
             </NavLink>
@@ -92,7 +93,7 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
         </nav>
 
         <div className="hidden md:block">
-          <Button href={contactHref}>Contact Me</Button>
+          <Button href="#contact">Contact</Button>
         </div>
 
         <button
@@ -101,7 +102,7 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center md:hidden"
         >
           <span className="relative block h-4 w-6" aria-hidden="true">
             <span
@@ -129,7 +130,7 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
       <nav
         id="mobile-nav"
         aria-label="Primary"
-        className={`fixed inset-0 flex flex-col bg-page px-6 pb-10 pt-[calc(76px+2rem)] transition-[opacity,visibility] duration-200 sm:px-10 md:hidden ${
+        className={`fixed inset-0 flex flex-col bg-page px-6 pb-10 pt-[calc(4.5rem+2rem)] transition-[opacity,visibility] duration-200 sm:px-10 md:hidden ${
           open ? "visible opacity-100" : "invisible opacity-0"
         }`}
       >
@@ -145,6 +146,7 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
               <NavLink
                 href={item.href}
                 active={isActive(item.href)}
+                transitionTypes={directionTo(item.href)}
                 onClick={() => setOpen(false)}
                 className="text-[2rem]!"
               >
@@ -154,8 +156,8 @@ export function SiteHeader({ contactHref = "#contact" }: { contactHref?: string 
           ))}
         </ul>
         <div className="mt-auto">
-          <Button href={contactHref} onClick={() => setOpen(false)}>
-            Contact Me
+          <Button href="#contact" onClick={() => setOpen(false)}>
+            Contact
           </Button>
         </div>
       </nav>

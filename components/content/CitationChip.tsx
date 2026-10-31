@@ -25,7 +25,7 @@ export function CitationChip({ citation, markKey, children }: { citation: Citati
         target="_blank"
         rel="noopener noreferrer"
         aria-describedby={cardId}
-        className="text-ink underline decoration-accent decoration-dotted decoration-2 underline-offset-[3px] hover:text-accent"
+        className="text-ink underline decoration-accent decoration-dotted decoration-2 underline-offset-[3px] hover:text-[color:var(--accent-text)]"
       >
         {children}
       </a>
@@ -35,13 +35,13 @@ export function CitationChip({ citation, markKey, children }: { citation: Citati
         data-card
         // display:none while hidden — an invisible card would still widen the
         // page's scroll area when the citation sits near the right edge.
-        className="pointer-events-none absolute left-0 top-full z-30 mt-2 hidden w-[min(20rem,calc(100vw-3rem))] rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] bg-white p-[12px_14px] text-left shadow-[-4px_4px_0_rgba(0,147,233,0.30)] group-focus-within/card:block group-hover/card:block"
+        className="pointer-events-none absolute left-0 top-full z-30 mt-2 hidden w-[min(20rem,calc(100vw-3rem))] bg-white shadow-[0_8px_24px_rgba(18,20,32,0.16)] p-[12px_14px] text-left group-focus-within/card:block group-hover/card:block"
       >
-        <span className="block font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
+        <span className="block font-body text-[13px] font-bold text-[color:var(--accent-text)]">
           {citation.label} <span className="font-normal normal-case tracking-normal text-muted">· {KIND_LABEL[citation.kind]}</span>
         </span>
         {citation.title ? (
-          <span className="mt-1 block font-mono text-[13.5px] font-bold leading-snug text-heading">{citation.title}</span>
+          <span className="mt-1 block font-body text-[13.5px] font-bold leading-snug text-heading">{citation.title}</span>
         ) : null}
         {citation.detail ? <span className="mt-1 block font-body text-[12.5px] leading-snug text-muted">{citation.detail}</span> : null}
       </span>

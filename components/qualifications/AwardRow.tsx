@@ -7,10 +7,10 @@ type AwardRowProps = {
 export function AwardRow({ title, date, className = "" }: AwardRowProps) {
   return (
     <div
-      className={`grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3.5 border-t border-black/10 py-4 ${className}`}
+      className={`reveal grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 py-3 ${className}`}
     >
-      <span className="font-mono text-[15px] font-bold text-black">{title}</span>
-      <span className="font-mono text-xs text-muted">{date}</span>
+      <span className="text-[1.0625rem] font-medium text-black">{title}</span>
+      <span className="text-sm tabular-nums text-muted">{date}</span>
     </div>
   );
 }

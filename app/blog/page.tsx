@@ -15,7 +15,7 @@ export default async function BlogPage() {
       kind="post"
       basePath="/blog"
       title="Personal Blog"
-      eyebrow="LATEST POSTS"
+      intro="Writing on software engineering, computer systems, and everything in between."
       emptyMessage="Posts are coming soon."
     />
   );

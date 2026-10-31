@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 
 import { AuthorBio } from "@/components/content/AuthorBio";
 import { DiagramFigure } from "@/components/content/DiagramFigure";
@@ -10,7 +11,7 @@ import { postMarkdownUrl } from "@/lib/post-markdown";
 import { PostBody } from "@/components/content/PostBody";
 import { PostSources } from "@/components/content/PostSources";
 import { PostToc } from "@/components/content/PostToc";
-import { Blob, Tag } from "@/components/ui";
+import { Tag } from "@/components/ui";
 import { estimateReadingTime, extractHeadings, formatPostDate } from "@/sanity/post";
 import { sanityFetch } from "@/sanity/fetch";
 import { urlFor } from "@/sanity/image";
@@ -116,63 +117,63 @@ export async function PostDetailView({
 
   return (
     <>
-      <section className="relative overflow-hidden bg-section">
-        <Blob
-          size={300}
-          interactive="parallax"
-          className="pointer-events-none absolute -left-16 -top-24"
-        />
-        <Blob
-          size={420}
-          variant="cluster"
-          interactive="parallax"
-          className="pointer-events-none absolute -right-16 -top-10 hidden sm:block"
-        />
-        <div className="relative mx-auto w-full max-w-7xl px-6 py-14 sm:px-10 sm:py-16">
-          <Link
-            href={basePath}
-            className="inline-flex items-center gap-2 font-mono text-[13px] font-bold text-accent no-underline hover:underline"
-          >
-            <span className="text-muted">$</span> cd ~{basePath}
-          </Link>
-          <div className="mt-6 flex flex-wrap items-center gap-4">
-            {post.category ? <Tag size="chip">{post.category}</Tag> : null}
-            <span className="font-mono text-sm text-muted">
+      <section className="page-margin pb-8 pt-8 md:pb-10 md:pt-12">
+        <div className="grid gap-x-10 gap-y-6 md:grid-cols-[minmax(150px,17%)_minmax(0,1fr)] wide:grid-cols-[minmax(0,1fr)_42rem_minmax(0,1fr)]">
+          <p className="m-0 hidden text-sm text-muted md:col-start-1 md:row-start-1 md:block">
+            {post.category ? (
+              <span className="block font-medium text-ink">{post.category}</span>
+            ) : null}
+            {formatPostDate(post)}
+            {kind === "post" ? ` · ${readingTime} min read` : null}
+          </p>
+          <div className="md:col-start-2 md:row-start-1 wide:col-span-2">
+            <ViewTransition name={post.slug ? `title-${post.slug}` : undefined} share="morph" default="none">
+              <h1 className="m-0 text-[length:var(--step-head)] font-bold leading-[1.02] tracking-[-0.03em] text-heading">
+                {post.title ?? "Post"}
+              </h1>
+            </ViewTransition>
+            <p className="m-0 mt-4 text-sm text-muted md:hidden">
+              {post.category ? (
+                <span className="block font-medium text-ink">{post.category}</span>
+              ) : null}
               {formatPostDate(post)}
               {kind === "post" ? ` · ${readingTime} min read` : null}
-            </span>
-          </div>
-          <h1 className="m-0 mt-5 max-w-[720px] font-mono text-[clamp(2rem,6vw,2.75rem)] font-bold leading-[1.1] text-ink">
-            {post.title ?? "Post"}
-          </h1>
-          {post.summary ? (
-            <p className="mt-4 max-w-[560px] font-body text-base leading-[1.6] text-ink">
-              {post.summary}
             </p>
-          ) : null}
-          {post.slug ? (
-            <ReadWith
-              title={post.title ?? "this post"}
-              markdownUrl={postMarkdownUrl(basePath === "/projects" ? "projects" : "blog", post.slug)}
-              kind={kind}
-            />
-          ) : null}
+            {post.summary ? (
+              <p className="reveal mt-8 max-w-[52ch] text-[length:var(--step-lead)] font-medium leading-[1.25] text-ink">
+                {post.summary}
+              </p>
+            ) : null}
+            {post.slug ? (
+              <ReadWith
+                title={post.title ?? "this post"}
+                markdownUrl={postMarkdownUrl(basePath === "/projects" ? "projects" : "blog", post.slug)}
+                kind={kind}
+              />
+            ) : null}
+            <Link
+              href={basePath}
+              className="mt-8 inline-flex items-center gap-2 text-[1.0625rem] font-medium text-ink underline decoration-2 underline-offset-4 hover:text-[color:var(--accent-text)]"
+            >
+              <span aria-hidden="true">←</span> {basePath === "/projects" ? "All projects" : "All posts"}
+            </Link>
+          </div>
         </div>
       </section>
 
       {seriesPosts.length > 1 && seriesIndex >= 0 ? (
-        <div className="border-b border-black/10 bg-page">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3.5 font-mono text-[13px] sm:px-10">
-            <span className="text-muted">
-              <span className="font-bold text-accent">⑂</span> series:{" "}
-              <span className="font-bold text-accent">{seriesName}</span>{" "}
+        <div className="bg-section">
+          <div className="page-margin flex flex-wrap items-center justify-between gap-3 py-4 text-[1.0625rem]">
+            <span className="text-ink">
+              Series:{" "}
+              <span className="font-semibold text-black">{seriesName}</span>{" "}
               · part {seriesIndex + 1} of {seriesPosts.length}
             </span>
             <span className="flex flex-wrap gap-5">
               {prevChapter ? (
                 <Link
                   href={`${basePath}/${prevChapter.slug}`}
-                  className="text-muted no-underline hover:text-accent"
+                  className="text-ink underline underline-offset-4 hover:text-[color:var(--accent-text)]"
                 >
                   ← {String(prevChapter.part ?? "").padStart(2, "0")}{" "}
                   {prevChapter.title}
@@ -181,7 +182,7 @@ export async function PostDetailView({
               {nextChapter ? (
                 <Link
                   href={`${basePath}/${nextChapter.slug}`}
-                  className="font-bold text-accent no-underline hover:underline"
+                  className="font-semibold text-black underline underline-offset-4 hover:text-[color:var(--accent-text)]"
                 >
                   {String(nextChapter.part ?? "").padStart(2, "0")}{" "}
                   {nextChapter.title} →
@@ -192,18 +193,12 @@ export async function PostDetailView({
         </div>
       ) : null}
 
-      <div className="mx-auto w-full max-w-7xl px-6 py-16 sm:px-10">
-        <div
-          className={
-            headings.length
-              ? "md:grid md:grid-cols-[150px_minmax(0,1fr)] md:items-start md:gap-10"
-              : ""
-          }
-        >
-          {headings.length ? <PostToc headings={headings} /> : null}
+      <div className="page-margin w-full pb-12 pt-6 md:pb-20 md:pt-8">
+        <div className="md:grid md:grid-cols-[minmax(150px,17%)_minmax(0,1fr)] md:items-start md:gap-10 wide:grid-cols-[minmax(0,1fr)_42rem_minmax(0,1fr)]">
+          {headings.length ? <PostToc headings={headings} /> : <div aria-hidden="true" />}
           <article className="mx-auto max-w-3xl md:mx-0 md:max-w-none">
             {post.coverDiagram?.svg ? (
-              <div className="-mt-10 mb-10">
+              <div className="mb-10 wide-block">
                 <DiagramFigure
                   svg={post.coverDiagram.svg}
                   alt={post.coverDiagram.alt ?? ""}
@@ -216,12 +211,10 @@ export async function PostDetailView({
                 />
               </div>
             ) : cover ? (
-              // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor
-              <img
-                src={cover}
-                alt={post.cover?.alt ?? ""}
-                className="mb-10 w-full rounded-[8px]"
-              />
+              <div className="mb-10 wide-block">
+                {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
+                <img src={cover} alt={post.cover?.alt ?? ""} className="w-full" />
+              </div>
             ) : null}
             <PostBody value={post.body} notes={notes} />
             <PostSources citations={notes.citations} />
@@ -237,11 +230,11 @@ export async function PostDetailView({
             ) : null}
 
             {newerPost || olderPost ? (
-              <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-black/10 pt-6">
+              <div className="reveal mt-16 flex wide-block flex-wrap items-center justify-between gap-4 bg-section p-5">
                 {olderPost ? (
                   <Link
                     href={`${basePath}/${olderPost.slug}`}
-                    className="font-mono text-[13px] font-bold text-accent no-underline hover:underline"
+                    className="text-[1.0625rem] font-semibold text-black underline underline-offset-4 hover:text-[color:var(--accent-text)]"
                   >
                     ← {olderPost.title}
                   </Link>
@@ -251,7 +244,7 @@ export async function PostDetailView({
                 {newerPost ? (
                   <Link
                     href={`${basePath}/${newerPost.slug}`}
-                    className="text-right font-mono text-[13px] font-bold text-accent no-underline hover:underline"
+                    className="text-right text-[1.0625rem] font-semibold text-black underline underline-offset-4 hover:text-[color:var(--accent-text)]"
                   >
                     {newerPost.title} →
                   </Link>
@@ -260,32 +253,31 @@ export async function PostDetailView({
             ) : null}
 
             {seriesPosts.length > 1 ? (
-              <div className="mt-12">
-                <div className="font-mono text-[11px] tracking-[0.18em] text-muted">
-                  ALSO IN THIS SERIES ·{" "}
-                  <span className="text-accent">{seriesName?.toUpperCase()}</span>
-                </div>
+              <div className="reveal mt-12 wide-block">
+                <h2 className="m-0 text-[length:var(--step-lead)] font-semibold leading-tight text-black">
+                  Also in this series: {seriesName}
+                </h2>
                 <div className="mt-3.5 flex flex-col">
                   {seriesPosts.map((chapter) => {
                     const isCurrent = chapter._id === post._id;
                     const row = (
                       <span
-                        className={`grid grid-cols-[36px_1fr_auto] items-baseline gap-3.5 border-t border-black/10 px-1 py-3.5 no-underline ${
-                          isCurrent ? "-ml-0.5 border-l-2 border-l-accent bg-[rgba(0,147,233,0.06)] pl-3" : ""
+                        className={`grid grid-cols-[36px_1fr_auto] items-baseline gap-3.5 px-3 py-3 no-underline ${
+                          isCurrent ? "bg-[#dff1fd]" : ""
                         }`}
                       >
-                        <span className="font-mono text-[13px] font-bold text-accent">
+                        <span className="text-sm font-semibold tabular-nums text-[color:var(--accent-text)]">
                           {String(chapter.part ?? "").padStart(2, "0")}
                         </span>
-                        <span className="font-mono text-[15px] font-bold text-heading">
+                        <span className="text-[1.0625rem] font-medium text-heading">
                           {chapter.title}
                           {isCurrent ? (
-                            <span className="ml-2 font-normal text-xs text-accent">
+                            <span className="ml-2 text-sm font-normal text-ink">
                               ← you are here
                             </span>
                           ) : null}
                         </span>
-                        <span className="font-mono text-xs text-muted">
+                        <span className="text-sm text-muted">
                           {formatPostDate(chapter)}
                         </span>
                       </span>

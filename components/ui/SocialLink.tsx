@@ -13,7 +13,7 @@ export function SocialLink({
   return (
     <a
       href={href}
-      className={`whitespace-nowrap font-mono text-lg font-bold leading-none text-black no-underline [text-shadow:var(--shadow-offset-social)] transition-[color,text-shadow] duration-200 hover:text-accent hover:[text-shadow:none] focus-visible:text-accent focus-visible:[text-shadow:none] active:-translate-x-px active:translate-y-px ${className}`}
+      className={`inline-flex items-center gap-2.5 whitespace-nowrap font-body text-[1.0625rem] font-medium leading-none underline decoration-2 underline-offset-4 transition-colors duration-150 hover:text-accent-bright focus-visible:text-accent-bright ${className}`}
       {...rest}
     >
       {children}

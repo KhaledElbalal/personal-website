@@ -61,7 +61,7 @@ export default async function QualificationsPage() {
         }
         aside={
           page?.stats?.length ? (
-            <div className="flex flex-wrap gap-x-8 gap-y-4">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3">
               {page.stats.map((s) => (
                 <StatBlock key={s._key} value={s.value ?? ""} label={s.label ?? ""} />
               ))}
@@ -70,9 +70,9 @@ export default async function QualificationsPage() {
         }
       />
 
-      <div className="mx-auto w-full max-w-7xl px-6 py-16 sm:px-10">
+      <div className="page-margin bg-section py-6 md:py-12">
         {degree ? (
-          <section aria-labelledby="education-heading" className="pb-14">
+          <section aria-labelledby="education-heading" className="grid gap-6 py-12 md:grid-cols-[22%_minmax(0,1fr)] md:gap-10 md:py-20">
             <SectionHeadingWithBlob id="education-heading">
               Education
             </SectionHeadingWithBlob>
@@ -89,7 +89,7 @@ export default async function QualificationsPage() {
         ) : null}
 
         {roles.length ? (
-          <section aria-labelledby="experience-heading" className="pb-14">
+          <section aria-labelledby="experience-heading" className="grid gap-6 py-12 md:grid-cols-[22%_minmax(0,1fr)] md:gap-10 md:py-20">
             <SectionHeadingWithBlob id="experience-heading">
               Experience
             </SectionHeadingWithBlob>
@@ -113,7 +113,7 @@ export default async function QualificationsPage() {
         ) : null}
 
         {certificates.length ? (
-          <section aria-labelledby="certificates-heading" className="pb-14">
+          <section aria-labelledby="certificates-heading" className="grid gap-6 py-12 md:grid-cols-[22%_minmax(0,1fr)] md:gap-10 md:py-20">
             <SectionHeadingWithBlob id="certificates-heading">
               Certificates
             </SectionHeadingWithBlob>
@@ -137,7 +137,7 @@ export default async function QualificationsPage() {
         ) : null}
 
         {honors.length ? (
-          <section aria-labelledby="awards-heading">
+          <section aria-labelledby="awards-heading" className="grid gap-6 py-12 md:grid-cols-[22%_minmax(0,1fr)] md:gap-10 md:py-20">
             <SectionHeadingWithBlob id="awards-heading">
               Awards &amp; Competitions
             </SectionHeadingWithBlob>

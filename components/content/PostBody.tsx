@@ -27,36 +27,41 @@ function buildComponents(
         const url = value?.asset ? urlFor(value).width(1200).url() : null;
         if (!url) return null;
         return (
-          // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor
-          <img
-            src={url}
-            alt={value.alt ?? ""}
-            className="my-8 w-full rounded-[8px]"
-          />
+          <div className="wide-block my-8">
+            {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
+            <img src={url} alt={value.alt ?? ""} className="w-full" />
+          </div>
         );
       },
       diagram: ({ value }) => {
         if (!value?.svg) return null;
         return (
-          <DiagramFigure
-            svg={value.svg}
-            alt={value.alt ?? ""}
-            caption={value.caption}
-            width={value.width}
-            animation={value.animation}
-            animateFlow={value.animateFlow}
-            flows={value.flows}
-            pages={value.pages}
-          />
+          <div className="wide-block">
+            <DiagramFigure
+              svg={value.svg}
+              alt={value.alt ?? ""}
+              caption={value.caption}
+              width={value.width}
+              animation={value.animation}
+              animateFlow={value.animateFlow}
+              flows={value.flows}
+              pages={value.pages}
+            />
+          </div>
         );
       },
-      code: ({ value }) => <CodeCell value={value} />,
+      code: ({ value }) => (
+        <div className="max-w-[46rem]">
+          <CodeCell value={value} />
+        </div>
+      ),
       codeTabs: ({ value }) => {
         const tabs = (
           (value?.tabs ?? []) as (CodeValue & { _key: string })[]
         ).filter((t) => t.code);
         if (!tabs.length) return null;
         return (
+          <div className="max-w-[46rem]">
           <CodeTabs
             labels={tabs.map((t, i) => t.label || t.language || `Tab ${i + 1}`)}
             caption={value.caption}
@@ -70,19 +75,23 @@ function buildComponents(
               </div>
             ))}
           </CodeTabs>
+          </div>
         );
       },
       walkthrough: ({ value }) => (
-        <WalkthroughBlock
-          value={value as WalkthroughValue}
-          renderText={(text) => (
-            <PortableText value={text as PostBodyValue & object} components={components} />
-          )}
-        />
+        <div className="wide-block">
+          <WalkthroughBlock
+            value={value as WalkthroughValue}
+            renderText={(text) => (
+              <PortableText value={text as PostBodyValue & object} components={components} />
+            )}
+          />
+        </div>
       ),
       callout: ({ value }) => {
         if (!value?.body?.length) return null;
         return (
+          <div className="max-w-[46rem]">
           <Callout
             tone={value.tone}
             title={value.title}
@@ -90,6 +99,7 @@ function buildComponents(
           >
             <PortableText value={value.body} components={components} />
           </Callout>
+          </div>
         );
       },
     },
@@ -97,27 +107,27 @@ function buildComponents(
       h2: ({ children, value }) => (
         <h2
           id={`h-${value._key}`}
-          className="mb-3 mt-10 scroll-mt-32 font-mono text-2xl font-bold text-heading"
+          className="mb-4 mt-14 max-w-[62ch] scroll-mt-32 font-body text-[length:var(--step-lead)] font-semibold leading-tight text-heading"
         >
-          <span className="text-accent">##</span> {children}
+          {children}
         </h2>
       ),
       h3: ({ children, value }) => (
         <h3
           id={`h-${value._key}`}
-          className="mb-2 mt-8 scroll-mt-32 font-mono text-xl font-bold text-heading"
+          className="mb-3 mt-10 max-w-[62ch] scroll-mt-32 font-body text-[1.25rem] font-semibold leading-tight text-heading"
         >
-          <span className="text-accent">###</span> {children}
+          {children}
         </h3>
       ),
       normal: ({ children }) => (
-        <p className="my-4 font-body text-base leading-[1.7] text-ink">
+        <p className="my-4 max-w-[62ch] font-body text-[1.0625rem] leading-[1.7] text-ink">
           {children}
         </p>
       ),
       blockquote: ({ children }) => (
-        <blockquote className="my-10 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[26px_30px] shadow-[-6px_6px_0_rgba(0,147,233,0.30)]">
-          <p className="m-0 font-mono text-lg font-bold leading-[1.5] text-heading">
+        <blockquote className="my-10 max-w-[62ch] bg-section p-6 md:p-8">
+          <p className="m-0 font-body text-[length:var(--step-lead)] font-medium leading-[1.3] text-heading">
             {children}
           </p>
         </blockquote>
@@ -145,14 +155,14 @@ function buildComponents(
         );
       },
       code: ({ children }) => (
-        <code className="rounded-[4px] bg-[rgba(0,147,233,0.08)] px-[0.35em] py-[0.1em] font-mono text-[0.9em] text-ink">
+        <code className="bg-[rgba(0,147,233,0.08)] px-[0.35em] py-[0.1em] font-mono text-[0.9em] text-ink">
           {children}
         </code>
       ),
       link: ({ children, value }) => (
         <a
           href={value?.href}
-          className="text-accent underline underline-offset-2"
+          className="text-[color:var(--accent-text)] underline decoration-2 underline-offset-2"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -162,10 +172,10 @@ function buildComponents(
     },
     list: {
       bullet: ({ children }) => (
-        <ul className="my-4 list-disc pl-6 font-body text-ink">{children}</ul>
+        <ul className="my-4 max-w-[62ch] list-disc pl-6 font-body text-[1.0625rem] leading-[1.7] text-ink">{children}</ul>
       ),
       number: ({ children }) => (
-        <ol className="my-4 list-decimal pl-6 font-body text-ink">
+        <ol className="my-4 max-w-[62ch] list-decimal pl-6 font-body text-[1.0625rem] leading-[1.7] text-ink">
           {children}
         </ol>
       ),

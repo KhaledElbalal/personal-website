@@ -13,7 +13,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <Tag
-      className={`m-0 font-mono text-[clamp(1.75rem,6vw,2.5rem)] font-bold leading-none tracking-[-0.01em] text-ink ${className}`}
+      className={`m-0 font-body text-[length:var(--step-lead)] font-semibold leading-tight text-black ${className}`}
       {...rest}
     >
       {children}

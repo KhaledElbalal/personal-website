@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // React <ViewTransition> + route navigations as view transitions
+  // (components/layout/RouteTransition.tsx, shared title morph on list → detail).
+  experimental: { viewTransition: true },
   // Markdown for assistants: /blog/<slug>.md (and Accept: text/markdown on the
   // normal URL) → app/md/[section]/[slug]/route.ts.
   async rewrites() {

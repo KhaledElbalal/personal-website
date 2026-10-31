@@ -1,9 +1,7 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import { ViewTransition } from "react";
 
 import { DiagramThumb } from "@/components/content/DiagramThumb";
-import { Tag } from "@/components/ui";
-import { slugify } from "@/lib/slugify";
 
 type BlogRowProps = {
   image?: string;
@@ -13,63 +11,89 @@ type BlogRowProps = {
   title?: string;
   body?: string;
   date?: string;
-  path?: string;
+  path?: string; // kept for call-site compatibility
   href?: string;
+  /** Names the title for the list → detail morph. */
+  slug?: string;
   className?: string;
 };
 
+// "ML PROJECT" -> "ML project"; short acronyms ("AI/ML") stay as typed.
+const sentenceCase = (s: string) =>
+  s.length <= 5 || /[a-z]/.test(s) ? s : s.charAt(0) + s.slice(1).toLowerCase();
+
+/**
+ * One list entry on a 12-column grid: what and when at the left, the title
+ * with its summary beneath, and the cover at the right when there is one (first on phones).
+ * The row tints and the title slides in an arrow on hover; the tint reaches
+ * past the text so the text stays on the page margin.
+ */
 export function BlogRow({
   image,
   diagramSvg,
-  category = "FRONTEND",
-  title = "Designing & Developing Anne's Website",
-  body = "A short teaser describing the project or post in a sentence or two.",
-  date = "July 08, 2021 · 3 months",
-  path,
+  category = "Frontend",
+  title = "",
+  body,
+  date = "",
   href = "#",
+  slug,
   className = "",
 }: BlogRowProps) {
-  const cmdPath = path ?? `~/${slugify(category)}/${slugify(title)}`;
-  const cover: CSSProperties | undefined = image
-    ? { backgroundImage: `url(${image})` }
-    : undefined;
+  const hasCover = Boolean(diagramSvg || image);
 
   return (
     <Link
       href={href}
-      className={`group grid grid-cols-1 items-start gap-6 border-t border-black/10 pt-6 no-underline md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center md:gap-10 ${className}`}
+      className={`reveal group -mx-4 grid grid-cols-1 gap-x-10 gap-y-4 px-4 py-9 no-underline transition-colors duration-300 hover:bg-[rgba(0,147,233,0.08)] focus-visible:bg-[rgba(0,147,233,0.08)] md:-mx-6 md:grid-cols-12 md:px-6 md:py-12 ${className}`}
     >
-      <div className="flex min-w-0 flex-col items-start gap-3.5">
-        <div className="flex items-center gap-4">
-          <Tag size="outline">{category}</Tag>
-          <span className="font-mono text-[12.5px] text-muted">{date}</span>
-        </div>
-        <h3 className="m-0 max-w-[620px] break-words font-mono text-[clamp(1.5rem,5vw,2rem)] font-bold leading-tight text-black transition-colors duration-150 group-hover:text-accent group-focus-visible:text-accent">
-          {title}
-        </h3>
-        <p className="m-0 max-w-[560px] font-body text-base leading-[1.55] text-ink">
-          {body}
-        </p>
-        <div className="max-h-0 overflow-hidden opacity-0 transition-all duration-200 group-hover:mt-2 group-hover:max-h-6 group-hover:opacity-100 group-focus-visible:mt-2 group-focus-visible:max-h-6 group-focus-visible:opacity-100">
-          <span className="whitespace-nowrap font-mono text-[13px] font-bold text-accent">
-            <span className="text-muted">$</span> open {cmdPath}
+      <div className="order-1 text-sm text-muted md:col-span-2">
+        <span className="block font-medium text-ink">{sentenceCase(category)}</span>
+        <span className="block">{date}</span>
+      </div>
+
+      <div className={`order-3 min-w-0 md:order-2 ${hasCover ? "md:col-span-6" : "md:col-span-10"}`}>
+        <ViewTransition name={slug ? `title-${slug}` : undefined} share="morph" default="none">
+          <h3 className="m-0 text-[length:var(--step-row)] font-semibold leading-tight text-black transition-colors duration-300 group-hover:text-[color:var(--accent-text)] group-focus-visible:text-[color:var(--accent-text)]">
+            {title}
             <span
               aria-hidden="true"
-              className="ml-[0.18em] inline-block h-[0.88em] w-[0.22em] animate-caret-blink bg-accent-bright align-[-0.1em]"
-            />
-          </span>
-        </div>
+              className="ml-2 inline-block -translate-x-2 opacity-0 transition-[opacity,translate] duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 group-hover:ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-visible:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:ease-[cubic-bezier(0.16,1,0.3,1)]"
+            >
+              →
+            </span>
+          </h3>
+        </ViewTransition>
+        {body ? (
+          <p className="m-0 mt-4 max-w-[58ch] text-[1.0625rem] leading-relaxed text-ink">
+            {body}
+          </p>
+        ) : null}
       </div>
-      {diagramSvg ? (
-        <div className="aspect-[16/10] w-full overflow-hidden rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] shadow-[var(--shadow-card-flat)] transition-transform duration-200 group-hover:-translate-y-0.5">
-          <DiagramThumb svg={diagramSvg} className="h-full w-full" />
+
+      {hasCover ? (
+        <div className="order-2 md:order-3 md:col-span-4 md:mt-1.5">
+          {diagramSvg ? (
+            <div className="aspect-[16/10] w-full overflow-hidden">
+              <DiagramThumb
+                svg={diagramSvg}
+                className="h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+              />
+            </div>
+          ) : (
+            <div className="aspect-[16/10] w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
+              <img
+                src={image}
+                alt=""
+                width={1200}
+                height={750}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+              />
+            </div>
+          )}
         </div>
-      ) : (
-        <div
-          className="aspect-[16/10] w-full rounded-[8px] bg-[color:var(--surface-placeholder)] bg-cover bg-center shadow-[var(--shadow-card-flat)] transition-transform duration-200 group-hover:-translate-y-0.5"
-          style={cover}
-        />
-      )}
+      ) : null}
     </Link>
   );
 }

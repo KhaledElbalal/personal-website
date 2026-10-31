@@ -17,25 +17,26 @@ export function CertificateRow({
 }: CertificateRowProps) {
   return (
     <div
-      className={`grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-4 border-t border-black/10 py-[18px] sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:gap-6 ${className}`}
+      className={`reveal grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-4 py-3 sm:grid-cols-[72px_minmax(0,1fr)_auto] sm:gap-6 ${className}`}
     >
       {logo ? (
         // eslint-disable-next-line @next/next/no-img-element -- arbitrary external issuer logos
         <img
           src={logo}
           alt={logoAlt}
-          className="h-16 w-16 rounded-[4px] bg-section object-contain"
+          width={72}
+          height={72}
+          loading="lazy"
+          className="h-14 w-14 bg-section object-contain sm:h-[72px] sm:w-[72px]"
         />
       ) : (
-        <div aria-hidden="true" className="h-16 w-16 rounded-[4px] bg-section" />
+        <div aria-hidden="true" className="h-14 w-14 bg-section sm:h-[72px] sm:w-[72px]" />
       )}
       <div>
-        <div className="font-mono text-base font-bold text-black">{name}</div>
-        {issuer ? (
-          <div className="mt-1 font-mono text-[12.5px] text-muted">{issuer}</div>
-        ) : null}
+        <div className="text-[1.0625rem] font-medium text-black">{name}</div>
+        {issuer ? <div className="mt-1 text-sm text-muted">{issuer}</div> : null}
       </div>
-      <span className="font-mono text-xs text-muted">{date}</span>
+      <span className="text-sm tabular-nums text-muted">{date}</span>
     </div>
   );
 }

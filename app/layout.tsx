@@ -5,7 +5,6 @@ import "./globals.css";
 import { Suspense } from "react";
 
 import { DraftTools } from "@/components/layout/DraftTools";
-import { IntroSplash } from "@/components/layout/IntroSplash";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeaderContainer } from "@/components/layout/SiteHeaderContainer";
@@ -106,7 +105,6 @@ export default function RootLayout({
       className={`${spaceMono.variable} ${poppins.variable} ${inter.variable} ${urbanist.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <IntroSplash />
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>

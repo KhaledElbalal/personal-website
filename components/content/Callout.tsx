@@ -26,25 +26,25 @@ export function Callout({ tone, title, collapsed, children }: CalloutProps) {
     <span className="flex items-baseline gap-2.5">
       <span
         aria-hidden="true"
-        className={`inline-flex h-5 w-5 shrink-0 translate-y-[3px] items-center justify-center rounded-full border-[1.5px] border-current font-mono text-[11px] font-bold ${t.accent}`}
+        className={`inline-flex h-5 w-5 shrink-0 translate-y-[3px] items-center justify-center rounded-full border-[1.5px] border-current font-body text-[13px] font-bold ${t.accent}`}
       >
         {t.glyph}
       </span>
       <span className="min-w-0">
-        <span className={`font-mono text-[12px] font-bold uppercase tracking-[0.14em] ${t.accent}`}>{t.label}</span>
-        {title ? <span className="mt-0.5 block font-mono text-[15px] font-bold leading-snug text-heading">{title}</span> : null}
+        <span className={`font-body text-[13px] font-bold ${t.accent}`}>{t.label}</span>
+        {title ? <span className="mt-0.5 block font-body text-[15px] font-bold leading-snug text-heading">{title}</span> : null}
       </span>
     </span>
   );
   const body = <div className="callout-body mt-3 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">{children}</div>;
-  const box = `my-8 rounded-[8px] border-l-4 p-[18px_20px] sm:p-[20px_24px] ${t.box}`;
+  const box = `my-8 border-l-4 p-[18px_20px] sm:p-[20px_24px] ${t.box}`;
 
   if (collapsed && title) {
     return (
       <details className={`group ${box}`}>
         <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
           {heading}
-          <span className="shrink-0 translate-y-1 font-mono text-[12px] font-bold text-muted">
+          <span className="shrink-0 translate-y-1 font-body text-[13px] font-bold text-muted">
             <span className="group-open:hidden">open +</span>
             <span className="hidden group-open:inline">close −</span>
           </span>

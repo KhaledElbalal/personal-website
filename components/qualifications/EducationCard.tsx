@@ -1,5 +1,3 @@
-import { Tag } from "@/components/ui";
-
 type EducationCardProps = {
   degree: string;
   institution?: string;
@@ -11,6 +9,7 @@ type EducationCardProps = {
   className?: string;
 };
 
+/** The degree as a field of ink: the grade is the largest thing in it. */
 export function EducationCard({
   degree,
   institution,
@@ -23,50 +22,44 @@ export function EducationCard({
 }: EducationCardProps) {
   return (
     <div
-      className={`grid grid-cols-1 gap-4 rounded-[8px] border-[1.5px] border-[color:var(--color-xiketic)] p-[30px] shadow-[-6px_6px_0_rgba(0,147,233,0.30)] sm:grid-cols-[minmax(0,1fr)_auto] ${className}`}
+      className={` reveal grid grid-cols-1 gap-x-10 gap-y-8 bg-[color:var(--color-xiketic)] p-6 text-on-accent md:grid-cols-[minmax(0,1fr)_auto] md:p-10 ${className}`}
     >
-      <div className="order-1 sm:col-start-1 sm:row-start-1">
-        <h3 className="m-0 font-mono text-[22px] font-bold leading-tight text-[color:var(--color-xiketic)]">
-          <span className="block sm:inline">{degree}</span>
+      <div>
+        <h3 className="m-0 text-[length:var(--step-lead)] font-semibold leading-tight">
+          {degree}
           {institution ? (
-            <>
-              <span aria-hidden="true" className="hidden sm:inline">
-                {" — "}
-              </span>
-              <span className="block sm:inline">{institution}</span>
-            </>
+            <span className="block font-normal text-[color:#b9bccb]">{institution}</span>
           ) : null}
         </h3>
         {subtitle ? (
-          <p className="mt-2 font-body text-[15px] leading-[1.6] text-muted">
+          <p className="mt-4 max-w-[52ch] text-[1.0625rem] leading-relaxed text-on-accent">
             {subtitle}
+          </p>
+        ) : null}
+        {tags.length > 0 ? (
+          <p className="mt-6 text-[1.0625rem] font-medium text-accent-bright">
+            {tags.join(" · ")}
           </p>
         ) : null}
       </div>
 
       {metricValue || dateRange ? (
-        <div className="order-2 sm:col-start-2 sm:row-start-1 sm:text-right">
+        <div className="md:text-right">
           {metricValue ? (
-            <div className="font-mono text-[32px] font-bold text-accent">
+            <div className="text-[length:var(--step-head)] font-bold leading-[0.95] tracking-[-0.03em] text-accent-bright">
               {metricValue}
               {metricLabel ? (
-                <span className="text-base text-muted"> {metricLabel}</span>
+                <span className="ml-2 text-[1.0625rem] font-normal tracking-normal text-[color:#b9bccb]">
+                  {metricLabel}
+                </span>
               ) : null}
             </div>
           ) : null}
           {dateRange ? (
-            <div className="mt-1 font-mono text-xs text-muted">{dateRange}</div>
+            <div className="mt-2 text-sm tabular-nums text-[color:#b9bccb]">
+              {dateRange}
+            </div>
           ) : null}
-        </div>
-      ) : null}
-
-      {tags.length > 0 ? (
-        <div className="order-3 flex flex-wrap gap-2.5 sm:col-start-1 sm:row-start-2">
-          {tags.map((t) => (
-            <Tag key={t} size="chip">
-              {t}
-            </Tag>
-          ))}
         </div>
       ) : null}
     </div>

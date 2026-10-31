@@ -53,16 +53,20 @@ export function CodeCell({ value }: { value: CodeValue }) {
   const cellNumber = value.label?.match(/\d+/)?.[0];
   const outputLabel = cellNumber ? `Out[${cellNumber}]:` : "Out:";
   return (
-    <div className="my-6 grid grid-cols-1 gap-2 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-y-3 sm:gap-x-3.5">
+    <div
+      className={`my-6 grid grid-cols-1 gap-2 ${
+        value.label ? "sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-y-3 sm:gap-x-3.5" : "sm:gap-y-3"
+      }`}
+    >
       {value.label ? (
         <span className="pt-4 font-mono text-[13px] font-bold text-accent">{value.label}</span>
-      ) : (
-        <span className="hidden sm:block" aria-hidden="true" />
-      )}
+      ) : null}
       <CodeCard value={value} />
       {value.output ? (
         <>
-          <span className="pt-3 font-mono text-[13px] font-bold text-muted">{outputLabel}</span>
+          {value.label ? (
+            <span className="pt-3 font-mono text-[13px] font-bold text-muted">{outputLabel}</span>
+          ) : null}
           <CodeOutput output={value.output} />
         </>
       ) : null}
