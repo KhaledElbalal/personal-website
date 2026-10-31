@@ -27,7 +27,7 @@ export async function SiteFooter() {
       id="contact"
       className="page-margin bg-[color:var(--color-xiketic)] pb-6 pt-24 text-on-accent md:pb-8 md:pt-40"
     >
-      <div className="grid gap-16 md:grid-cols-12 md:gap-x-8">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-16 md:grid-cols-12 md:gap-x-8">
       <div className="max-w-[520px] md:col-span-5">
         <p className="reveal text-[length:var(--step-lead)] font-medium leading-tight">
           <span className="block text-[color:#b9bccb]">What are you building?</span>
@@ -71,7 +71,7 @@ export async function SiteFooter() {
       <ul className="reveal flex flex-col gap-3 md:col-span-5 md:col-start-8">
         {email ? (
           <li>
-            <SocialLink href={contactHref(email)} className="break-all">
+            <SocialLink href={contactHref(email)} className="break-all whitespace-normal!">
               <SocialIcon name="email" />
               {email}
             </SocialLink>
