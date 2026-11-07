@@ -1,4 +1,4 @@
-import { DesktopIcon } from "@sanity/icons";
+import { DesktopIcon } from "@sanity/icons/Desktop";
 import { useRouter } from "sanity/router";
 import type { DocumentActionComponent } from "sanity";
 

@@ -1,8 +1,11 @@
 # Khaled Portfolio — Sanity Studio
 
-Standalone Sanity Studio for the portfolio content. This is a **separate
-project/deploy** from the Next.js site (in the parent directory) — it is not
-mounted inside the app. The site reads this content read-only via
+Sanity Studio for the portfolio content. It is its own package (Vite build via
+the Sanity CLI), but in production the **Next.js site serves it at `/studio`**:
+`npm run build` at the repo root runs `build:studio`, which builds this Studio
+into `../public/studio` (git-ignored), and `next.config.ts` rewrites `/studio/*`
+to its `index.html`. Hosting it on the site's own domain is what makes the
+domain-bound tldraw license key valid. The site reads content via
 `@sanity/client`.
 
 ## Setup
@@ -13,7 +16,7 @@ npm install
 cp .env.example .env           # then fill in SANITY_STUDIO_PROJECT_ID
 npx sanity login               # authenticate (first time)
 npx sanity init --env          # or create a project at sanity.io/manage and paste its id
-npm run dev                    # http://localhost:3333
+npm run dev                    # http://localhost:3333/studio
 ```
 
 Set the same project id / dataset in the **site's** `.env.local`
@@ -38,13 +41,17 @@ Set the same project id / dataset in the **site's** `.env.local`
 - **Markdown paste** — pasting Markdown into the body converts it to blocks (h1–h6 → H2/H3, lists, quotes, bold/italic/code, links, fenced code → Code cell).
 - **References** — the identifier field checks PEP / WG21 / RFC / man-page ids against the site's `/api/citation`.
 - **Warnings** (not blockers) — missing cover, long summary, half-filled series, long post without headings.
-- **Diagram editor** — set `SANITY_STUDIO_TLDRAW_LICENSE_KEY` in `studio/.env`.
+- **Diagram editor** — set `SANITY_STUDIO_TLDRAW_LICENSE_KEY` in `studio/.env` (and in the Vercel project's env, since the Studio is built there). The key only validates on the hostnames it was issued for; localhost always works.
 
 ## Deploy the Studio
 
-```bash
-npm run deploy                 # → https://<your-project>.sanity.studio (free hosting)
-```
+Deploying the site deploys the Studio: Vercel runs the root `npm run build`,
+which builds it into `public/studio`. The `SANITY_STUDIO_*` variables must be
+set in the Vercel project for that build. Add the site origin to the Sanity
+project's CORS origins **with credentials**.
+
+`npm run deploy` still pushes a copy to `*.sanity.studio`, but tldraw's license
+won't validate there.
 
 ## Type generation (run after schema changes)
 
