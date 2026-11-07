@@ -18,6 +18,20 @@ const nextConfig: NextConfig = {
         destination: "/md/:section/:slug",
         has: [{ type: "header", key: "accept", value: "(.*)text/markdown(.*)" }],
       },
+      // Sanity Studio SPA (static build in public/studio). Array rewrites run
+      // after public files, so real assets win and every other /studio/* route
+      // falls back to the Studio's index.html for client-side routing.
+      { source: "/studio", destination: "/studio/index.html" },
+      { source: "/studio/:path*", destination: "/studio/index.html" },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        // Studio JS/CSS bundles are content-hashed (favicons etc. are not).
+        source: "/studio/static/:file([^/]+\\.(?:js|css))",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
   images: {

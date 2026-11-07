@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { PlayIcon } from "@sanity/icons";
+import { PlayIcon } from "@sanity/icons/Play";
 
 import { calloutBlock } from "./richText";
 

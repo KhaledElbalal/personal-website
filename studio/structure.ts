@@ -1,4 +1,6 @@
-import { BookIcon, EditIcon, RocketIcon } from "@sanity/icons";
+import { BookIcon } from "@sanity/icons/Book";
+import { EditIcon } from "@sanity/icons/Edit";
+import { RocketIcon } from "@sanity/icons/Rocket";
 import type { StructureBuilder, StructureResolver } from "sanity/structure";
 
 const SINGLETONS = ["siteSettings", "qualificationsPage"];

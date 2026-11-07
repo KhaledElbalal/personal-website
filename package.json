@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build:studio && next build",
+    "build:studio": "npm --prefix studio ci --no-audit --no-fund && npm --prefix studio run build:site",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

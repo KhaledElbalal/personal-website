@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { CodeBlockIcon, CodeIcon } from "@sanity/icons";
+import { CodeBlockIcon } from "@sanity/icons/CodeBlock";
+import { CodeIcon } from "@sanity/icons/Code";
 
 // Fields shared by a standalone code cell and each tab of a code-tabs block.
 const codeFields = [

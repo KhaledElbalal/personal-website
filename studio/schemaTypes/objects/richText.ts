@@ -1,4 +1,6 @@
-import { CommentIcon, LinkIcon, BookIcon } from "@sanity/icons";
+import { CommentIcon } from "@sanity/icons/Comment";
+import { LinkIcon } from "@sanity/icons/Link";
+import { BookIcon } from "@sanity/icons/Book";
 import { defineArrayMember, defineField } from "sanity";
 
 import { CitationIdInput } from "../../components/CitationIdInput";

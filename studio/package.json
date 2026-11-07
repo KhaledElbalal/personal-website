@@ -7,6 +7,7 @@
     "dev": "sanity dev",
     "start": "sanity start",
     "build": "sanity build",
+    "build:site": "sanity build ../public/studio --yes",
     "deploy": "sanity deploy",
     "extract-schema": "sanity schema extract",
     "typegen": "sanity schema extract && sanity typegen generate"

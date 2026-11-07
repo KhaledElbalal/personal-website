@@ -29,6 +29,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "sanity.types.ts",
     "studio/**",
+    "public/studio/**",
     "design/**",
     "design_qualifications/**",
   ]),

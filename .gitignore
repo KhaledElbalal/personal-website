@@ -25,6 +25,8 @@
 
 # production
 /build
+# Sanity Studio build served at /studio (npm run build:studio)
+/public/studio/
 
 # misc
 .DS_Store
