@@ -27,7 +27,7 @@ export async function AuthorBio() {
   );
 
   return (
-    <div className="reveal mt-14 wide-block flex items-center gap-6 bg-[color:var(--color-xiketic)] p-7 ">
+    <div className="reveal mt-14 flex items-center gap-6 bg-[color:var(--color-xiketic)] p-7">
       {avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor
         <img
