@@ -230,7 +230,7 @@ export async function PostDetailView({
             ) : null}
 
             {newerPost || olderPost ? (
-              <div className="reveal mt-16 flex wide-block flex-wrap items-center justify-between gap-4 bg-section p-5">
+              <div className="reveal mt-16 flex flex-wrap items-center justify-between gap-4 bg-section p-5">
                 {olderPost ? (
                   <Link
                     href={`${basePath}/${olderPost.slug}`}
@@ -253,7 +253,7 @@ export async function PostDetailView({
             ) : null}
 
             {seriesPosts.length > 1 ? (
-              <div className="reveal mt-12 wide-block">
+              <div className="reveal mt-12">
                 <h2 className="m-0 text-[length:var(--step-lead)] font-semibold leading-tight text-black">
                   Also in this series: {seriesName}
                 </h2>
