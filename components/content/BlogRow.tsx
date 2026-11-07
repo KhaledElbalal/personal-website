@@ -13,7 +13,7 @@ type BlogRowProps = {
   date?: string;
   path?: string; // kept for call-site compatibility
   href?: string;
-  /** Names the title for the list → detail morph. */
+  /** Names the title and cover for the list → detail morphs. */
   slug?: string;
   className?: string;
 };
@@ -72,26 +72,28 @@ export function BlogRow({
 
       {hasCover ? (
         <div className="order-2 md:order-3 md:col-span-4 md:mt-1.5">
-          {diagramSvg ? (
-            <div className="aspect-[16/10] w-full overflow-hidden">
-              <DiagramThumb
-                svg={diagramSvg}
-                className="h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-              />
-            </div>
-          ) : (
-            <div className="aspect-[16/10] w-full overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
-              <img
-                src={image}
-                alt=""
-                width={1200}
-                height={750}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-              />
-            </div>
-          )}
+          <ViewTransition name={slug ? `cover-${slug}` : undefined} share="cover-morph" default="none">
+            {diagramSvg ? (
+              <div className="aspect-[16/10] w-full overflow-hidden">
+                <DiagramThumb
+                  svg={diagramSvg}
+                  className="h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                />
+              </div>
+            ) : (
+              <div className="aspect-[16/10] w-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
+                <img
+                  src={image}
+                  alt=""
+                  width={1200}
+                  height={750}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                />
+              </div>
+            )}
+          </ViewTransition>
         </div>
       ) : null}
     </Link>
