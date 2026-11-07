@@ -14,6 +14,10 @@ type DiagramFigureProps = {
   flows?: string | null;
   /** All pages as JSON [{name, svg, width, height}] when the canvas has > 1 page. */
   pages?: string | null;
+  /** Post cover: cap the height with a "Show full diagram" toggle. */
+  peek?: boolean;
+  /** Shared-element transition name for the frame (list cover → post cover). */
+  transitionName?: string;
 };
 
 function parseFlows(json?: string | null): FlowDef[] {
@@ -56,6 +60,8 @@ export function DiagramFigure({
   animateFlow,
   flows,
   pages,
+  peek,
+  transitionName,
 }: DiagramFigureProps) {
   const pageViews = parsePages(pages);
   if (pageViews.length > 1) {
@@ -66,6 +72,8 @@ export function DiagramFigure({
         caption={caption}
         animation={toAnimation(animation, animateFlow)}
         flows={parseFlows(flows)}
+        peek={peek}
+        transitionName={transitionName}
       />
     );
   }
@@ -77,6 +85,8 @@ export function DiagramFigure({
       width={width}
       animation={toAnimation(animation, animateFlow)}
       flows={parseFlows(flows)}
+      peek={peek}
+      transitionName={transitionName}
     />
   );
 }

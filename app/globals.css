@@ -576,6 +576,26 @@ body {
 ::view-transition-image-pair(.morph) {
   animation-name: vt-via-blur;
 }
+/* A post cover grows from its list thumbnail into the post's cover frame.
+   The two snapshots differ in aspect (16:10 thumb vs. wide frame), so both fill
+   the moving box and crop rather than stretch, and cross-fade on the way. */
+::view-transition-group(.cover-morph) {
+  animation-duration: 560ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: clip;
+}
+::view-transition-old(.cover-morph),
+::view-transition-new(.cover-morph) {
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+::view-transition-old(.cover-morph) {
+  animation: 240ms ease-out both vt-fade reverse;
+}
+::view-transition-new(.cover-morph) {
+  animation: 360ms ease-out both vt-fade;
+}
 @keyframes vt-fade {
   from {
     opacity: 0;

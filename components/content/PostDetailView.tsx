@@ -112,7 +112,7 @@ export async function PostDetailView({
   const readingTime = estimateReadingTime(post.body);
   const notes = await collectNotes(post.body);
   const cover = post.cover
-    ? urlFor(post.cover).width(1280).height(640).url()
+    ? urlFor(post.cover).width(1920).height(960).url()
     : null;
 
   return (
@@ -193,12 +193,13 @@ export async function PostDetailView({
         </div>
       ) : null}
 
-      <div className="page-margin w-full pb-12 pt-6 md:pb-20 md:pt-8">
-        <div className="md:grid md:grid-cols-[minmax(150px,17%)_minmax(0,1fr)] md:items-start md:gap-10 wide:grid-cols-[minmax(0,1fr)_42rem_minmax(0,1fr)]">
-          {headings.length ? <PostToc headings={headings} /> : <div aria-hidden="true" />}
-          <article className="mx-auto max-w-3xl md:mx-0 md:max-w-none">
-            {post.coverDiagram?.svg ? (
-              <div className="mb-10 wide-block">
+      {post.coverDiagram?.svg || cover ? (
+        // Cover spans the title's columns, so it starts on the title's edge
+        // and runs to the right margin rather than sitting in the text column.
+        <div className="page-margin">
+          <div className="grid gap-x-10 md:grid-cols-[minmax(150px,17%)_minmax(0,1fr)] wide:grid-cols-[minmax(0,1fr)_42rem_minmax(0,1fr)]">
+            <div className="md:col-start-2 wide:col-[2/span_2]">
+              {post.coverDiagram?.svg ? (
                 <DiagramFigure
                   svg={post.coverDiagram.svg}
                   alt={post.coverDiagram.alt ?? ""}
@@ -208,14 +209,28 @@ export async function PostDetailView({
                   animateFlow={post.coverDiagram.animateFlow}
                   flows={post.coverDiagram.flows}
                   pages={post.coverDiagram.pages}
+                  peek
+                  transitionName={post.slug ? `cover-${post.slug}` : undefined}
                 />
-              </div>
-            ) : cover ? (
-              <div className="mb-10 wide-block">
-                {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
-                <img src={cover} alt={post.cover?.alt ?? ""} className="w-full" />
-              </div>
-            ) : null}
+              ) : (
+                <ViewTransition name={post.slug ? `cover-${post.slug}` : undefined} share="cover-morph" default="none">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- Sanity CDN, sized via urlFor */}
+                  <img
+                    src={cover!}
+                    alt={post.cover?.alt ?? ""}
+                    className="aspect-[2/1] max-h-[clamp(24rem,50svh,32rem)] w-full object-cover"
+                  />
+                </ViewTransition>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="page-margin w-full pb-12 pt-6 md:pb-20 md:pt-8">
+        <div className="md:grid md:grid-cols-[minmax(150px,17%)_minmax(0,1fr)] md:items-start md:gap-10 wide:grid-cols-[minmax(0,1fr)_42rem_minmax(0,1fr)]">
+          {headings.length ? <PostToc headings={headings} /> : <div aria-hidden="true" />}
+          <article className="mx-auto max-w-3xl md:mx-0 md:max-w-none">
             <PostBody value={post.body} notes={notes} />
             <PostSources citations={notes.citations} />
 

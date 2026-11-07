@@ -7,10 +7,12 @@ import {
   type RefObject,
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
   useSyncExternalStore,
+  ViewTransition,
 } from "react";
 
 import { AUTO_FLOW, DiagramEngine, type FlowDef, type Stage } from "@/components/content/diagram/engine";
@@ -24,7 +26,14 @@ type DiagramViewerProps = {
   width?: number | null;
   animation: DiagramAnimation;
   flows: FlowDef[];
+  /** Cover mode: cap the frame at PEEK_HEIGHT (diagram kept at readable size) with a fade and a "Show full diagram" toggle. */
+  peek?: boolean;
+  /** Names the frame for a shared-element view transition (list cover → post cover). */
+  transitionName?: string;
 };
+
+/** Height of a collapsed cover diagram: about half the screen, within readable bounds. */
+export const PEEK_HEIGHT = "clamp(24rem, 50svh, 32rem)";
 
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -82,6 +91,8 @@ const SvgHost = memo(function SvgHost({
 // sinks 1px when pressed, and dims (with a not-allowed cursor) when disabled.
 const ctrlBase =
   " inline-flex h-9 items-center justify-center gap-1.5 px-3 text-sm font-semibold leading-none transition-colors duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40";
+// Solid, high-contrast variant for the cover's expand/collapse toggle.
+const ctrlSolid = `${ctrlBase} h-11 px-5 text-[0.9375rem] bg-[color:var(--color-xiketic)] text-[color:var(--color-ghost-white)] shadow-[0_6px_20px_rgba(10,14,30,0.18)] hover:bg-[color:var(--color-tufts-blue)]`;
 const ctrl = `${ctrlBase} bg-[#dff1fd] text-ink hover:bg-[#c9e8fb] active:bg-[#b4def8] disabled:hover:bg-[#dff1fd]`;
 /** Selected pill/tab. */
 const ctrlOn = `${ctrlBase} bg-[color:var(--color-xiketic)] text-on-accent`;
@@ -288,42 +299,92 @@ export function DiagramViewer({
   animation,
   flows,
   pager,
+  peek = false,
+  transitionName,
 }: DiagramViewerProps & { pager?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const { containerRef, controls } = useDiagramStage({ html, flows, animation, active: !open });
 
+  // Peek: only offer the toggle when the diagram is actually taller than the cap.
+  const [expanded, setExpanded] = useState(false);
+  const [clipped, setClipped] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!peek || expanded || !el) return;
+    const check = () => setClipped(el.scrollHeight > el.clientHeight + 1);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
+    return () => ro.disconnect();
+  }, [peek, expanded, html]);
+  const collapsed = peek && !expanded;
+
   return (
-    <figure className="my-10 w-full [contain:inline-size]">
+    <figure className={`${peek ? "my-0" : "my-10"} w-full [contain:inline-size]`}>
       {controls ? <div className="mb-3">{controls}</div> : null}
-      <div className="relative">
-        <div
-          className={`overflow-x-auto bg-section p-4 sm:p-6 ${pager ? "pt-16 sm:pt-16" : ""}`}
-        >
+      <ViewTransition name={transitionName} share="cover-morph" default="none">
+        <div className="relative">
+          <div
+            ref={panelRef}
+            id={panelId}
+            style={collapsed ? { maxHeight: PEEK_HEIGHT } : undefined}
+            className={`bg-section p-4 sm:p-6 ${collapsed ? "overflow-hidden" : "overflow-x-auto"} ${pager ? "pt-16 sm:pt-16" : ""}`}
+          >
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label={`Enlarge diagram: ${alt}`}
+              className="mx-auto block w-full cursor-zoom-in"
+              style={{ maxWidth: width ?? undefined }}
+            >
+              <SvgHost html={html} hostRef={containerRef} className="sd-diagram" />
+            </button>
+          </div>
+          {collapsed && clipped ? (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-36 items-end justify-center bg-linear-to-t from-section via-section/90 to-transparent pb-6">
+              <button
+                type="button"
+                aria-expanded={false}
+                aria-controls={panelId}
+                onClick={() => setExpanded(true)}
+                className={`${ctrlSolid} pointer-events-auto`}
+              >
+                Show full diagram <span aria-hidden="true">↓</span>
+              </button>
+            </div>
+          ) : null}
+          <div className="absolute right-3 top-3">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label="Enlarge diagram"
+              title="Enlarge diagram"
+              className={ctrl}
+            >
+              {icon.expand}
+              <span className="hidden sm:inline">Enlarge</span>
+            </button>
+          </div>
+          {/* Pinned top-left so it never moves when pages differ in height. */}
+          {pager ? <div className="absolute left-3 top-3 right-14">{pager}</div> : null}
+        </div>
+      </ViewTransition>
+      {peek && expanded ? (
+        <div className="mt-3 flex justify-center">
           <button
             type="button"
-            onClick={() => setOpen(true)}
-            aria-label={`Enlarge diagram: ${alt}`}
-            className="mx-auto block w-full cursor-zoom-in"
-            style={{ maxWidth: width ?? undefined }}
+            aria-expanded
+            aria-controls={panelId}
+            onClick={() => setExpanded(false)}
+            className={ctrlSolid}
           >
-            <SvgHost html={html} hostRef={containerRef} className="sd-diagram" />
+            Show less <span aria-hidden="true">↑</span>
           </button>
         </div>
-        <div className="absolute right-3 top-3">
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Enlarge diagram"
-            title="Enlarge diagram"
-            className={ctrl}
-          >
-            {icon.expand}
-            <span className="hidden sm:inline">Enlarge</span>
-          </button>
-        </div>
-        {/* Pinned top-left so it never moves when pages differ in height. */}
-        {pager ? <div className="absolute left-3 top-3 right-14">{pager}</div> : null}
-      </div>
+      ) : null}
       {caption ? (
         <figcaption className="mt-3 text-center font-body text-[13px] text-muted">{caption}</figcaption>
       ) : null}
